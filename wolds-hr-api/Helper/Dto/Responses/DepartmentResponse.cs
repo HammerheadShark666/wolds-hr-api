@@ -1,6 +1,6 @@
-﻿using employee_test_api.Domain;
+﻿using wolds_hr_api.Domain;
 
-namespace employee_test_api.Helpers.Dto.Responses;
+namespace wolds_hr_api.Helpers.Dto.Responses;
 
 public class DepartmentResponse
 {

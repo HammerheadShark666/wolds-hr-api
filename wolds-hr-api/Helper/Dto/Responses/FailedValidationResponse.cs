@@ -1,4 +1,4 @@
-﻿namespace employee_test_api.Helper.Dto.Responses;
+﻿namespace wolds_hr_api.Helper.Dto.Responses;
 
 public class FailedValidationResponse
 {

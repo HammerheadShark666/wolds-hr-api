@@ -1,4 +1,4 @@
-﻿namespace employee_test_api.Domain;
+﻿namespace wolds_hr_api.Domain;
 
 public class Department
 {

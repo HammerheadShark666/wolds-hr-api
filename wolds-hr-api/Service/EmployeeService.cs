@@ -1,150 +1,121 @@
-﻿using employee_test_api.Domain;
-using employee_test_api.Helpers;
-using employee_test_api.Helpers.Dto.Responses;
-using employee_test_api.Services.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
+using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Domain;
+using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Helpers.Dto.Responses;
+using wolds_hr_api.Service.Interfaces;
+using static wolds_hr_api.Helper.PhotoHelper;
 
-namespace employee_test_api.Services;
+namespace wolds_hr_api.Service;
 
 public class EmployeeService : IEmployeeService
 {
-    private static List<Employee> employees = [];
-    private readonly Random random = new();
-    private IDepartmentService _departmentService;
-
+    private readonly IAzureStorageBlobHelper _azureStorageHelper;
+    private readonly IPhotoHelper _photoHelper;
+    private readonly IEmployeeRepository _employeeRepository;
     private readonly IValidator<Employee> _validator;
 
-    public EmployeeService(IValidator<Employee> validator, IDepartmentService departmentService)
+    public EmployeeService(IValidator<Employee> validator,
+                           IEmployeeRepository employeeRepository,
+                           IAzureStorageBlobHelper azureStorageHelper,
+                           IPhotoHelper photoHelper)
     {
         _validator = validator;
-        _departmentService = departmentService;
-
-        if (employees.Count == 0)
-        {
-            employees = EmployeeHelper.CreateSpecificEmployees(employees);
-            employees = EmployeeHelper.CreateRandomEmployees(employees);
-        }
+        _azureStorageHelper = azureStorageHelper;
+        _photoHelper = photoHelper;
+        _employeeRepository = employeeRepository;
     }
 
     public EmployeePagedResponse Search(string keyword, int page, int pageSize)
     {
-        var departments = _departmentService.Get();
-
         var employeePagedResponse = new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count(),
-            Employees = (from e in employees
-                         join d in departments on e.DepartmentId equals d.Id into dept
-                         from department in dept.DefaultIfEmpty()
-                         where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-                         select new Employee()
-                         {
-                             Id = e.Id,
-                             Surname = e.Surname,
-                             FirstName = e.FirstName,
-                             DateOfBirth = e.DateOfBirth,
-                             HireDate = e.DateOfBirth,
-                             Email = e.Email,
-                             PhoneNumber = e.PhoneNumber,
-                             Photo = e.Photo,
-                             DepartmentId = department != null ? department.Id : 0,
-                             Department = department ?? null
-                         })
-                        .Skip((page - 1) * pageSize)
-                        .Take(pageSize)
-                        .ToList()
+            TotalEmployees = _employeeRepository.CountEmployees(keyword),
+            Employees = _employeeRepository.GetEmployees(keyword, page, pageSize)
         };
 
         return employeePagedResponse;
     }
 
-    public Employee? Get(int id)
+    public Employee? Get(long id)
     {
-        var departments = _departmentService.Get();
-
-        var employee = (from e in employees
-                        join d in departments on e.DepartmentId equals d.Id into dept
-                        from department in dept.DefaultIfEmpty()
-                        where e.Id == id
-                        select new Employee()
-                        {
-                            Id = e.Id,
-                            Surname = e.Surname,
-                            FirstName = e.FirstName,
-                            DateOfBirth = e.DateOfBirth,
-                            HireDate = e.DateOfBirth,
-                            Email = e.Email,
-                            PhoneNumber = e.PhoneNumber,
-                            Photo = e.Photo,
-                            DepartmentId = department != null ? department.Id : 0,
-                            Department = department ?? null
-                        }).SingleOrDefault() ?? null;
-
-
-        if (employee?.DepartmentId > 0)
-        {
-            employee.Department = departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
-        }
-
-        return employee;
+        return _employeeRepository.Get(id);
     }
 
     public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> Add(Employee employee)
     {
-        var result = await _validator.ValidateAsync(employee);
+        var result = await _validator.ValidateAsync(employee, options =>
+        {
+            options.IncludeRuleSets("AddUpdate");
+        });
+
         if (!result.IsValid)
         {
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
         }
 
-        employee.Id = random.Next();
-        employees.Add(employee);
+        _employeeRepository.Add(employee);
         return (true, employee, null);
     }
 
-    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> Update(Employee updatedEmployee)
+    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> Update(Employee employee)
     {
-        int index = employees.FindIndex(e => e.Id == updatedEmployee.Id);
-
-        if (index != -1)
+        var result = await _validator.ValidateAsync(employee, options =>
         {
-            var result = await _validator.ValidateAsync(updatedEmployee);
-            if (!result.IsValid)
-            {
-                return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
-            }
+            options.IncludeRuleSets("AddUpdate");
+        });
 
-            employees[index] = updatedEmployee;
-        }
-        else
+        if (!result.IsValid)
         {
-            throw new Exception("Not found");
+            return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
         }
 
-        return (true, Get(updatedEmployee.Id), null);
+        _employeeRepository.Update(employee);
+
+        return (true, Get(employee.Id), null);
     }
 
-    public int Delete(int id)
+    public void Delete(long id)
     {
-        var employee = employees.FirstOrDefault(e => e.Id == id);
-        if (employee != null)
-        {
-            employees.Remove(employee);
-        }
-        else
-        {
-            throw new Exception("Not found");
-        }
-
-        return id;
+        _employeeRepository.Delete(id);
+        return;
     }
 
-    //public List<Employee> Search(string criteria)
-    //{
-    //    return employees
-    //                .Where(e => e.Surname.StartsWith(criteria, StringComparison.CurrentCultureIgnoreCase))
-    //                .ToList();
-    //}
+    public async Task<string> UpdateEmployeePhotoAsync(long id, IFormFile file)
+    {
+        var employee = _employeeRepository.Get(id);
+
+        if (employee?.Photo == null)
+            throw new Exception("");
+
+        string newFileName = FileHelper.getGuidFileName(Constants.FileExtensionJpg);
+        string originalFileName = employee.Photo;
+
+        await _azureStorageHelper.SaveBlobToAzureStorageContainerAsync(file, Constants.AzureStorageContainerEmployees, newFileName);
+
+        employee.Photo = newFileName;
+        _employeeRepository.Update(employee);
+
+        if (!String.IsNullOrEmpty(originalFileName))
+            await DeleteOriginalFileAsync(originalFileName, newFileName, Constants.AzureStorageContainerEmployees);
+
+        return newFileName;
+    }
+
+    private async Task DeleteOriginalFileAsync(string originalFileName, string newFileName, string container)
+    {
+        EditPhoto editPhoto = _photoHelper.WasPhotoEdited(originalFileName, newFileName, Constants.DefaultEmployeePhotoFileName);
+        if (editPhoto.PhotoWasChanged)
+        {
+            await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
+        }
+    }
+
+    public bool Exists(long id)
+    {
+        return _employeeRepository.Exists(id);
+    }
 }

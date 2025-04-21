@@ -1,6 +1,6 @@
-﻿using employee_test_api.Domain;
+﻿using wolds_hr_api.Domain;
 
-namespace employee_test_api.Services.Interfaces;
+namespace wolds_hr_api.Services.Interfaces;
 
 public interface IDepartmentService
 {
