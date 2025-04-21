@@ -1,4 +1,4 @@
-﻿namespace employee_test_api.Helpers.Converters;
+﻿namespace wolds_hr_api.Helpers.Converters;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

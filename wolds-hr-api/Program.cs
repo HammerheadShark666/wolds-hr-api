@@ -1,10 +1,16 @@
-using employee_test_api.Endpoints;
-using employee_test_api.Helpers.Converters;
-using employee_test_api.Services;
-using employee_test_api.Services.Interfaces;
-using employee_test_api.Validator;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using wolds_hr_api.Data;
+using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Endpoints;
+using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Helpers.Converters;
+using wolds_hr_api.Service;
+using wolds_hr_api.Service.Interfaces;
+using wolds_hr_api.Services;
+using wolds_hr_api.Services.Interfaces;
+using wolds_hr_api.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,9 +22,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
 });
 
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
+builder.Services.AddScoped<IPhotoHelper, PhotoHelper>();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
 

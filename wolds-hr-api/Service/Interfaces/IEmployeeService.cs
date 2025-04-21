@@ -1,13 +1,15 @@
-﻿using employee_test_api.Domain;
-using employee_test_api.Helpers.Dto.Responses;
+﻿using wolds_hr_api.Domain;
+using wolds_hr_api.Helpers.Dto.Responses;
 
-namespace employee_test_api.Services.Interfaces;
+namespace wolds_hr_api.Service.Interfaces;
 
 public interface IEmployeeService
 {
     EmployeePagedResponse Search(string keyword, int page, int pageSize);
-    Employee? Get(int id);
+    Employee? Get(long id);
     Task<(bool isValid, Employee? Employee, List<string>? Errors)> Add(Employee employee);
     Task<(bool isValid, Employee? Employee, List<string>? Errors)> Update(Employee updatedEmployee);
-    int Delete(int id);
+    void Delete(long id);
+    Task<string> UpdateEmployeePhotoAsync(long id, IFormFile file);
+    bool Exists(long id);
 }

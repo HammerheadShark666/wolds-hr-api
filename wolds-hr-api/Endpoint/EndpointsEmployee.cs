@@ -1,12 +1,13 @@
-﻿using employee_test_api.Domain;
-using employee_test_api.Helper.Dto.Responses;
-using employee_test_api.Helpers.Dto.Responses;
-using employee_test_api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
+using wolds_hr_api.Domain;
+using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Helper.Exceptions;
+using wolds_hr_api.Helpers.Dto.Responses;
+using wolds_hr_api.Service.Interfaces;
 
-namespace employee_test_api.Endpoints;
+namespace wolds_hr_api.Endpoints;
 
 public static class EndpointsEmployee
 {
@@ -92,14 +93,50 @@ public static class EndpointsEmployee
 
         employeeGroup.MapDelete("/{id}", (IEmployeeService employeeService, int id) =>
         {
-            return employeeService.Delete(id);
+            try
+            {
+                employeeService.Delete(53453453);
+                return Results.Ok();
+            }
+            catch (EmployeeNotFoundException)
+            {
+                return Results.NotFound(new { Message = "Employee not found." });
+            }
         })
         .WithName("DeleteEmployees")
+        .Produces(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Delete employee",
             Description = "Delete employee",
             Tags = [new() { Name = "HR System" }]
         });
+
+        employeeGroup.MapPost("/upload-photo/{id}", async (int id, HttpRequest request, IEmployeeService employeeService) =>
+        {
+            if (!request.HasFormContentType)
+                return Results.BadRequest("Invalid content type.");
+
+            var form = await request.ReadFormAsync();
+            var file = form.Files[0];
+
+            if (file == null || file.Length == 0)
+                return Results.BadRequest("No file uploaded.");
+
+            var newFileName = await employeeService.UpdateEmployeePhotoAsync(id, file);
+
+            return Results.Ok(new UpdatedPhotoResponse(id, newFileName)); ;
+        })
+        .Accepts<IFormFile>("multipart/form-data")
+        .Produces<UpdatedPhotoResponse>((int)HttpStatusCode.OK)
+        .WithName("UploadPhoto")
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Upload employee photo",
+            Description = "Upload employee photo",
+            Tags = [new() { Name = "HR System" }]
+        });
+
     }
 }

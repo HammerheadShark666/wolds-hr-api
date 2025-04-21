@@ -1,10 +1,10 @@
-﻿using employee_test_api.Helpers.Dto.Responses;
-using employee_test_api.Services.Interfaces;
+﻿using wolds_hr_api.Helpers.Dto.Responses;
+using wolds_hr_api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
 
-namespace employee_test_api.Endpoints;
+namespace wolds_hr_api.Endpoints;
 
 public static class EndpointsDepartment
 {

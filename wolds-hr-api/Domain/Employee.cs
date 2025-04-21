@@ -1,8 +1,8 @@
-﻿namespace employee_test_api.Domain;
+﻿namespace wolds_hr_api.Domain;
 
 public class Employee()
 {
-    public int Id { get; set; }
+    public long Id { get; set; }
     public string Surname { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public DateOnly? DateOfBirth { get; set; }
