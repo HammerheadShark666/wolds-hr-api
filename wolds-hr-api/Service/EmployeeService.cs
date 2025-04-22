@@ -79,6 +79,7 @@ public class EmployeeService(IValidator<Employee> validator,
     {
         var employee = _employeeRepository.Get(id);
 
+        //TODO: Sort this 
         if (employee?.Photo == null)
             throw new Exception("");
 
@@ -172,8 +173,6 @@ public class EmployeeService(IValidator<Employee> validator,
     {
         EditPhoto editPhoto = _photoHelper.WasPhotoEdited(originalFileName, newFileName, Constants.DefaultEmployeePhotoFileName);
         if (editPhoto.PhotoWasChanged)
-        {
             await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
-        }
     }
 }
