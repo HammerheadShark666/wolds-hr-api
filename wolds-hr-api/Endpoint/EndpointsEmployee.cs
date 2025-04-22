@@ -49,7 +49,7 @@ public static class EndpointsEmployee
 
         employeeGroup.MapPost("/add", async (IEmployeeService employeeService, Employee employee) =>
         {
-            var (isValid, savedEmployee, errors) = await employeeService.Add(employee);
+            var (isValid, savedEmployee, errors) = await employeeService.AddAsync(employee);
             if (!isValid)
             {
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
@@ -71,7 +71,7 @@ public static class EndpointsEmployee
 
         employeeGroup.MapPut("/update", async (IEmployeeService employeeService, Employee employee) =>
         {
-            var (isValid, savedEmployee, errors) = await employeeService.Update(employee); ;
+            var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(employee); ;
             if (!isValid)
             {
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
@@ -137,6 +137,29 @@ public static class EndpointsEmployee
             Description = "Upload employee photo",
             Tags = [new() { Name = "HR System" }]
         });
+
+        employeeGroup.MapPost("/import", async (HttpRequest request, IEmployeeService employeeService) =>
+        {
+            if (!request.HasFormContentType)
+                return Results.BadRequest("Invalid content type.");
+
+            var form = await request.ReadFormAsync();
+            var file = form.Files.GetFile("file");
+
+            if (file == null || file.Length == 0)
+                return Results.BadRequest("No file uploaded.");
+
+            return Results.Ok(await employeeService.ImportAsync(file)); ;
+        })
+       .Accepts<IFormFile>("multipart/form-data")
+       .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
+       .WithName("ImportEmployees")
+       .WithOpenApi(x => new OpenApiOperation(x)
+       {
+           Summary = "Import employees",
+           Description = "Import employees",
+           Tags = [new() { Name = "HR System" }]
+       });
 
     }
 }
