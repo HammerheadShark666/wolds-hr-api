@@ -11,9 +11,7 @@ public class DepartmentRepository : IDepartmentRepository
     public DepartmentRepository()
     {
         if (deparments.Count == 0)
-        {
             deparments = DepartmentHelper.CreateDepartments(deparments);
-        }
     }
 
     public List<Department> Get()

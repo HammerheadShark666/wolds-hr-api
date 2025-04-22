@@ -33,9 +33,8 @@ public static class EndpointsEmployee
         {
             var employee = employeeService.Get(id);
             if (employee == null)
-            {
                 return Results.NotFound();
-            }
+
             return Results.Ok(employee);
         })
        .WithName("GetEmployee")
@@ -51,9 +50,7 @@ public static class EndpointsEmployee
         {
             var (isValid, savedEmployee, errors) = await employeeService.AddAsync(employee);
             if (!isValid)
-            {
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
-            }
 
             return Results.Ok(employee);
 
@@ -73,9 +70,7 @@ public static class EndpointsEmployee
         {
             var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(employee); ;
             if (!isValid)
-            {
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
-            }
 
             return Results.Ok(savedEmployee);
 
