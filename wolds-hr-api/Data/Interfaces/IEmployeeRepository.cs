@@ -11,4 +11,5 @@ public interface IEmployeeRepository
     Employee Update(Employee employee);
     void Delete(long id);
     bool Exists(long id);
+    bool Exists(string surname, string firstName, DateOnly? dateOfBirth);
 }

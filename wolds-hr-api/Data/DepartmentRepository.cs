@@ -20,4 +20,14 @@ public class DepartmentRepository : IDepartmentRepository
     {
         return deparments.OrderBy(e => e.Name).ToList();
     }
+
+    public Department? Get(int? id)
+    {
+        return (id == null) ? null : deparments.Find(e => e.Id == id);
+    }
+
+    public bool Exists(int? id)
+    {
+        return deparments.Exists(e => e.Id == id);
+    }
 }

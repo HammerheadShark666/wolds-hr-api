@@ -5,4 +5,6 @@ namespace wolds_hr_api.Data.Interfaces;
 public interface IDepartmentRepository
 {
     List<Department> Get();
+    Department? Get(int? id);
+    bool Exists(int? id);
 }
