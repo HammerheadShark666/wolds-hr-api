@@ -2,6 +2,7 @@
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Helpers.Dto.Responses;
 using wolds_hr_api.Service.Interfaces;
@@ -9,23 +10,17 @@ using static wolds_hr_api.Helper.PhotoHelper;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeService : IEmployeeService
+public class EmployeeService(IValidator<Employee> validator,
+                             IEmployeeRepository employeeRepository,
+                             IDepartmentRepository departmentRepository,
+                             IAzureStorageBlobHelper azureStorageHelper,
+                             IPhotoHelper photoHelper) : IEmployeeService
 {
-    private readonly IAzureStorageBlobHelper _azureStorageHelper;
-    private readonly IPhotoHelper _photoHelper;
-    private readonly IEmployeeRepository _employeeRepository;
-    private readonly IValidator<Employee> _validator;
-
-    public EmployeeService(IValidator<Employee> validator,
-                           IEmployeeRepository employeeRepository,
-                           IAzureStorageBlobHelper azureStorageHelper,
-                           IPhotoHelper photoHelper)
-    {
-        _validator = validator;
-        _azureStorageHelper = azureStorageHelper;
-        _photoHelper = photoHelper;
-        _employeeRepository = employeeRepository;
-    }
+    private readonly IAzureStorageBlobHelper _azureStorageHelper = azureStorageHelper;
+    private readonly IPhotoHelper _photoHelper = photoHelper;
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    private readonly IValidator<Employee> _validator = validator;
 
     public EmployeePagedResponse Search(string keyword, int page, int pageSize)
     {
@@ -45,7 +40,7 @@ public class EmployeeService : IEmployeeService
         return _employeeRepository.Get(id);
     }
 
-    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> Add(Employee employee)
+    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> AddAsync(Employee employee)
     {
         var result = await _validator.ValidateAsync(employee, options =>
         {
@@ -53,15 +48,13 @@ public class EmployeeService : IEmployeeService
         });
 
         if (!result.IsValid)
-        {
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
-        }
 
         _employeeRepository.Add(employee);
         return (true, employee, null);
     }
 
-    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> Update(Employee employee)
+    public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> UpdateAsync(Employee employee)
     {
         var result = await _validator.ValidateAsync(employee, options =>
         {
@@ -69,9 +62,7 @@ public class EmployeeService : IEmployeeService
         });
 
         if (!result.IsValid)
-        {
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
-        }
 
         _employeeRepository.Update(employee);
 
@@ -105,6 +96,78 @@ public class EmployeeService : IEmployeeService
         return newFileName;
     }
 
+    public bool Exists(long id)
+    {
+        return _employeeRepository.Exists(id);
+    }
+
+    public async Task<EmployeeImportResponse> ImportAsync(IFormFile file)
+    {
+        List<Employee> ExistingEmployees = [];
+        List<Employee> EmployeesImported = [];
+        List<string> EmployeesErrorImporting = [];
+
+        using var stream = file.OpenReadStream();
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream)
+        {
+            var employeeLine = await reader.ReadLineAsync();
+            if (string.IsNullOrWhiteSpace(employeeLine)) continue;
+
+            try
+            {
+                var employee = ParseEmployeeFromCsv(employeeLine);
+
+                var (employeeExists, existingEmployees) = EmployeeExists(employee, ExistingEmployees);
+
+                ExistingEmployees = existingEmployees;
+                if (employeeExists)
+                    continue;
+
+                _employeeRepository.Add(employee);
+
+                if (employee.DepartmentId != null)
+                    employee.Department = _departmentRepository.Get(employee.DepartmentId);
+
+                EmployeesImported.Add(employee);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Import Employee: {employeeLine}, Error: {ex.Message}");
+                EmployeesErrorImporting.Add(employeeLine);
+                continue;
+            }
+        }
+
+        return new EmployeeImportResponse(ExistingEmployees, EmployeesImported, EmployeesErrorImporting);
+    }
+
+    private (bool employeeExists, List<Employee> existingEmployees) EmployeeExists(Employee employee, List<Employee> existingEmployees)
+    {
+        var employeeExists = _employeeRepository.Exists(employee.Surname, employee.FirstName, employee.DateOfBirth);
+        if (employeeExists)
+            existingEmployees.Add(employee);
+
+        return (employeeExists, existingEmployees);
+    }
+
+    private static Employee ParseEmployeeFromCsv(string employeeLine)
+    {
+        var values = employeeLine.Split(',');
+
+        return new Employee
+        {
+            Surname = values[1],
+            FirstName = values[2],
+            DateOfBirth = DateOnly.TryParse(values[3], out var dob) ? dob : null,
+            HireDate = DateOnly.TryParse(values[4], out var hireDate) ? hireDate : null,
+            DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
+            Email = values[6],
+            PhoneNumber = values[7]
+        };
+    }
+
     private async Task DeleteOriginalFileAsync(string originalFileName, string newFileName, string container)
     {
         EditPhoto editPhoto = _photoHelper.WasPhotoEdited(originalFileName, newFileName, Constants.DefaultEmployeePhotoFileName);
@@ -112,10 +175,5 @@ public class EmployeeService : IEmployeeService
         {
             await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
         }
-    }
-
-    public bool Exists(long id)
-    {
-        return _employeeRepository.Exists(id);
     }
 }

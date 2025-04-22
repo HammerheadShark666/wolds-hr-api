@@ -124,4 +124,9 @@ public class EmployeeRepository : IEmployeeRepository
     {
         return employees.Exists(e => e.Id == id);
     }
+
+    public bool Exists(string surname, string firstName, DateOnly? dateOfBirth)
+    {
+        return employees.Exists(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
+    }
 }
