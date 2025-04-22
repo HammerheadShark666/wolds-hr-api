@@ -76,10 +76,8 @@ public class EmployeeRepository : IEmployeeRepository
                                   Department = department ?? null
                               }).SingleOrDefault() ?? null;
 
-        if (employee?.DepartmentId > 0)
-        {
+        if (employee?.DepartmentId > 0
             employee.Department = departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
-        }
 
         return employee;
     }
@@ -96,13 +94,9 @@ public class EmployeeRepository : IEmployeeRepository
         int index = employees.FindIndex(e => e.Id == employee.Id);
 
         if (index != -1)
-        {
             employees[index] = employee;
-        }
         else
-        {
             throw new Exception("Employee not found");
-        }
 
         return employee;
     }
@@ -111,13 +105,9 @@ public class EmployeeRepository : IEmployeeRepository
     {
         var employee = employees.FirstOrDefault(e => e.Id == id);
         if (employee != null)
-        {
             employees.Remove(employee);
-        }
         else
-        {
             throw new EmployeeNotFoundException("Employee not found");
-        }
     }
 
     public bool Exists(long id)
