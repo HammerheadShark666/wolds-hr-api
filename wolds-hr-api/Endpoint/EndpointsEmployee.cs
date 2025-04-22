@@ -95,7 +95,7 @@ public static class EndpointsEmployee
         {
             try
             {
-                employeeService.Delete(53453453);
+                employeeService.Delete(id);
                 return Results.Ok();
             }
             catch (EmployeeNotFoundException)
