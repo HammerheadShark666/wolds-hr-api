@@ -41,6 +41,8 @@ public class EmployeeRepository : IEmployeeRepository
                     Email = e.Email,
                     PhoneNumber = e.PhoneNumber,
                     Photo = e.Photo,
+                    Created = e.Created,
+                    WasImported = e.WasImported,
                     DepartmentId = department != null ? department.Id : 0,
                     Department = department ?? null
                 })
@@ -52,6 +54,40 @@ public class EmployeeRepository : IEmployeeRepository
     public int CountEmployees(string keyword)
     {
         return employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count();
+    }
+
+    public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)
+    {
+        var departments = _departmentRepository.Get();
+
+        return (from e in employees
+                join d in departments on e.DepartmentId equals d.Id into dept
+                from department in dept.DefaultIfEmpty()
+                where e.WasImported == true && e.Created.Equals(importDate)
+                select new Employee()
+                {
+                    Id = e.Id,
+                    Surname = e.Surname,
+                    FirstName = e.FirstName,
+                    DateOfBirth = e.DateOfBirth,
+                    HireDate = e.DateOfBirth,
+                    Email = e.Email,
+                    PhoneNumber = e.PhoneNumber,
+                    Photo = e.Photo,
+                    Created = e.Created,
+                    WasImported = e.WasImported,
+                    DepartmentId = department != null ? department.Id : 0,
+                    Department = department ?? null
+                })
+                .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+    }
+
+    public int CountImportedEmployees(DateOnly importDate)
+    {
+        return employees.Where(e => e.WasImported == true && e.Created.Equals(importDate)).Count();
     }
 
     public Employee? Get(long id)
@@ -72,11 +108,13 @@ public class EmployeeRepository : IEmployeeRepository
                                   Email = e.Email,
                                   PhoneNumber = e.PhoneNumber,
                                   Photo = e.Photo,
+                                  Created = e.Created,
+                                  WasImported = e.WasImported,
                                   DepartmentId = department != null ? department.Id : 0,
                                   Department = department ?? null
                               }).SingleOrDefault() ?? null;
 
-        if (employee?.DepartmentId > 0
+        if (employee?.DepartmentId > 0)
             employee.Department = departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
 
         return employee;
@@ -85,6 +123,7 @@ public class EmployeeRepository : IEmployeeRepository
     public Employee Add(Employee employee)
     {
         employee.Id = random.Next();
+        employee.Created = DateOnly.FromDateTime(DateTime.Now);
         employees.Add(employee);
         return employee;
     }

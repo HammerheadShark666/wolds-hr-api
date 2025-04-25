@@ -18,7 +18,8 @@ public class EmployeeHelper
             DepartmentId = 1,
             Email = "jmiller@hotmail.com",
             PhoneNumber = "04545 560934",
-            Photo = "jmiller.jpg"
+            Photo = "jmiller.jpg",
+            WasImported = false
         });
         employees.Add(new Employee()
         {
@@ -30,7 +31,8 @@ public class EmployeeHelper
             DepartmentId = 2,
             Email = "hhanigan@hotmail.com",
             PhoneNumber = "12473 846285",
-            Photo = "hhow.jpg"
+            Photo = "hhow.jpg",
+            WasImported = false
         });
         employees.Add(new Employee()
         {
@@ -42,7 +44,8 @@ public class EmployeeHelper
             DepartmentId = 4,
             Email = "jjohns@hotmail.com",
             PhoneNumber = "23465 889453",
-            Photo = ""
+            Photo = "",
+            WasImported = false
         });
         employees.Add(new Employee()
         {
@@ -54,7 +57,8 @@ public class EmployeeHelper
             DepartmentId = 2,
             Email = "njohnston@hotmail.com",
             PhoneNumber = "33243 432435",
-            Photo = ""
+            Photo = "",
+            WasImported = false
         });
         employees.Add(new Employee()
         {
@@ -66,7 +70,8 @@ public class EmployeeHelper
             DepartmentId = 2,
             Email = "mjohnstone@hotmail.com",
             PhoneNumber = "38967 674523",
-            Photo = ""
+            Photo = "",
+            WasImported = false
         });
         employees.Add(new Employee()
         {
@@ -78,7 +83,8 @@ public class EmployeeHelper
             DepartmentId = 2,
             Email = "hjohnsen@hotmail.com",
             PhoneNumber = "23547 237573",
-            Photo = ""
+            Photo = "",
+            WasImported = false
         });
 
         return employees;
@@ -116,7 +122,8 @@ public class EmployeeHelper
                 DepartmentId = departments[random.Next(departments.Length)],
                 Email = email,
                 PhoneNumber = $"04{random.Next(100, 999)} {random.Next(100000, 999999)}",
-                Photo = $"{char.ToLower(firstName[0])}{surname.ToLower()}{i}.jpg"
+                Photo = $"{char.ToLower(firstName[0])}{surname.ToLower()}{i}.jpg",
+                WasImported = false
             });
         }
 
