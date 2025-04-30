@@ -10,7 +10,8 @@ public class Employee()
     public string? Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? Photo { get; set; } = string.Empty;
-
+    public DateOnly Created { get; set; }
+    public Boolean WasImported { get; set; }
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
 }

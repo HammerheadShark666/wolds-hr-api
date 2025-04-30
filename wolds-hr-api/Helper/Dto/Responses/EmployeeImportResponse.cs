@@ -1,12 +1,13 @@
 ﻿using wolds_hr_api.Domain;
+using wolds_hr_api.Helpers.Dto.Responses;
 
 namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class EmployeeImportResponse(List<Employee> existingEmployees, List<Employee> employeesImported, List<string> employeesErrorImporting)
+public class EmployeeImportResponse(List<Employee> existingEmployees, EmployeePagedResponse todaysImportedEmployees, List<string> employeesErrorImporting)
 {
     public List<Employee> ExistingEmployees { get; set; } = existingEmployees;
 
-    public List<Employee> EmployeesImported { get; set; } = employeesImported;
+    public EmployeePagedResponse TodaysImportedEmployees { get; set; } = todaysImportedEmployees;
 
     public List<string> EmployeesErrorImporting { get; set; } = employeesErrorImporting;
 }

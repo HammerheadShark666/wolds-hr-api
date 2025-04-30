@@ -35,6 +35,19 @@ public class EmployeeService(IValidator<Employee> validator,
         return employeePagedResponse;
     }
 
+    public EmployeePagedResponse GetImported(DateOnly importDate, int page, int pageSize)
+    {
+        var employeePagedResponse = new EmployeePagedResponse
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalEmployees = _employeeRepository.CountImportedEmployees(importDate),
+            Employees = _employeeRepository.GetImportedEmployees(importDate, page, pageSize)
+        };
+
+        return employeePagedResponse;
+    }
+
     public Employee? Get(long id)
     {
         return _employeeRepository.Get(id);
@@ -141,7 +154,9 @@ public class EmployeeService(IValidator<Employee> validator,
             }
         }
 
-        return new EmployeeImportResponse(ExistingEmployees, EmployeesImported, EmployeesErrorImporting);
+        EmployeePagedResponse todaysImportedEmployees = GetImported(DateOnly.FromDateTime(DateTime.Now), 1, 5);
+
+        return new EmployeeImportResponse(ExistingEmployees, todaysImportedEmployees, EmployeesErrorImporting);
     }
 
     private (bool employeeExists, List<Employee> existingEmployees) EmployeeExists(Employee employee, List<Employee> existingEmployees)
@@ -165,7 +180,8 @@ public class EmployeeService(IValidator<Employee> validator,
             HireDate = DateOnly.TryParse(values[4], out var hireDate) ? hireDate : null,
             DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
             Email = values[6],
-            PhoneNumber = values[7]
+            PhoneNumber = values[7],
+            WasImported = true
         };
     }
 
