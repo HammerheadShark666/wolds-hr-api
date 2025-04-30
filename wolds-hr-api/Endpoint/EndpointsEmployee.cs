@@ -156,5 +156,18 @@ public static class EndpointsEmployee
            Tags = [new() { Name = "HR System" }]
        });
 
+        employeeGroup.MapGet("/imported", (DateOnly importDate, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        {
+            var employees = employeeService.GetImported(importDate, page, pageSize);
+            return Results.Ok(employees);
+        })
+        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
+        .WithName("GetImportedEmployeesWithPaging")
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Get paged imported employees",
+            Description = "Gets imported employees by paging",
+            Tags = [new() { Name = "HR System" }]
+        });
     }
 }
