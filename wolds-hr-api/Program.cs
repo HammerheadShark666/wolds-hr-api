@@ -1,4 +1,4 @@
-using wolds_hr_api.Endpoints;
+using wolds_hr_api.Endpoint;
 using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Helpers.Converters;
 
@@ -13,6 +13,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDI();
+builder.Services.AddJwtAuthentication();
 
 var app = builder.Build();
 
@@ -25,6 +26,7 @@ if (app.Environment.IsDevelopment())
 app.ConfigureCors();
 app.UseHttpsRedirection();
 
+EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
 

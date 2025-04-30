@@ -7,7 +7,7 @@ using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helpers.Dto.Responses;
 using wolds_hr_api.Service.Interfaces;
 
-namespace wolds_hr_api.Endpoints;
+namespace wolds_hr_api.Endpoint;
 
 public static class EndpointsEmployee
 {
