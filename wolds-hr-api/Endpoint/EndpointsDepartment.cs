@@ -1,10 +1,10 @@
-﻿using wolds_hr_api.Helpers.Dto.Responses;
-using wolds_hr_api.Services.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
+using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Service.Interfaces;
 
-namespace wolds_hr_api.Endpoints;
+namespace wolds_hr_api.Endpoint;
 
 public static class EndpointsDepartment
 {
