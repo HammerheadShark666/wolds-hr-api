@@ -4,7 +4,6 @@ using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Interfaces;
-using wolds_hr_api.Helpers.Dto.Responses;
 using wolds_hr_api.Service.Interfaces;
 using static wolds_hr_api.Helper.PhotoHelper;
 

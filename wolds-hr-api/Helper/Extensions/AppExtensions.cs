@@ -7,7 +7,7 @@ public static class AppExtensions
         webApplication.UseCors(x => x
         .AllowAnyHeader()
         .AllowAnyMethod()
-        //.AllowCredentials()
+        .AllowCredentials()
         .WithOrigins("http://localhost:3000", "http://localhost:3001"));
     }
 }

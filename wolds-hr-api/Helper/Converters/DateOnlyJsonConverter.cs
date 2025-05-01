@@ -12,7 +12,7 @@ public class DateOnlyJsonConverter : JsonConverter<DateOnly?>
         var value = reader.GetString();
         if (string.IsNullOrEmpty(value))
         {
-            return null; // If null or empty, we return null
+            return null;
         }
 
         if (DateOnly.TryParseExact(value, _format, out var date))
