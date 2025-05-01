@@ -1,25 +1,27 @@
 ﻿using FluentValidation;
-using SwanSong.Domain.Dto;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.Dto.Requests;
+using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
+using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
 public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
                                  IAccountRepository accountRepository,
-                                 IRefreshTokenService refreshTokenService) : IAuthenticateService
+                                 IJwtHelper jwtHelper) : IAuthenticateService
 {
     public readonly IValidator<LoginRequest> _validatorHelper = validatorHelper;
-    public readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
     public readonly IAccountRepository _accountRepository = accountRepository;
+    public readonly IJwtHelper _jwtHelper = jwtHelper;
 
     #region Public Functions
 
 
-    public async Task<(bool isValid, Authenticated? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest) //, string ipAddress
+    public async Task<(bool isValid, AuthenticatedResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest)
     {
 
         var result = await _validatorHelper.ValidateAsync(loginRequest, options =>
@@ -30,12 +32,9 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
         var account = GetAccount(loginRequest.Email);
+        var jwtToken = _jwtHelper.GenerateJwtToken(account);
 
-        var jwtToken = AuthenticationHelper.GenerateJwtToken(account,
-                                                             EnvironmentVariablesHelper.JwtSettingsTokenExpiryMinutes,
-                                                             EnvironmentVariablesHelper.JwtSymmetricSecurityKey);
-
-        return (true, new Authenticated(jwtToken, new Profile(account.FirstName, account.LastName, account.Email)), []); //refreshToken.Token, 
+        return (true, new AuthenticatedResponse(jwtToken, new Profile(account.FirstName, account.LastName, account.Email)), []);
     }
 
     #endregion

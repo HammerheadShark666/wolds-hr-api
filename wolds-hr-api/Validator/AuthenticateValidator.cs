@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using SwanSong.Domain.Dto;
 using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Helper.Dto.Requests;
 using BC = BCrypt.Net.BCrypt;
 
 namespace wolds_hr_api.Validator;
@@ -24,7 +24,7 @@ public class AuthenticateValidator : AbstractValidator<LoginRequest>
                 .NotEmpty().WithMessage("Password is required.")
                 .Length(8, 50).WithMessage("Password length between 8 and 50.");
 
-            RuleFor(_ => _) // validate the whole object
+            RuleFor(_ => _)
                 .Must(login => ValidLoginDetails(login))
                 .WithMessage("Invalid login");
         });

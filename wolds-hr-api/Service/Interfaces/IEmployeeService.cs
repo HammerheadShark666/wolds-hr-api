@@ -1,6 +1,5 @@
 ﻿using wolds_hr_api.Domain;
 using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helpers.Dto.Responses;
 
 namespace wolds_hr_api.Service.Interfaces;
 
