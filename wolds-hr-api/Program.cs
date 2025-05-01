@@ -4,6 +4,7 @@ using wolds_hr_api.Helpers.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddJwtAuthentication();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -13,7 +14,6 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDI();
-builder.Services.AddJwtAuthentication();
 
 var app = builder.Build();
 
@@ -25,6 +25,8 @@ if (app.Environment.IsDevelopment())
 
 app.ConfigureCors();
 app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 
 EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);

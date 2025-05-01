@@ -1,8 +1,9 @@
-﻿using SwanSong.Domain.Dto;
+﻿using wolds_hr_api.Helper.Dto.Requests;
+using wolds_hr_api.Helper.Dto.Responses;
 
 namespace wolds_hr_api.Service.Interfaces;
 
 public interface IAuthenticateService
 {
-    Task<(bool isValid, Authenticated? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest);
+    Task<(bool isValid, AuthenticatedResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest);
 }

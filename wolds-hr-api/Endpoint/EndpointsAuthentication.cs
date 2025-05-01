@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
-using SwanSong.Domain.Dto;
 using System.Net;
+using wolds_hr_api.Helper.Dto.Requests;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Service.Interfaces;
 
@@ -10,18 +10,18 @@ public static class EndpointsAuthentication
 {
     public static void ConfigureRoutes(this WebApplication webApplication)
     {
-        var authenticateGroup = webApplication.MapGroup("v1").WithTags("authenticate");
+        var authenticateGroup = webApplication.MapGroup("").WithTags("authenticate");
 
         authenticateGroup.MapPost("/login", async (LoginRequest loginRequest, IAuthenticateService authenticateService) =>
         {
-            var (isValid, authenticated, errors) = await authenticateService.AuthenticateAsync(loginRequest); //, AuthenticationHelper.IpAddress(request, httpContext) , HttpRequest request, HttpContext httpContext
+            var (isValid, authenticated, errors) = await authenticateService.AuthenticateAsync(loginRequest);
             if (!isValid)
-                return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
+                return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
 
             return Results.Ok(authenticated);
         })
         .Accepts<LoginRequest>("application/json")
-        .Produces<Authenticated>((int)HttpStatusCode.OK)
+        .Produces<AuthenticatedResponse>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("AuthenticateUser")
         .WithOpenApi(x => new OpenApiOperation(x)

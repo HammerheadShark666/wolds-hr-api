@@ -4,7 +4,6 @@ using System.Net;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
-using wolds_hr_api.Helpers.Dto.Responses;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
@@ -22,6 +21,7 @@ public static class EndpointsEmployee
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
         .WithName("GetEmployeesWithPaging")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Get paged employees",
@@ -50,7 +50,7 @@ public static class EndpointsEmployee
         {
             var (isValid, savedEmployee, errors) = await employeeService.AddAsync(employee);
             if (!isValid)
-                return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
+                return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
 
             return Results.Ok(employee);
 
@@ -70,7 +70,7 @@ public static class EndpointsEmployee
         {
             var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(employee); ;
             if (!isValid)
-                return Results.BadRequest(new FailedValidationResponse { Errors = errors != null ? errors : [] });
+                return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
 
             return Results.Ok(savedEmployee);
 
