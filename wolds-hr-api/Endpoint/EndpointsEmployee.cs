@@ -38,6 +38,7 @@ public static class EndpointsEmployee
             return Results.Ok(employee);
         })
        .WithName("GetEmployee")
+       .RequireAuthorization()
        .WithOpenApi(x => new OpenApiOperation(x)
        {
            Summary = "Get employee",
@@ -59,6 +60,7 @@ public static class EndpointsEmployee
         .Produces<Employee>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("AddEmployee")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Add employee",
@@ -79,6 +81,7 @@ public static class EndpointsEmployee
         .Produces<Employee>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("UpdateEmployee")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Update employee",
@@ -98,9 +101,10 @@ public static class EndpointsEmployee
                 return Results.NotFound(new { Message = "Employee not found." });
             }
         })
-        .WithName("DeleteEmployees")
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
+        .WithName("DeleteEmployees")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Delete employee",
@@ -126,6 +130,7 @@ public static class EndpointsEmployee
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<UpdatedPhotoResponse>((int)HttpStatusCode.OK)
         .WithName("UploadPhoto")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Upload employee photo",
@@ -149,6 +154,7 @@ public static class EndpointsEmployee
        .Accepts<IFormFile>("multipart/form-data")
        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
        .WithName("ImportEmployees")
+       .RequireAuthorization()
        .WithOpenApi(x => new OpenApiOperation(x)
        {
            Summary = "Import employees",
@@ -163,6 +169,7 @@ public static class EndpointsEmployee
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeesWithPaging")
+        .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Get paged imported employees",
