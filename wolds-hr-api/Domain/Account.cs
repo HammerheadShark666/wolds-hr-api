@@ -20,10 +20,4 @@ public class Account
     public DateTime? PasswordReset { get; set; }
     public DateTime Created { get; set; }
     public DateTime? Updated { get; set; }
-    public List<RefreshToken> RefreshTokens { get; set; }
-
-    public Account()
-    {
-        RefreshTokens = [];
-    }
 }
