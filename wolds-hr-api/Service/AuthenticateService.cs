@@ -21,7 +21,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
     #region Public Functions
 
 
-    public async Task<(bool isValid, AuthenticatedResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest)
+    public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest)
     {
 
         var result = await _validatorHelper.ValidateAsync(loginRequest, options =>
@@ -34,7 +34,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
         var account = GetAccount(loginRequest.Email);
         var jwtToken = _jwtHelper.GenerateJwtToken(account);
 
-        return (true, new AuthenticatedResponse(jwtToken, new Profile(account.FirstName, account.LastName, account.Email)), []);
+        return (true, new LoginResponse(jwtToken, new Profile(account.FirstName, account.LastName, account.Email)), []);
     }
 
     #endregion

@@ -21,7 +21,7 @@ public static class EndpointsAuthentication
             return Results.Ok(authenticated);
         })
         .Accepts<LoginRequest>("application/json")
-        .Produces<AuthenticatedResponse>((int)HttpStatusCode.OK)
+        .Produces<LoginResponse>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("AuthenticateUser")
         .WithOpenApi(x => new OpenApiOperation(x)
