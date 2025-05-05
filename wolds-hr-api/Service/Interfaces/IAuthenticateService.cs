@@ -5,5 +5,5 @@ namespace wolds_hr_api.Service.Interfaces;
 
 public interface IAuthenticateService
 {
-    Task<(bool isValid, AuthenticatedResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest);
+    Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest);
 }
