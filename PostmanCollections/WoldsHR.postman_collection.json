@@ -517,7 +517,7 @@
 							"    pm.expect(importedEmployee.surname).to.eql(\"Barker\");\r",
 							"    pm.expect(importedEmployee.departmentId).to.eql(2);\r",
 							"    pm.expect(importedEmployee.dateOfBirth).to.eql(\"1982-04-13\");\r",
-							"    pm.expect(importedEmployee.hireDate).to.eql(\"1982-04-13\");\r",
+							"    pm.expect(importedEmployee.hireDate).to.eql(\"2005-06-12\");\r",
 							"    pm.expect(importedEmployee.email).to.eql(\"smithdebra@yahoo.com\");\r",
 							"    pm.expect(importedEmployee.phoneNumber).to.eql(\"07112128110\");\r",
 							"    pm.expect(importedEmployee.department.id).to.eql(2);\r",
