@@ -104,7 +104,7 @@ public class EmployeeRepository : IEmployeeRepository
                                   Surname = e.Surname,
                                   FirstName = e.FirstName,
                                   DateOfBirth = e.DateOfBirth,
-                                  HireDate = e.DateOfBirth,
+                                  HireDate = e.HireDate,
                                   Email = e.Email,
                                   PhoneNumber = e.PhoneNumber,
                                   Photo = e.Photo,
