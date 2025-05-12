@@ -2,11 +2,11 @@
 
 namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class EmployeeImportResponse(List<Employee> existingEmployees, EmployeePagedResponse todaysImportedEmployees, List<string> employeesErrorImporting)
+public class EmployeeImportResponse(List<Employee> existingEmployees, EmployeePagedResponse importedEmployees, List<string> employeesErrorImporting)
 {
     public List<Employee> ExistingEmployees { get; set; } = existingEmployees;
 
-    public EmployeePagedResponse TodaysImportedEmployees { get; set; } = todaysImportedEmployees;
+    public EmployeePagedResponse ImportedEmployees { get; set; } = importedEmployees;
 
     public List<string> EmployeesErrorImporting { get; set; } = employeesErrorImporting;
 }

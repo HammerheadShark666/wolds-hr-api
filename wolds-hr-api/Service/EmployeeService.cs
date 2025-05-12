@@ -132,6 +132,9 @@ public class EmployeeService(IValidator<Employee> validator,
             {
                 var employee = ParseEmployeeFromCsv(employeeLine);
 
+                if (employee.Surname == "Surname")
+                    continue;
+
                 var (employeeExists, existingEmployees) = EmployeeExists(employee, ExistingEmployees);
 
                 ExistingEmployees = existingEmployees;
@@ -153,16 +156,25 @@ public class EmployeeService(IValidator<Employee> validator,
             }
         }
 
-        EmployeePagedResponse todaysImportedEmployees = GetImported(DateOnly.FromDateTime(DateTime.Now), 1, 5);
+        var employeePagedResponse = new EmployeePagedResponse
+        {
+            Page = 1,
+            PageSize = 10,
+            TotalEmployees = EmployeesImported.Count(),
+            Employees = [.. EmployeesImported.OrderBy(e => e.Surname)]
+        };
 
-        return new EmployeeImportResponse(ExistingEmployees, todaysImportedEmployees, EmployeesErrorImporting);
+        return new EmployeeImportResponse(ExistingEmployees, employeePagedResponse, EmployeesErrorImporting);
     }
 
     private (bool employeeExists, List<Employee> existingEmployees) EmployeeExists(Employee employee, List<Employee> existingEmployees)
     {
         var employeeExists = _employeeRepository.Exists(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
+        {
+            employee.WasImported = false;
             existingEmployees.Add(employee);
+        }
 
         return (employeeExists, existingEmployees);
     }
@@ -180,7 +192,8 @@ public class EmployeeService(IValidator<Employee> validator,
             DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
             Email = values[6],
             PhoneNumber = values[7],
-            WasImported = true
+            WasImported = true,
+            Created = DateOnly.FromDateTime(DateTime.Now)
         };
     }
 
