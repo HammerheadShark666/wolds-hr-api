@@ -400,4 +400,3 @@ FodyWeavers.xsd
 *.sln.iml
 
 **/launchSettings.json
-/wolds-hr-api/wolds-hr-api.csproj
