@@ -554,7 +554,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/D:/.Net 8 SD/react projects/wolds-hr/employee-imports.csv"
+							"src": "{{upload_file}}"
 						}
 					]
 				},
