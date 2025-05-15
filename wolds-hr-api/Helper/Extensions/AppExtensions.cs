@@ -8,6 +8,6 @@ public static class AppExtensions
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()
-        .WithOrigins("http://localhost:3000", "http://localhost:3001"));
+        .WithOrigins("http://localhost:3000", "http://localhost:3001", "https://zealous-glacier-0aa9a691e.6.azurestaticapps.net"));
     }
 }
