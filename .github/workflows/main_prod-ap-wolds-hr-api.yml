@@ -24,7 +24,7 @@ jobs:
           dotnet-version: '8.0'
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build wolds-hr-api/wolds-hr-api.csproj --configuration Release
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -56,3 +56,17 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D553457A9BF141058A55A3748812E1FC }}
+  automated-api-tests:
+      runs-on: ubuntu-latest
+      needs: deploy
+      steps:
+        - uses: actions/checkout@v4
+        - name: Install Postman CLI
+          run: |
+            curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
+        - name: Login to Postman CLI
+          run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+        - name: Run API tests
+          run: |
+            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" -e "cea332e0-79fc-4914-af80-b78e256af13b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+            
