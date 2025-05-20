@@ -14,5 +14,5 @@ public static class Constants
     public const string JwtAudience = "JWT_AUDIENCE";
     public const string JwtSymmetricSecurityKey = "JWT_SYMMETRIC_SECURITY_KEY";
 
-    public const int MaxNumberOfEmployees = 106;
+    public const int MaxNumberOfEmployees = 150;
 }
