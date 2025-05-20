@@ -56,6 +56,11 @@ public class EmployeeRepository : IEmployeeRepository
         return employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count();
     }
 
+    public int Count()
+    {
+        return employees.Count();
+    }
+
     public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)
     {
         var departments = _departmentRepository.Get();
