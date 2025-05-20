@@ -14,4 +14,5 @@ public interface IEmployeeService
     bool Exists(long id);
     Task<EmployeeImportResponse> ImportAsync(IFormFile file);
     EmployeePagedResponse GetImported(DateOnly importDate, int page, int pageSize);
+    bool MaximumNumberOfEmployeesReached(IFormFile file);
 }

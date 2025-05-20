@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
+using wolds_hr_api.Helper;
 
 namespace wolds_hr_api.Validator;
 
@@ -14,20 +15,22 @@ public class EmployeeValidator : AbstractValidator<Employee>
         RuleSet("AddUpdate", () =>
         {
             RuleFor(employee => employee.Surname)
-                .NotEmpty()
-                .MinimumLength(3)
-            .WithMessage("Surname must be at least 3 characters long.");
+                .MinimumLength(2)
+            .WithMessage("Surname must be at least 2 characters long.");
 
             RuleFor(employee => employee.FirstName)
                 .NotEmpty()
                 .MinimumLength(3)
             .WithMessage("First name must be at least 3 characters long.");
 
+            RuleFor(_ => _)
+                .Must(employee => NumberOfEmployeesWithinMax())
+                .WithMessage($"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}");
         });
     }
 
-    protected bool EmployeeExists(int id)
+    protected bool NumberOfEmployeesWithinMax()
     {
-        return _employeeRepository.Exists(id);
+        return !(_employeeRepository.Count() > Constants.MaxNumberOfEmployees);
     }
 }
