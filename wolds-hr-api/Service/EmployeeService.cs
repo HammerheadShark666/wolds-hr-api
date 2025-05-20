@@ -167,6 +167,42 @@ public class EmployeeService(IValidator<Employee> validator,
         return new EmployeeImportResponse(ExistingEmployees, employeePagedResponse, EmployeesErrorImporting);
     }
 
+    private static int NumberOfEmployeesToImport(IFormFile file)
+    {
+        int numberOfEmployees = 0;
+
+        using var stream = file.OpenReadStream();
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream)
+        {
+            var employeeLine = reader.ReadLine();
+            if (string.IsNullOrWhiteSpace(employeeLine)) continue;
+
+            var employee = ParseEmployeeFromCsv(employeeLine);
+            if (employee.Surname == "Surname") continue;
+
+            var values = employeeLine.Split(',');
+            if (values.Length > 1)
+                numberOfEmployees++;
+        }
+
+        return numberOfEmployees;
+    }
+
+    public bool MaximumNumberOfEmployeesReached(IFormFile file)
+    {
+        var numberOfEmployeesToImport = NumberOfEmployeesToImport(file);
+        var numberOfEmloyees = _employeeRepository.Count();
+
+        if (numberOfEmployeesToImport + numberOfEmloyees > Constants.MaxNumberOfEmployees)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     private (bool employeeExists, List<Employee> existingEmployees) EmployeeExists(Employee employee, List<Employee> existingEmployees)
     {
         var employeeExists = _employeeRepository.Exists(employee.Surname, employee.FirstName, employee.DateOfBirth);
