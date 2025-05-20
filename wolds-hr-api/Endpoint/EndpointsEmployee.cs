@@ -2,6 +2,7 @@
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Domain;
+using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Service.Interfaces;
@@ -115,13 +116,13 @@ public static class EndpointsEmployee
         employeeGroup.MapPost("/upload-photo/{id}", async (int id, HttpRequest request, IEmployeeService employeeService) =>
         {
             if (!request.HasFormContentType)
-                return Results.BadRequest("Invalid content type.");
+                return Results.BadRequest(new { Message = "Invalid content type." });
 
             var form = await request.ReadFormAsync();
             var file = form.Files[0];
 
             if (file == null || file.Length == 0)
-                return Results.BadRequest("No file uploaded.");
+                return Results.BadRequest(new { Message = "No file uploaded." });
 
             var newFileName = await employeeService.UpdateEmployeePhotoAsync(id, file);
 
@@ -141,13 +142,16 @@ public static class EndpointsEmployee
         employeeGroup.MapPost("/import", async (HttpRequest request, IEmployeeService employeeService) =>
         {
             if (!request.HasFormContentType)
-                return Results.BadRequest("Invalid content type.");
+                return Results.BadRequest(new { Message = "Invalid content type." });
 
             var form = await request.ReadFormAsync();
             var file = form.Files.GetFile("file");
 
             if (file == null || file.Length == 0)
-                return Results.BadRequest("No file uploaded.");
+                return Results.BadRequest(new { Message = "No file uploaded." });
+
+            if (employeeService.MaximumNumberOfEmployeesReached(file))
+                return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
 
             return Results.Ok(await employeeService.ImportAsync(file)); ;
         })
