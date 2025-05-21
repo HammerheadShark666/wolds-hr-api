@@ -23,59 +23,37 @@ public class EmployeeRepository : IEmployeeRepository
         }
     }
 
-    public List<Employee> GetEmployees(string keyword, int page, int pageSize)
-    {
-        var departments = _departmentRepository.Get();
-
-        return (from e in employees
-                join d in departments on e.DepartmentId equals d.Id into dept
-                from department in dept.DefaultIfEmpty()
-                where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-                select new Employee()
-                {
-                    Id = e.Id,
-                    Surname = e.Surname,
-                    FirstName = e.FirstName,
-                    DateOfBirth = e.DateOfBirth,
-                    HireDate = e.DateOfBirth,
-                    Email = e.Email,
-                    PhoneNumber = e.PhoneNumber,
-                    Photo = e.Photo,
-                    Created = e.Created,
-                    WasImported = e.WasImported,
-                    DepartmentId = department != null ? department.Id : 0,
-                    Department = department ?? null
-                })
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
-    }
-
     public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
     {
         var departments = _departmentRepository.Get();
 
-        return (from e in employees
-                join d in departments on e.DepartmentId equals d.Id into dept
-                from department in dept.DefaultIfEmpty()
-                where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-                && e.DepartmentId == departmentId
-                select new Employee()
-                {
-                    Id = e.Id,
-                    Surname = e.Surname,
-                    FirstName = e.FirstName,
-                    DateOfBirth = e.DateOfBirth,
-                    HireDate = e.DateOfBirth,
-                    Email = e.Email,
-                    PhoneNumber = e.PhoneNumber,
-                    Photo = e.Photo,
-                    Created = e.Created,
-                    WasImported = e.WasImported,
-                    DepartmentId = department != null ? department.Id : 0,
-                    Department = department ?? null
-                })
-                .Skip((page - 1) * pageSize)
+
+        var query = from e in employees
+                    join d in departments on e.DepartmentId equals d.Id into dept
+                    from department in dept.DefaultIfEmpty()
+                    where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
+                    select new Employee()
+                    {
+                        Id = e.Id,
+                        Surname = e.Surname,
+                        FirstName = e.FirstName,
+                        DateOfBirth = e.DateOfBirth,
+                        HireDate = e.DateOfBirth,
+                        Email = e.Email,
+                        PhoneNumber = e.PhoneNumber,
+                        Photo = e.Photo,
+                        Created = e.Created,
+                        WasImported = e.WasImported,
+                        DepartmentId = department != null ? department.Id : 0,
+                        Department = department ?? null
+                    };
+
+        if (departmentId > 0)
+        {
+            query = query.Where(e => e.DepartmentId == departmentId);
+        }
+
+        return query.Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
     }
@@ -87,13 +65,19 @@ public class EmployeeRepository : IEmployeeRepository
 
     public int CountEmployees(string keyword, int departmentId)
     {
-        return employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-                                        && e.DepartmentId == departmentId).Count();
+        var query = employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase));
+
+        if (departmentId > 0)
+        {
+            query = query.Where(e => e.DepartmentId == departmentId);
+        }
+
+        return query.Count();
     }
 
     public int Count()
     {
-        return employees.Count();
+        return employees.Count;
     }
 
     public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)

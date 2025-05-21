@@ -57,7 +57,7 @@
 			"response": []
 		},
 		{
-			"name": "{{baseUrl}}/employees/search?keyword=john&page=1&pageSize=5",
+			"name": "{{baseUrl}}/employees/search?keyword=john&departmentId=0&page=1&pageSize=5 (No Department)",
 			"event": [
 				{
 					"listen": "test",
@@ -90,7 +90,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/search?keyword=john&page=1&pageSize=5",
+					"raw": "{{baseUrl}}/employees/search?keyword=john&departmentId=0&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -102,6 +102,10 @@
 						{
 							"key": "keyword",
 							"value": "john"
+						},
+						{
+							"key": "departmentId",
+							"value": "0"
 						},
 						{
 							"key": "page",
@@ -117,7 +121,7 @@
 			"response": []
 		},
 		{
-			"name": "{{baseUrl}}/employees/search/department?keyword=john&departmentId=1page=1&pageSize=5",
+			"name": "{{baseUrl}}/employees/search?keyword=&departmentId=2&page=1&pageSize=5 (Department Only)",
 			"event": [
 				{
 					"listen": "test",
@@ -150,14 +154,77 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/search/department?keyword=john&departmentId=1&page=1&pageSize=5",
+					"raw": "{{baseUrl}}/employees/search?keyword=&departmentId=1&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"employees",
-						"search",
-						"department"
+						"search"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": ""
+						},
+						{
+							"key": "departmentId",
+							"value": "1"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseUrl}}/employees/search?keyword=john&departmentId=2&page=1&pageSize=5 (With Department)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Schema validation', () => { \r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/employees/search?keyword=john&departmentId=2&page=1&pageSize=5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"employees",
+						"search"
 					],
 					"query": [
 						{
@@ -166,7 +233,7 @@
 						},
 						{
 							"key": "departmentId",
-							"value": "1"
+							"value": "2"
 						},
 						{
 							"key": "page",

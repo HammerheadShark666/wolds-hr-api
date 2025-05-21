@@ -21,19 +21,6 @@ public class EmployeeService(IValidator<Employee> validator,
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
 
-    public EmployeePagedResponse Search(string keyword, int page, int pageSize)
-    {
-        var employeePagedResponse = new EmployeePagedResponse
-        {
-            Page = page,
-            PageSize = pageSize,
-            TotalEmployees = _employeeRepository.CountEmployees(keyword),
-            Employees = _employeeRepository.GetEmployees(keyword, page, pageSize)
-        };
-
-        return employeePagedResponse;
-    }
-
     public EmployeePagedResponse Search(string keyword, int departmentId, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
@@ -173,7 +160,7 @@ public class EmployeeService(IValidator<Employee> validator,
         {
             Page = 1,
             PageSize = 10,
-            TotalEmployees = EmployeesImported.Count(),
+            TotalEmployees = EmployeesImported.Count,
             Employees = [.. EmployeesImported.OrderBy(e => e.Surname)]
         };
 
