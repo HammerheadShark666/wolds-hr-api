@@ -3,7 +3,8 @@
 		"_postman_id": "c32e4871-45d6-4334-914e-5d70057f5a36",
 		"name": "WoldsHR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "4654363"
+		"_exporter_id": "4654363",
+		"_collection_link": "https://jwm-demo-team.postman.co/workspace/Wolds-HR~aa8a5d16-4c7c-438d-bd2d-89bb65a3c19f/collection/4654363-c32e4871-45d6-4334-914e-5d70057f5a36?action=share&source=collection_link&creator=4654363"
 	},
 	"item": [
 		{
@@ -64,7 +65,11 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});"
+							"});\r",
+							"\r",
+							"pm.test('Schema validation', () => { \r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"}); "
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -97,6 +102,71 @@
 						{
 							"key": "keyword",
 							"value": "john"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseUrl}}/employees/search/department?keyword=john&departmentId=1page=1&pageSize=5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Schema validation', () => { \r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/employees/search/department?keyword=john&departmentId=1&page=1&pageSize=5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"employees",
+						"search",
+						"department"
+					],
+					"query": [
+						{
+							"key": "keyword",
+							"value": "john"
+						},
+						{
+							"key": "departmentId",
+							"value": "1"
 						},
 						{
 							"key": "page",
@@ -554,7 +624,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "{{upload_file}}"
+							"src": "postman-cloud:///1f02f0cd-7707-45b0-bf3a-31ee168c81d1"
 						}
 					]
 				},

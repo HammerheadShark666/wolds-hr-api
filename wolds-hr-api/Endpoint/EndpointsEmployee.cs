@@ -26,7 +26,22 @@ public static class EndpointsEmployee
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Get paged employees",
-            Description = "Gets employees by paging",
+            Description = "Gets employees with paging",
+            Tags = [new() { Name = "HR System" }]
+        });
+
+        employeeGroup.MapGet("/search/department", (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        {
+            var employees = employeeService.Search(keyword, departmentId, page, pageSize);
+            return Results.Ok(employees);
+        })
+        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
+        .WithName("GetEmployeesByDepartmentWithPaging")
+        .RequireAuthorization()
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Get paged employees by department",
+            Description = "Gets employees by department with paging",
             Tags = [new() { Name = "HR System" }]
         });
 

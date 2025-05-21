@@ -34,6 +34,19 @@ public class EmployeeService(IValidator<Employee> validator,
         return employeePagedResponse;
     }
 
+    public EmployeePagedResponse Search(string keyword, int departmentId, int page, int pageSize)
+    {
+        var employeePagedResponse = new EmployeePagedResponse
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalEmployees = _employeeRepository.CountEmployees(keyword, departmentId),
+            Employees = _employeeRepository.GetEmployees(keyword, departmentId, page, pageSize)
+        };
+
+        return employeePagedResponse;
+    }
+
     public EmployeePagedResponse GetImported(DateOnly importDate, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
