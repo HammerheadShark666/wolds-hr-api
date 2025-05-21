@@ -5,7 +5,9 @@ namespace wolds_hr_api.Data.Interfaces;
 public interface IEmployeeRepository
 {
     List<Employee> GetEmployees(string keyword, int page, int pageSize);
+    List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize);
     int CountEmployees(string keyword);
+    int CountEmployees(string keyword, int departmentId);
     int Count();
     Employee? Get(long id);
     Employee Add(Employee employee);
