@@ -15,33 +15,18 @@ public static class EndpointsEmployee
     {
         var employeeGroup = webApplication.MapGroup("employees").WithTags("employees");
 
-        employeeGroup.MapGet("/search", (string keyword, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
-        {
-            var employees = employeeService.Search(keyword, page, pageSize);
-            return Results.Ok(employees);
-        })
-        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
-        .WithName("GetEmployeesWithPaging")
-        .RequireAuthorization()
-        .WithOpenApi(x => new OpenApiOperation(x)
-        {
-            Summary = "Get paged employees",
-            Description = "Gets employees with paging",
-            Tags = [new() { Name = "HR System" }]
-        });
-
-        employeeGroup.MapGet("/search/department", (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        employeeGroup.MapGet("/search", (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
         {
             var employees = employeeService.Search(keyword, departmentId, page, pageSize);
             return Results.Ok(employees);
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
-        .WithName("GetEmployeesByDepartmentWithPaging")
+        .WithName("SearchEmployeeWithPaging")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
-            Summary = "Get paged employees by department",
-            Description = "Gets employees by department with paging",
+            Summary = "Searches employees with paging",
+            Description = "Searches employees with paging",
             Tags = [new() { Name = "HR System" }]
         });
 

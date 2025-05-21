@@ -5,7 +5,6 @@ namespace wolds_hr_api.Service.Interfaces;
 
 public interface IEmployeeService
 {
-    EmployeePagedResponse Search(string keyword, int page, int pageSize);
     EmployeePagedResponse Search(string keyword, int departmentId, int page, int pageSize);
     Employee? Get(long id);
     Task<(bool isValid, Employee? Employee, List<string>? Errors)> AddAsync(Employee employee);
