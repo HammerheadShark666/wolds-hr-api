@@ -122,7 +122,7 @@ public class EmployeeHelper
                 DepartmentId = departments[random.Next(departments.Length)],
                 Email = email,
                 PhoneNumber = $"04{random.Next(100, 999)} {random.Next(100000, 999999)}",
-                Photo = $"{char.ToLower(firstName[0])}{surname.ToLower()}{i}.jpg",
+                Photo = "",
                 WasImported = false
             });
         }
