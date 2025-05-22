@@ -1,35 +1,20 @@
 ﻿using FluentValidation;
+using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeRepository : IEmployeeRepository
+public class EmployeeRepository(IDepartmentRepository departmentRepository, AppDbContext context) : IEmployeeRepository
 {
-    private static List<Employee> employees = [];
-    private readonly Random random = new();
-    private IDepartmentRepository _departmentRepository;
-
-    public EmployeeRepository(IDepartmentRepository departmentRepository)
-    {
-        _departmentRepository = departmentRepository;
-
-        if (employees.Count == 0)
-        {
-            employees = EmployeeHelper.CreateSpecificEmployees(employees);
-            employees = EmployeeHelper.CreateRandomEmployees(employees);
-        }
-    }
+    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    private readonly AppDbContext _context = context;
 
     public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
     {
-        var departments = _departmentRepository.Get();
-
-
-        var query = from e in employees
-                    join d in departments on e.DepartmentId equals d.Id into dept
+        var query = from e in _context.Employees
+                    join d in _context.Departments on e.DepartmentId equals d.Id into dept
                     from department in dept.DefaultIfEmpty()
                     where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
                     select new Employee()
@@ -53,19 +38,17 @@ public class EmployeeRepository : IEmployeeRepository
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        return query.Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+        return [.. query.Skip((page - 1) * pageSize).Take(pageSize)];
     }
 
     public int CountEmployees(string keyword)
     {
-        return employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count();
+        return _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count();
     }
 
     public int CountEmployees(string keyword, int departmentId)
     {
-        var query = employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase));
+        var query = _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase));
 
         if (departmentId > 0)
         {
@@ -77,14 +60,14 @@ public class EmployeeRepository : IEmployeeRepository
 
     public int Count()
     {
-        return employees.Count;
+        return _context.Employees.Count();
     }
 
     public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)
     {
         var departments = _departmentRepository.Get();
 
-        return (from e in employees
+        return [.. (from e in _context.Employees
                 join d in departments on e.DepartmentId equals d.Id into dept
                 from department in dept.DefaultIfEmpty()
                 where e.WasImported == true && e.Created.Equals(importDate)
@@ -105,21 +88,18 @@ public class EmployeeRepository : IEmployeeRepository
                 })
                 .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
                 .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+                .Take(pageSize)];
     }
 
     public int CountImportedEmployees(DateOnly importDate)
     {
-        return employees.Where(e => e.WasImported == true && e.Created.Equals(importDate)).Count();
+        return _context.Employees.Where(e => e.WasImported == true && e.Created.Equals(importDate)).Count();
     }
 
     public Employee? Get(long id)
     {
-        var departments = _departmentRepository.Get();
-
-        Employee? employee = (from e in employees
-                              join d in departments on e.DepartmentId equals d.Id into dept
+        Employee? employee = (from e in _context.Employees
+                              join d in _context.Departments on e.DepartmentId equals d.Id into dept
                               from department in dept.DefaultIfEmpty()
                               where e.Id == id
                               select new Employee()
@@ -139,47 +119,61 @@ public class EmployeeRepository : IEmployeeRepository
                               }).SingleOrDefault() ?? null;
 
         if (employee?.DepartmentId > 0)
-            employee.Department = departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
+            employee.Department = _context.Departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
 
         return employee;
     }
 
     public Employee Add(Employee employee)
     {
-        employee.Id = random.Next();
         employee.Created = DateOnly.FromDateTime(DateTime.Now);
-        employees.Add(employee);
+        _context.Employees.Add(employee);
+        _context.SaveChangesAsync();
         return employee;
     }
 
     public Employee Update(Employee employee)
     {
-        int index = employees.FindIndex(e => e.Id == employee.Id);
+        var currentEmployee = _context.Employees.FirstOrDefault(e => e.Id == employee.Id);
 
-        if (index != -1)
-            employees[index] = employee;
+        if (currentEmployee != null)
+        {
+            currentEmployee.Surname = employee.Surname;
+            currentEmployee.FirstName = employee.FirstName;
+            currentEmployee.DateOfBirth = employee.DateOfBirth;
+            currentEmployee.HireDate = employee.HireDate;
+            currentEmployee.Email = employee.Email;
+            currentEmployee.PhoneNumber = employee.PhoneNumber;
+            currentEmployee.DepartmentId = employee.DepartmentId;
+
+            _context.Employees.Update(currentEmployee);
+            _context.SaveChangesAsync();
+        }
         else
-            throw new Exception("Employee not found");
+            throw new EmployeeNotFoundException("Employee not found");
 
         return employee;
     }
 
     public void Delete(long id)
     {
-        var employee = employees.FirstOrDefault(e => e.Id == id);
+        var employee = _context.Employees.FirstOrDefault(e => e.Id == id);
         if (employee != null)
-            employees.Remove(employee);
+        {
+            _context.Employees.Remove(employee);
+            _context.SaveChangesAsync();
+        }
         else
             throw new EmployeeNotFoundException("Employee not found");
     }
 
     public bool Exists(long id)
     {
-        return employees.Exists(e => e.Id == id);
+        return _context.Employees.Any(e => e.Id == id);
     }
 
     public bool Exists(string surname, string firstName, DateOnly? dateOfBirth)
     {
-        return employees.Exists(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
+        return _context.Employees.Any(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
     }
 }

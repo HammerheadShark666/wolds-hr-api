@@ -1,7 +1,9 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using wolds_hr_api.Data;
+using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Service;
@@ -54,5 +56,10 @@ public static class ServiceExtensions
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
+    }
+
+    public static void ConfigureDbContext(this IServiceCollection services)
+    {
+        services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
     }
 }
