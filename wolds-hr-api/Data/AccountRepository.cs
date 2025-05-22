@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Data.Interfaces;
+﻿using wolds_hr_api.Data.Context;
+using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
 
 namespace wolds_hr_api.Data;
 
@@ -8,15 +8,16 @@ public class AccountRepository : IAccountRepository
 {
     private static List<Account> accounts = [];
 
-    public AccountRepository()
+    private readonly AppDbContext _context;
+
+    public AccountRepository(AppDbContext context)
     {
-        if (accounts != null)
-            accounts = AccountHelper.CreateAccounts(accounts);
+        _context = context;
     }
 
     public Account? Get(string email)
     {
-        return accounts.Where(a => a.Email.Equals(email))
+        return _context.Accounts.Where(a => a.Email.Equals(email))
                        .FirstOrDefault();
     }
 }
