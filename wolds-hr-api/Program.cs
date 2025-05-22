@@ -1,3 +1,4 @@
+using wolds_hr_api.Data.Context;
 using wolds_hr_api.Endpoint;
 using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Helpers.Converters;
@@ -5,6 +6,7 @@ using wolds_hr_api.Helpers.Converters;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddJwtAuthentication();
+builder.Services.ConfigureDbContext();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -31,5 +33,9 @@ app.UseAuthorization();
 EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
+
+using var scope = app.Services.CreateScope();
+var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+db.Database.EnsureCreated();
 
 app.Run();
