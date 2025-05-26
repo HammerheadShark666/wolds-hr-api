@@ -17,6 +17,7 @@ public static class EndpointsDepartment
             var departments = departmentService.Get();
             return Results.Ok(departments);
         })
+       .RequireAuthorization()
        .Produces<DepartmentResponse>((int)HttpStatusCode.OK)
        .WithName("GetDepartments")
        .WithOpenApi(x => new OpenApiOperation(x)

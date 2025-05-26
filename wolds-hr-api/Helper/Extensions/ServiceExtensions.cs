@@ -1,7 +1,10 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 using wolds_hr_api.Data;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
@@ -36,23 +39,58 @@ public static class ServiceExtensions
         });
     }
 
-    public static void ConfigureJwt(this IServiceCollection services)
+    public static void ConfigureJWT(this IServiceCollection services)
     {
-        services.AddJwtAuthentication();
-    }
+        services.AddAuthentication("Bearer")
+            .AddJwtBearer("Bearer", options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = EnvironmentVariablesHelper.JWTIssuer,
+                    ValidAudience = EnvironmentVariablesHelper.JWTAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvironmentVariablesHelper.JWTSymmetricSecurityKey)),
+                    NameClaimType = "name",
+                    ClockSkew = TimeSpan.Zero
+                };
 
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.HttpContext.Request.Cookies[Constants.AccessToken];
+                        if (!string.IsNullOrEmpty(token))
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnAuthenticationFailed = context =>
+                    {
+                        Console.WriteLine("JWT Authentication failed:");
+                        Console.WriteLine(context.Exception.ToString());
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+    }
 
     public static void ConfigureDI(this IServiceCollection services)
     {
         services.AddScoped<IAuthenticateService, AuthenticateService>();
+        services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IEmployeeService, EmployeeService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
-        services.AddScoped<IJwtHelper, JwtHelper>();
+        services.AddScoped<IJWTHelper, JWTHelper>();
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();

@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper.Interfaces;
 
-public interface IJwtHelper
+public interface IJWTHelper
 {
-    string GenerateJwtToken(Account account);
+    string GenerateJWTToken(Account account);
 }

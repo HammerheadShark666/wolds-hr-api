@@ -11,5 +11,4 @@ public class ConstantMessages
     public static string ProfileNotFound = "Profile not found";
 
     public static string UnexpectedError = "An unexpected error has occurred.";
-
 }

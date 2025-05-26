@@ -11,17 +11,19 @@ using wolds_hr_api.Service.Interfaces;
 namespace wolds_hr_api.Service;
 
 public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
+                                 IRefreshTokenService refreshTokenService,
                                  IAccountRepository accountRepository,
-                                 IJwtHelper jwtHelper) : IAuthenticateService
+                                 IJWTHelper jWTHelper) : IAuthenticateService
 {
     public readonly IValidator<LoginRequest> _validatorHelper = validatorHelper;
     public readonly IAccountRepository _accountRepository = accountRepository;
-    public readonly IJwtHelper _jwtHelper = jwtHelper;
+    public readonly IJWTHelper _jWTHelper = jWTHelper;
+    public readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
 
     #region Public Functions
 
 
-    public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest)
+    public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress)
     {
 
         var result = await _validatorHelper.ValidateAsync(loginRequest, options =>
@@ -32,9 +34,27 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
         var account = GetAccount(loginRequest.Email);
-        var jwtToken = _jwtHelper.GenerateJwtToken(account);
+        var jwtToken = _jWTHelper.GenerateJWTToken(account);
+        var refreshToken = _refreshTokenService.GenerateRefreshToken(ipAddress, account);
 
-        return (true, new LoginResponse(jwtToken, new Profile(account.FirstName, account.LastName, account.Email)), []);
+        _refreshTokenService.RemoveExpiredRefreshTokens(account.Id);
+        await _refreshTokenService.AddRefreshTokenAsync(refreshToken);
+
+        return (true, new LoginResponse(jwtToken, refreshToken.Token, new Profile(account.FirstName, account.LastName, account.Email)), []);
+    }
+
+    public async Task<JwtRefreshToken> RefreshTokenAsync(string token, string ipAddress)
+    {
+        var refreshToken = await _refreshTokenService.GetRefreshTokenAsync(token);
+        var newRefreshToken = _refreshTokenService.GenerateRefreshToken(ipAddress, refreshToken.Account);
+
+        _refreshTokenService.RemoveExpiredRefreshTokens(refreshToken.Account.Id);
+        await _refreshTokenService.AddRefreshTokenAsync(newRefreshToken);
+
+        var jwtToken = _jWTHelper.GenerateJWTToken(refreshToken.Account);
+
+        return new JwtRefreshToken(refreshToken.Account.IsAuthenticated, jwtToken, newRefreshToken.Token,
+                                                 new Profile(refreshToken.Account.FirstName, refreshToken.Account.LastName, refreshToken.Account.Email));
     }
 
     #endregion
