@@ -3,6 +3,7 @@ using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Service.Interfaces;
 using static wolds_hr_api.Helper.PhotoHelper;
@@ -89,14 +90,9 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task<string> UpdateEmployeePhotoAsync(long id, IFormFile file)
     {
-        var employee = _employeeRepository.Get(id);
-
-        //TODO: Sort this 
-        if (employee?.Photo == null)
-            throw new Exception("");
-
+        var employee = _employeeRepository.Get(id) ?? throw new EmployeeNotFoundException("Employee not found.");
         string newFileName = FileHelper.getGuidFileName(Constants.FileExtensionJpg);
-        string originalFileName = employee.Photo;
+        string originalFileName = employee.Photo ?? "";
 
         await _azureStorageHelper.SaveBlobToAzureStorageContainerAsync(file, Constants.AzureStorageContainerEmployees, newFileName);
 

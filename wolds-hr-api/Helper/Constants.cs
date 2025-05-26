@@ -10,9 +10,16 @@ public static class Constants
 
     public const string DefaultEmployeePhotoFileName = "default.png";
 
-    public const string JwtIssuer = "JWT_ISSUER";
-    public const string JwtAudience = "JWT_AUDIENCE";
-    public const string JwtSymmetricSecurityKey = "JWT_SYMMETRIC_SECURITY_KEY";
+    public const string JWTIssuer = "JWT_ISSUER";
+    public const string JWTAudience = "JWT_AUDIENCE";
+    public const string JWTSymmetricSecurityKey = "JWT_SYMMETRIC_SECURITY_KEY";
+    public const string JWTSettingsTokenExpiryMinutes = "JWT_SETTINGS_TOKEN_EXPIRY_MINUTES";
+    public const string JWTSettingsRefreshTokenExpiryDays = "JWT_SETTINGS_REFRESH_TOKEN_EXPIRY_DAYS";
+    public const string JWTSettingsPasswordTokenExpiryDays = "JWT_SETTINGS_RESET_PASSWORD_TOKEN_EXPIRY_DAYS";
+    public const string JWTSettingsRefreshTokenTtl = "JWT_SETTINGS_REFRESH_TOKEN_TTL";
+
+    public const string RefreshToken = "refresh_token";
+    public const string AccessToken = "access_token";
 
     public const int MaxNumberOfEmployees = 150;
 }
