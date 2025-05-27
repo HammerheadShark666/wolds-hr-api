@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureJWT();
 builder.Services.ConfigureDbContext();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddCors();
+builder.Services.BuildCorsPolicy();
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
@@ -24,7 +24,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.ConfigureCors();
+app.AddCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
