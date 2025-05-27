@@ -72,8 +72,8 @@ public static class EndpointsAuthentication
                 await refreshTokeService.DeleteRefreshTokenAsync(refreshToken);
             }
 
-            http.Response.Cookies.Delete(Constants.AccessToken);
-            http.Response.Cookies.Delete(Constants.RefreshToken);
+            SetDeleteCookie(http, Constants.AccessToken);
+            SetDeleteCookie(http, Constants.RefreshToken);
 
             return Results.Ok();
         })
@@ -120,5 +120,10 @@ public static class EndpointsAuthentication
             Secure = true,
             Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
         });
+    }
+
+    private static void SetDeleteCookie(HttpContext http, string cookieName)
+    {
+        http.Response.Cookies.Delete(cookieName, new CookieOptions { Secure = true, SameSite = SameSiteMode.None });
     }
 }
