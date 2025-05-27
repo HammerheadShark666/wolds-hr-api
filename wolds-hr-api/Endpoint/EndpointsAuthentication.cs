@@ -37,10 +37,9 @@ public static class EndpointsAuthentication
             try
             {
                 var refreshToken = http.Request.Cookies[Constants.RefreshToken];
-
                 if (string.IsNullOrEmpty(refreshToken))
                 {
-                    return Results.Unauthorized();
+                    return Results.BadRequest("Refresh token invalid.");
                 }
                 var tokens = await authenticateService.RefreshTokenAsync(refreshToken, JWTHelper.IpAddress(context));
 
