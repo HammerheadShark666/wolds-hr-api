@@ -100,4 +100,22 @@ public static class ServiceExtensions
     {
         services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
     }
+
+    public static void BuildCorsPolicy(this IServiceCollection services)
+    {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("WoldsHrFrontendPolicy", policy =>
+            {
+                policy.WithOrigins(
+                    "http://localhost:3000",
+                    "http://localhost:3001",
+                    "https://mango-plant-076b11e1e.6.azurestaticapps.net"
+                )
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
+            });
+        });
+    }
 }
