@@ -10,7 +10,7 @@ public static class AppExtensions
         .AllowAnyHeader()
         .AllowAnyMethod()
         .AllowCredentials()
-        .WithOrigins("http://localhost:3000", "http://localhost:3001", "https://zealous-glacier-0aa9a691e.6.azurestaticapps.net"));
+        .WithOrigins("http://localhost:3000", "http://localhost:3001", "https://mango-plant-076b11e1e.6.azurestaticapps.net"));
     }
 
     public static void BuildDatabase(this WebApplication webApplication)
