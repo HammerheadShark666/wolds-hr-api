@@ -21,5 +21,8 @@ public static class Constants
     public const string RefreshToken = "refresh_token";
     public const string AccessToken = "access_token";
 
+    public const string HostDomain = "HOST_DOMAIN";
+    public const string LocalHost = "localhost";
+
     public const int MaxNumberOfEmployees = 150;
 }

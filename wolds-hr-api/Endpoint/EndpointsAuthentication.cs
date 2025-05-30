@@ -102,24 +102,53 @@ public static class EndpointsAuthentication
 
     private static void SetAccessTokenCookie(HttpContext http, string token)
     {
-        http.Response.Cookies.Append(Constants.AccessToken, token, new CookieOptions
+        if (EnvironmentVariablesHelper.HostDomain == Constants.LocalHost)
         {
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Secure = true,
-            Expires = DateTimeOffset.UtcNow.AddMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes)
-        });
+            http.Response.Cookies.Append(Constants.AccessToken, token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes)
+            });
+        }
+        else
+        {
+            http.Response.Cookies.Append(Constants.AccessToken, token, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Domain = EnvironmentVariablesHelper.HostDomain,
+                Expires = DateTimeOffset.UtcNow.AddMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes)
+            });
+        }
     }
 
     private static void SetRefreshTokenCookie(HttpContext http, string refreshToken)
     {
-        http.Response.Cookies.Append(Constants.RefreshToken, refreshToken, new CookieOptions
+        if (EnvironmentVariablesHelper.HostDomain == Constants.LocalHost)
         {
-            HttpOnly = true,
-            SameSite = SameSiteMode.None,
-            Secure = true,
-            Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
-        });
+            http.Response.Cookies.Append(Constants.RefreshToken, refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
+            });
+        }
+        else
+        {
+            http.Response.Cookies.Append(Constants.RefreshToken, refreshToken, new CookieOptions
+            {
+                HttpOnly = true,
+                SameSite = SameSiteMode.None,
+                Secure = true,
+                Domain = EnvironmentVariablesHelper.HostDomain,
+                Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
+            });
+        }
+
     }
 
     private static void SetDeleteCookie(HttpContext http, string cookieName)

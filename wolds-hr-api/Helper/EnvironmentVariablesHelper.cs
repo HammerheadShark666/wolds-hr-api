@@ -7,6 +7,7 @@ public class EnvironmentVariablesHelper
     public static string AzureStorageConnectionString => GetEnvironmentVariableString(Constants.AzureStorageConnectionString);
     public static string JWTIssuer => GetEnvironmentVariableString(Constants.JWTIssuer);
     public static string JWTAudience => GetEnvironmentVariableString(Constants.JWTAudience);
+    public static string HostDomain => GetEnvironmentVariableString(Constants.HostDomain);
     public static string JWTSymmetricSecurityKey => GetEnvironmentVariableString(Constants.JWTSymmetricSecurityKey);
     public static readonly int JWTSettingsTokenExpiryMinutes = GetEnvironmentVariableInt(Constants.JWTSettingsTokenExpiryMinutes);
     public static readonly int JWTSettingsRefreshTokenExpiryDays = GetEnvironmentVariableInt(Constants.JWTSettingsRefreshTokenExpiryDays);
