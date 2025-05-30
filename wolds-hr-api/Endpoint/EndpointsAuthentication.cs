@@ -16,6 +16,9 @@ public static class EndpointsAuthentication
 
         authenticateGroup.MapPost("/login", async (HttpContext http, Helper.Dto.Requests.LoginRequest loginRequest, IAuthenticateService authenticateService) =>
         {
+            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
+            http.Response.Headers["Pragma"] = "no-cache";
+
             var (isValid, authenticated, errors) = await authenticateService.AuthenticateAsync(loginRequest, "ipAddress");
             if (!isValid)
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
@@ -34,6 +37,9 @@ public static class EndpointsAuthentication
 
         authenticateGroup.MapPost("/refresh-token", async (HttpContext http, JwtRefreshTokenRequest jwtRefreshTokenRequest, IAuthenticateService authenticateService, HttpContext context) =>
         {
+            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
+            http.Response.Headers["Pragma"] = "no-cache";
+
             try
             {
                 var refreshToken = http.Request.Cookies[Constants.RefreshToken];
@@ -88,6 +94,9 @@ public static class EndpointsAuthentication
 
         authenticateGroup.MapGet("/authentication/me", (HttpContext http) =>
         {
+            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
+            http.Response.Headers["Pragma"] = "no-cache";
+
             return Results.Ok(http.User.Claims.Select(c => new { c.Type, c.Value }));
         })
         .RequireAuthorization()
