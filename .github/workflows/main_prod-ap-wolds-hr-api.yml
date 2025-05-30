@@ -68,5 +68,5 @@ jobs:
           run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
         - name: Run API tests
           run: |
-            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" -e "cea332e0-79fc-4914-af80-b78e256af13b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
             
