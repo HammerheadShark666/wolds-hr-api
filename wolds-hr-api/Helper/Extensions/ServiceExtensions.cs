@@ -110,7 +110,9 @@ public static class ServiceExtensions
                 policy.WithOrigins(
                     "http://localhost:3000",
                     "http://localhost:3001",
-                    "https://mango-plant-076b11e1e.6.azurestaticapps.net"
+                    "https://mango-plant-076b11e1e.6.azurestaticapps.net",
+                    "https://wolds-hr.co.uk",
+                    "https://www.wolds-hr.co.uk"
                 )
                 .AllowAnyHeader()
                 .AllowAnyMethod()
