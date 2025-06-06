@@ -145,7 +145,11 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
             currentEmployee.Email = employee.Email;
             currentEmployee.PhoneNumber = employee.PhoneNumber;
             currentEmployee.DepartmentId = employee.DepartmentId;
-            currentEmployee.Photo = employee.Photo;
+
+            if (employee.Photo != null && !string.IsNullOrEmpty(employee.Photo))
+            {
+                currentEmployee.Photo = employee.Photo;
+            }
 
             _context.Employees.Update(currentEmployee);
             _context.SaveChangesAsync();
