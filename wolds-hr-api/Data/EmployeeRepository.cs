@@ -38,7 +38,7 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        return [.. query.Skip((page - 1) * pageSize).Take(pageSize)];
+        return [.. query.OrderBy(a => a.Surname).ThenBy(a => a.FirstName).Skip((page - 1) * pageSize).Take(pageSize)];
     }
 
     public int CountEmployees(string keyword)
