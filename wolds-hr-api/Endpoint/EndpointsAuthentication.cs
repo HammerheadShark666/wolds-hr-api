@@ -16,8 +16,8 @@ public static class EndpointsAuthentication
 
         authenticateGroup.MapPost("/login", async (HttpContext http, Helper.Dto.Requests.LoginRequest loginRequest, IAuthenticateService authenticateService) =>
         {
-            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
-            http.Response.Headers["Pragma"] = "no-cache";
+            http.Response.Headers.CacheControl = "no-store"; // Disable caching
+            http.Response.Headers.Pragma = "no-cache";
 
             var (isValid, authenticated, errors) = await authenticateService.AuthenticateAsync(loginRequest, "ipAddress");
             if (!isValid)
@@ -33,12 +33,19 @@ public static class EndpointsAuthentication
             SetRefreshTokenCookie(http, refreshToken);
 
             return Results.Ok(new { message = "Logged in" });
+        })
+        .WithName("Login")
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Login and return a jwt token and refresh token",
+            Description = "Login and return a jwt token and refresh token",
+            Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
 
         authenticateGroup.MapPost("/refresh-token", async (HttpContext http, JwtRefreshTokenRequest jwtRefreshTokenRequest, IAuthenticateService authenticateService, HttpContext context) =>
         {
-            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
-            http.Response.Headers["Pragma"] = "no-cache";
+            http.Response.Headers.CacheControl = "no-store"; // Disable caching
+            http.Response.Headers.Pragma = "no-cache";
 
             try
             {
@@ -67,7 +74,7 @@ public static class EndpointsAuthentication
         {
             Summary = "Authenticate refresh token and return a new jwt token and refresh token",
             Description = "Authenticate refresh token and return a new jwt token and refresh token",
-            Tags = [new() { Name = "WoldHR - Authenticate" }]
+            Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
 
         authenticateGroup.MapPost("/logout", async (HttpContext http, IRefreshTokenService refreshTokeService) =>
@@ -89,13 +96,13 @@ public static class EndpointsAuthentication
         {
             Summary = "Logout of api",
             Description = "Logout of api",
-            Tags = [new() { Name = "WoldHR - Authenticate" }]
+            Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
 
         authenticateGroup.MapGet("/authentication/me", (HttpContext http) =>
         {
-            http.Response.Headers["Cache-Control"] = "no-store"; // Disable caching
-            http.Response.Headers["Pragma"] = "no-cache";
+            http.Response.Headers.CacheControl = "no-store"; // Disable caching
+            http.Response.Headers.Pragma = "no-cache";
 
             return Results.Ok(http.User.Claims.Select(c => new { c.Type, c.Value }));
         })
@@ -105,7 +112,7 @@ public static class EndpointsAuthentication
         {
             Summary = "Authenticate token",
             Description = "Authenticate token",
-            Tags = [new() { Name = "WoldHR - Authenticate" }]
+            Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
     }
 

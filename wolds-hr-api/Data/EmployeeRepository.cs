@@ -6,9 +6,12 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeRepository(IDepartmentRepository departmentRepository, AppDbContext context) : IEmployeeRepository
+public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 {
-    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+
+    //IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository, 
+    //private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    // private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly AppDbContext _context = context;
 
     public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
@@ -28,7 +31,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                         PhoneNumber = e.PhoneNumber,
                         Photo = e.Photo,
                         Created = e.Created,
-                        WasImported = e.WasImported,
                         DepartmentId = department != null ? department.Id : 0,
                         Department = department ?? null
                     };
@@ -63,39 +65,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
         return _context.Employees.Count();
     }
 
-    public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)
-    {
-        var departments = _departmentRepository.Get();
-
-        return [.. (from e in _context.Employees
-                join d in departments on e.DepartmentId equals d.Id into dept
-                from department in dept.DefaultIfEmpty()
-                where e.WasImported == true && e.Created.Equals(importDate)
-                select new Employee()
-                {
-                    Id = e.Id,
-                    Surname = e.Surname,
-                    FirstName = e.FirstName,
-                    DateOfBirth = e.DateOfBirth,
-                    HireDate = e.HireDate,
-                    Email = e.Email,
-                    PhoneNumber = e.PhoneNumber,
-                    Photo = e.Photo,
-                    Created = e.Created,
-                    WasImported = e.WasImported,
-                    DepartmentId = department != null ? department.Id : 0,
-                    Department = department ?? null
-                })
-                .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)];
-    }
-
-    public int CountImportedEmployees(DateOnly importDate)
-    {
-        return _context.Employees.Where(e => e.WasImported == true && e.Created.Equals(importDate)).Count();
-    }
-
     public Employee? Get(long id)
     {
         Employee? employee = (from e in _context.Employees
@@ -113,7 +82,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                                   PhoneNumber = e.PhoneNumber,
                                   Photo = e.Photo,
                                   Created = e.Created,
-                                  WasImported = e.WasImported,
                                   DepartmentId = department != null ? department.Id : 0,
                                   Department = department ?? null
                               }).SingleOrDefault() ?? null;

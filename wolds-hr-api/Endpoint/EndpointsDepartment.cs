@@ -24,7 +24,7 @@ public static class EndpointsDepartment
        {
            Summary = "Get departments",
            Description = "Gets departments",
-           Tags = [new() { Name = "HR System" }]
+           Tags = [new() { Name = "Wolds HR - Department" }]
        });
     }
 }

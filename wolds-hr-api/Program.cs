@@ -33,5 +33,6 @@ app.BuildDatabase();
 EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
+EndpointsEmployeeImport.ConfigureRoutes(app);
 
 app.Run();
