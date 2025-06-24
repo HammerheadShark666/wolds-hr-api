@@ -10,7 +10,7 @@ public class DepartmentRepository(AppDbContext context) : IDepartmentRepository
 
     public List<Department> Get()
     {
-        return _context.Departments.OrderBy(e => e.Name).ToList();
+        return [.. _context.Departments.OrderBy(e => e.Name)];
     }
 
     public Department? Get(int? id)

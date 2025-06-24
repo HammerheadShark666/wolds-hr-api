@@ -2,7 +2,6 @@
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Service.Interfaces;
@@ -27,7 +26,7 @@ public static class EndpointsEmployee
         {
             Summary = "Searches employees with paging",
             Description = "Searches employees with paging",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapGet("/employee/{id}", (IEmployeeService employeeService, int id) =>
@@ -44,7 +43,7 @@ public static class EndpointsEmployee
        {
            Summary = "Get employee",
            Description = "Gets employee",
-           Tags = [new() { Name = "HR System" }]
+           Tags = [new() { Name = "Wolds HR - Employee" }]
        });
 
 
@@ -66,7 +65,7 @@ public static class EndpointsEmployee
         {
             Summary = "Add employee",
             Description = "Add employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapPut("/update", async (IEmployeeService employeeService, Employee employee) =>
@@ -87,7 +86,7 @@ public static class EndpointsEmployee
         {
             Summary = "Update employee",
             Description = "Update employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapDelete("/{id}", (IEmployeeService employeeService, int id) =>
@@ -110,7 +109,7 @@ public static class EndpointsEmployee
         {
             Summary = "Delete employee",
             Description = "Delete employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapPost("/upload-photo/{id}", async (int id, HttpRequest request, IEmployeeService employeeService) =>
@@ -136,49 +135,7 @@ public static class EndpointsEmployee
         {
             Summary = "Upload employee photo",
             Description = "Upload employee photo",
-            Tags = [new() { Name = "HR System" }]
-        });
-
-        employeeGroup.MapPost("/import", async (HttpRequest request, IEmployeeService employeeService) =>
-        {
-            if (!request.HasFormContentType)
-                return Results.BadRequest(new { Message = "Invalid content type." });
-
-            var form = await request.ReadFormAsync();
-            var file = form.Files.GetFile("file");
-
-            if (file == null || file.Length == 0)
-                return Results.BadRequest(new { Message = "No file uploaded." });
-
-            if (employeeService.MaximumNumberOfEmployeesReached(file))
-                return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
-
-            return Results.Ok(await employeeService.ImportAsync(file)); ;
-        })
-       .Accepts<IFormFile>("multipart/form-data")
-       .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
-       .WithName("ImportEmployees")
-       .RequireAuthorization()
-       .WithOpenApi(x => new OpenApiOperation(x)
-       {
-           Summary = "Import employees",
-           Description = "Import employees",
-           Tags = [new() { Name = "HR System" }]
-       });
-
-        employeeGroup.MapGet("/imported", (DateOnly importDate, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
-        {
-            var employees = employeeService.GetImported(importDate, page, pageSize);
-            return Results.Ok(employees);
-        })
-        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
-        .WithName("GetImportedEmployeesWithPaging")
-        .RequireAuthorization()
-        .WithOpenApi(x => new OpenApiOperation(x)
-        {
-            Summary = "Get paged imported employees",
-            Description = "Gets imported employees by paging",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
     }
 }
