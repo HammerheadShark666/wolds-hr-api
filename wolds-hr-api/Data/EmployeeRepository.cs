@@ -62,14 +62,14 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
         return _context.Employees.Count();
     }
 
-    public List<Employee> GetImportedEmployees(DateOnly importDate, int page, int pageSize)
+    public List<Employee> GetImportedEmployees(int id, int page, int pageSize)
     {
         var departments = _departmentRepository.Get();
 
         return [.. (from e in _context.Employees
                 join d in departments on e.DepartmentId equals d.Id into dept
                 from department in dept.DefaultIfEmpty()
-                //where e.WasImported == true && e.Created.Equals(importDate)
+                where e.EmployeeImportId == id
                 select new Employee()
                 {
                     Id = e.Id,
@@ -89,9 +89,9 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                 .Take(pageSize)];
     }
 
-    public int CountImportedEmployees(DateOnly importDate)
+    public int CountImportedEmployees(int id)
     {
-        return _context.Employees.Where(e => e.EmployeeImportId != null && e.Created.Equals(importDate)).Count();
+        return _context.Employees.Where(e => e.EmployeeImportId == id).Count();
     }
 
     public Employee? Get(long id)

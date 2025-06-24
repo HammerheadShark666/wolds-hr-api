@@ -5,6 +5,6 @@ namespace wolds_hr_api.Service.Interfaces;
 public interface IEmployeeImportService
 {
     Task<EmployeeImportResponse> ImportAsync(IFormFile file);
-    EmployeePagedResponse GetImported(DateOnly importDate, int page, int pageSize);
+    EmployeePagedResponse GetImported(int id, int page, int pageSize);
     bool MaximumNumberOfEmployeesReached(IFormFile file);
 }
