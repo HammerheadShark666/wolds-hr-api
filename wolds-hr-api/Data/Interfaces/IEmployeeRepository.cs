@@ -13,6 +13,4 @@ public interface IEmployeeRepository
     void Delete(long id);
     bool Exists(long id);
     bool Exists(string surname, string firstName, DateOnly? dateOfBirth);
-    int CountImportedEmployees(int id);
-    List<Employee> GetImportedEmployees(int id, int page, int pageSize);
 }

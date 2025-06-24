@@ -69,14 +69,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             }
         }
 
-        //var employeePagedResponse = new EmployeePagedResponse
-        //{
-        //    Page = 1,
-        //    PageSize = 10,
-        //    TotalEmployees = EmployeesImported.Count,
-        //    Employees = [.. EmployeesImported.OrderBy(e => e.Surname)]
-        //};
-
         return new EmployeeImportResponse(ExistingEmployees, employeeImport.Id, EmployeesErrorImporting);
     }
 
@@ -86,8 +78,8 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = _employeeRepository.CountImportedEmployees(id),
-            Employees = _employeeRepository.GetImportedEmployees(id, page, pageSize)
+            TotalEmployees = _employeeImportRepository.CountImportedEmployees(id),
+            Employees = _employeeImportRepository.GetImportedEmployees(id, page, pageSize)
         };
 
         return employeePagedResponse;

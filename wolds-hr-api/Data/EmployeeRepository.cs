@@ -6,9 +6,12 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeRepository(IDepartmentRepository departmentRepository, AppDbContext context) : IEmployeeRepository
+public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 {
-    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+
+    //IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository, 
+    //private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    // private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly AppDbContext _context = context;
 
     public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
@@ -60,38 +63,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
     public int Count()
     {
         return _context.Employees.Count();
-    }
-
-    public List<Employee> GetImportedEmployees(int id, int page, int pageSize)
-    {
-        var departments = _departmentRepository.Get();
-
-        return [.. (from e in _context.Employees
-                join d in departments on e.DepartmentId equals d.Id into dept
-                from department in dept.DefaultIfEmpty()
-                where e.EmployeeImportId == id
-                select new Employee()
-                {
-                    Id = e.Id,
-                    Surname = e.Surname,
-                    FirstName = e.FirstName,
-                    DateOfBirth = e.DateOfBirth,
-                    HireDate = e.HireDate,
-                    Email = e.Email,
-                    PhoneNumber = e.PhoneNumber,
-                    Photo = e.Photo,
-                    Created = e.Created,
-                    DepartmentId = department != null ? department.Id : 0,
-                    Department = department ?? null
-                })
-                .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)];
-    }
-
-    public int CountImportedEmployees(int id)
-    {
-        return _context.Employees.Where(e => e.EmployeeImportId == id).Count();
     }
 
     public Employee? Get(long id)

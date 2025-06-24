@@ -26,7 +26,7 @@ public static class EndpointsEmployee
         {
             Summary = "Searches employees with paging",
             Description = "Searches employees with paging",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapGet("/employee/{id}", (IEmployeeService employeeService, int id) =>
@@ -43,7 +43,7 @@ public static class EndpointsEmployee
        {
            Summary = "Get employee",
            Description = "Gets employee",
-           Tags = [new() { Name = "HR System" }]
+           Tags = [new() { Name = "Wolds HR - Employee" }]
        });
 
 
@@ -65,7 +65,7 @@ public static class EndpointsEmployee
         {
             Summary = "Add employee",
             Description = "Add employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapPut("/update", async (IEmployeeService employeeService, Employee employee) =>
@@ -86,7 +86,7 @@ public static class EndpointsEmployee
         {
             Summary = "Update employee",
             Description = "Update employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapDelete("/{id}", (IEmployeeService employeeService, int id) =>
@@ -109,7 +109,7 @@ public static class EndpointsEmployee
         {
             Summary = "Delete employee",
             Description = "Delete employee",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
         employeeGroup.MapPost("/upload-photo/{id}", async (int id, HttpRequest request, IEmployeeService employeeService) =>
@@ -135,7 +135,7 @@ public static class EndpointsEmployee
         {
             Summary = "Upload employee photo",
             Description = "Upload employee photo",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee" }]
         });
     }
 }
