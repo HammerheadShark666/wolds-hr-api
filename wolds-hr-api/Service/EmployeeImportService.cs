@@ -2,6 +2,7 @@
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
@@ -26,18 +27,17 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
 
         while (!reader.EndOfStream)
         {
-
-            if (createEmployeeImportRecord)
-            {
-                employeeImport = _employeeImportRepository.Add();
-                createEmployeeImportRecord = false;
-            }
-
             var employeeLine = await reader.ReadLineAsync();
             if (string.IsNullOrWhiteSpace(employeeLine)) continue;
 
             try
             {
+                if (createEmployeeImportRecord)
+                {
+                    employeeImport = _employeeImportRepository.Add();
+                    createEmployeeImportRecord = false;
+                }
+
                 var employee = ParseEmployeeFromCsv(employeeLine);
 
                 if (employee.Surname == "Surname")
@@ -48,6 +48,9 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
                 ExistingEmployees = existingEmployees;
                 if (employeeExists)
                     continue;
+
+                if (employeeImport.Id == 0)
+                    throw new EmployeeImportNotCreated("Employee import record was not created.");
 
                 employee.EmployeeImportId = employeeImport.Id;
 
