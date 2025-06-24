@@ -19,4 +19,6 @@ public class Employee()
     public Boolean WasImported { get; set; }
     public int? DepartmentId { get; set; }
     public Department? Department { get; set; }
+    public int? EmployeeImportId { get; set; }
+    public EmployeeImport? EmployeeImport { get; set; }
 }
