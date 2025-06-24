@@ -6,8 +6,9 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeImportService(IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository) : IEmployeeImportService
+public class EmployeeImportService(IDepartmentRepository departmentRepository, IEmployeeImportRepository employeeImportRepository, IEmployeeRepository employeeRepository) : IEmployeeImportService
 {
+    private readonly IEmployeeImportRepository _employeeImportRepository = employeeImportRepository;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
 
@@ -16,12 +17,22 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         List<Employee> ExistingEmployees = [];
         List<Employee> EmployeesImported = [];
         List<string> EmployeesErrorImporting = [];
+        EmployeeImport employeeImport = new();
+
+        bool createEmployeeImportRecord = true;
 
         using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream);
 
         while (!reader.EndOfStream)
         {
+
+            if (createEmployeeImportRecord)
+            {
+                employeeImport = _employeeImportRepository.Add();
+                createEmployeeImportRecord = false;
+            }
+
             var employeeLine = await reader.ReadLineAsync();
             if (string.IsNullOrWhiteSpace(employeeLine)) continue;
 
@@ -37,6 +48,8 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
                 ExistingEmployees = existingEmployees;
                 if (employeeExists)
                     continue;
+
+                employee.EmployeeImportId = employeeImport.Id;
 
                 _employeeRepository.Add(employee);
 
@@ -126,7 +139,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
             Email = values[6],
             PhoneNumber = values[7],
-            WasImported = true,
             Created = DateOnly.FromDateTime(DateTime.Now)
         };
     }
@@ -136,7 +148,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         var employeeExists = _employeeRepository.Exists(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
         {
-            employee.WasImported = false;
             existingEmployees.Add(employee);
         }
 

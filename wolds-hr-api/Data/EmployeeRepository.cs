@@ -28,7 +28,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                         PhoneNumber = e.PhoneNumber,
                         Photo = e.Photo,
                         Created = e.Created,
-                        WasImported = e.WasImported,
                         DepartmentId = department != null ? department.Id : 0,
                         Department = department ?? null
                     };
@@ -70,7 +69,7 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
         return [.. (from e in _context.Employees
                 join d in departments on e.DepartmentId equals d.Id into dept
                 from department in dept.DefaultIfEmpty()
-                where e.WasImported == true && e.Created.Equals(importDate)
+                //where e.WasImported == true && e.Created.Equals(importDate)
                 select new Employee()
                 {
                     Id = e.Id,
@@ -82,7 +81,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                     PhoneNumber = e.PhoneNumber,
                     Photo = e.Photo,
                     Created = e.Created,
-                    WasImported = e.WasImported,
                     DepartmentId = department != null ? department.Id : 0,
                     Department = department ?? null
                 })
@@ -93,7 +91,7 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
 
     public int CountImportedEmployees(DateOnly importDate)
     {
-        return _context.Employees.Where(e => e.WasImported == true && e.Created.Equals(importDate)).Count();
+        return _context.Employees.Where(e => e.EmployeeImportId != null && e.Created.Equals(importDate)).Count();
     }
 
     public Employee? Get(long id)
@@ -113,7 +111,6 @@ public class EmployeeRepository(IDepartmentRepository departmentRepository, AppD
                                   PhoneNumber = e.PhoneNumber,
                                   Photo = e.Photo,
                                   Created = e.Created,
-                                  WasImported = e.WasImported,
                                   DepartmentId = department != null ? department.Id : 0,
                                   Department = department ?? null
                               }).SingleOrDefault() ?? null;
