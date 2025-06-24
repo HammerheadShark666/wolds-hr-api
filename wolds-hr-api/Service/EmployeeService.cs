@@ -12,14 +12,12 @@ namespace wolds_hr_api.Service;
 
 public class EmployeeService(IValidator<Employee> validator,
                              IEmployeeRepository employeeRepository,
-                             IDepartmentRepository departmentRepository,
                              IAzureStorageBlobHelper azureStorageHelper,
                              IPhotoHelper photoHelper) : IEmployeeService
 {
     private readonly IAzureStorageBlobHelper _azureStorageHelper = azureStorageHelper;
     private readonly IPhotoHelper _photoHelper = photoHelper;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
-    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
 
     public EmployeePagedResponse Search(string keyword, int departmentId, int page, int pageSize)

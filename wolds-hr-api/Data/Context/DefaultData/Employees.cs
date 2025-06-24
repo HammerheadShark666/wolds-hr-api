@@ -6,8 +6,6 @@ public class Employees
 {
     public static List<Employee> GetEmployeeDefaultData()
     {
-        Random random = new();
-
         return
         [
             new Employee()
@@ -21,7 +19,6 @@ public class Employees
                 Email = "jmiller@hotmail.com",
                 PhoneNumber = "04545 560934",
                 Photo = "jmiller.jpg",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             },
             new Employee()
@@ -35,7 +32,6 @@ public class Employees
                 Email = "hhanigan@hotmail.com",
                 PhoneNumber = "12473 846285",
                 Photo = "hhow.jpg",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             },
             new Employee()
@@ -49,7 +45,6 @@ public class Employees
                 Email = "jjohns@hotmail.com",
                 PhoneNumber = "23465 889453",
                 Photo = "",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             },
             new Employee()
@@ -63,7 +58,6 @@ public class Employees
                 Email = "njohnston@hotmail.com",
                 PhoneNumber = "33243 432435",
                 Photo = "",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             },
             new Employee()
@@ -77,7 +71,6 @@ public class Employees
                 Email = "mjohnstone@hotmail.com",
                 PhoneNumber = "38967 674523",
                 Photo = "",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             },
             new Employee()
@@ -91,7 +84,6 @@ public class Employees
                 Email = "hjohnsen@hotmail.com",
                 PhoneNumber = "23547 237573",
                 Photo = "",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             }
         ];
@@ -99,7 +91,7 @@ public class Employees
 
     public static List<Employee> GetRandomEmployeeDefaultData()
     {
-        List<Employee> employees = new();
+        List<Employee> employees = [];
         Random random = new();
 
         var surnames = new[] { "Miller", "Smith", "Brown", "Johnson", "Taylor", "Anderson", "Lee", "Walker", "Hall", "Clark", "Patel", "Johnstone", "Johnsen", "Harper", "Jones", "Singh", "Booth", "Collier", "Derry", "Ericsson", "Fortune", "Gray", "Horton", "Kingston", "Morton", "Norton" };
@@ -133,7 +125,6 @@ public class Employees
                 Email = email,
                 PhoneNumber = $"04{random.Next(100, 999)} {random.Next(100000, 999999)}",
                 Photo = "",
-                WasImported = false,
                 Created = DateOnly.FromDateTime(DateTime.Now)
             });
 
