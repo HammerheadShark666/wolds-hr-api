@@ -37,7 +37,7 @@ public static class EndpointsEmployeeImport
        {
            Summary = "Import employees",
            Description = "Import employees",
-           Tags = [new() { Name = "HR System" }]
+           Tags = [new() { Name = "Wolds HR - Employee Import" }]
        });
 
         employeeImportGroup.MapGet("", (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
@@ -52,7 +52,7 @@ public static class EndpointsEmployeeImport
         {
             Summary = "Get paged imported employees",
             Description = "Gets imported employees by paging",
-            Tags = [new() { Name = "HR System" }]
+            Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
     }
 }
