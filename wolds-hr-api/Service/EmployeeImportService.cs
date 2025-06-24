@@ -69,15 +69,15 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             }
         }
 
-        var employeePagedResponse = new EmployeePagedResponse
-        {
-            Page = 1,
-            PageSize = 10,
-            TotalEmployees = EmployeesImported.Count,
-            Employees = [.. EmployeesImported.OrderBy(e => e.Surname)]
-        };
+        //var employeePagedResponse = new EmployeePagedResponse
+        //{
+        //    Page = 1,
+        //    PageSize = 10,
+        //    TotalEmployees = EmployeesImported.Count,
+        //    Employees = [.. EmployeesImported.OrderBy(e => e.Surname)]
+        //};
 
-        return new EmployeeImportResponse(ExistingEmployees, employeePagedResponse, EmployeesErrorImporting);
+        return new EmployeeImportResponse(ExistingEmployees, employeeImport.Id, EmployeesErrorImporting);
     }
 
     public EmployeePagedResponse GetImported(int id, int page, int pageSize)
