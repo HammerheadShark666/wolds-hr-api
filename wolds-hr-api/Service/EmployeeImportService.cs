@@ -77,14 +77,14 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return new EmployeeImportResponse(ExistingEmployees, employeePagedResponse, EmployeesErrorImporting);
     }
 
-    public EmployeePagedResponse GetImported(DateOnly importDate, int page, int pageSize)
+    public EmployeePagedResponse GetImported(int id, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = _employeeRepository.CountImportedEmployees(importDate),
-            Employees = _employeeRepository.GetImportedEmployees(importDate, page, pageSize)
+            TotalEmployees = _employeeRepository.CountImportedEmployees(id),
+            Employees = _employeeRepository.GetImportedEmployees(id, page, pageSize)
         };
 
         return employeePagedResponse;
