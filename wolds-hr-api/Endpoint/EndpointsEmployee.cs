@@ -139,7 +139,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "HR System" }]
         });
 
-        employeeGroup.MapPost("/import", async (HttpRequest request, IEmployeeService employeeService) =>
+        employeeGroup.MapPost("/import", async (HttpRequest request, IEmployeeImportService employeeImportService) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
@@ -150,10 +150,10 @@ public static class EndpointsEmployee
             if (file == null || file.Length == 0)
                 return Results.BadRequest(new { Message = "No file uploaded." });
 
-            if (employeeService.MaximumNumberOfEmployeesReached(file))
+            if (employeeImportService.MaximumNumberOfEmployeesReached(file))
                 return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
 
-            return Results.Ok(await employeeService.ImportAsync(file)); ;
+            return Results.Ok(await employeeImportService.ImportAsync(file)); ;
         })
        .Accepts<IFormFile>("multipart/form-data")
        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
@@ -166,9 +166,9 @@ public static class EndpointsEmployee
            Tags = [new() { Name = "HR System" }]
        });
 
-        employeeGroup.MapGet("/imported", (DateOnly importDate, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        employeeGroup.MapGet("/imported", (DateOnly importDate, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
-            var employees = employeeService.GetImported(importDate, page, pageSize);
+            var employees = employeeImportService.GetImported(importDate, page, pageSize);
             return Results.Ok(employees);
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
