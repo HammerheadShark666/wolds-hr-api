@@ -18,7 +18,10 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         List<Employee> ExistingEmployees = [];
         List<Employee> EmployeesImported = [];
         List<string> EmployeesErrorImporting = [];
-        EmployeeImport employeeImport = new();
+        EmployeeImport employeeImport = new()
+        {
+            Employees = []
+        };
 
         bool createEmployeeImportRecord = true;
 
@@ -148,4 +151,11 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
 
         return (employeeExists, existingEmployees);
     }
+
+    public void Delete(int id)
+    {
+        _employeeImportRepository.Delete(id);
+        return;
+    }
+
 }

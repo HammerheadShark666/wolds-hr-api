@@ -8,10 +8,6 @@ namespace wolds_hr_api.Data;
 
 public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 {
-
-    //IDepartmentRepository departmentRepository, IEmployeeRepository employeeRepository, 
-    //private readonly IDepartmentRepository _departmentRepository = departmentRepository;
-    // private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly AppDbContext _context = context;
 
     public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
