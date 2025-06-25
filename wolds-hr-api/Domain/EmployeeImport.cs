@@ -10,4 +10,6 @@ public class EmployeeImport
     public int Id { get; set; }
 
     public DateTime Date { get; set; }
+
+    public required ICollection<Employee> Employees { get; set; }
 }
