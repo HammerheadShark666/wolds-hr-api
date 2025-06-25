@@ -3,6 +3,7 @@ using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
@@ -29,16 +30,16 @@ public static class EndpointsEmployeeImport
 
             return Results.Ok(await employeeImportService.ImportAsync(file)); ;
         })
-       .Accepts<IFormFile>("multipart/form-data")
-       .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
-       .WithName("ImportEmployees")
-       .RequireAuthorization()
-       .WithOpenApi(x => new OpenApiOperation(x)
-       {
-           Summary = "Import employees",
-           Description = "Import employees",
-           Tags = [new() { Name = "Wolds HR - Employee Import" }]
-       });
+        .Accepts<IFormFile>("multipart/form-data")
+        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
+        .WithName("ImportEmployees")
+        .RequireAuthorization()
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Import employees",
+            Description = "Import employees",
+            Tags = [new() { Name = "Wolds HR - Employee Import" }]
+        });
 
         employeeImportGroup.MapGet("", (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
@@ -52,6 +53,29 @@ public static class EndpointsEmployeeImport
         {
             Summary = "Get paged imported employees",
             Description = "Gets imported employees by paging",
+            Tags = [new() { Name = "Wolds HR - Employee Import" }]
+        });
+
+        employeeImportGroup.MapDelete("/{id}", (IEmployeeImportService employeeImportService, int id) =>
+        {
+            try
+            {
+                employeeImportService.Delete(id);
+                return Results.Ok();
+            }
+            catch (EmployeeImportNotFoundException)
+            {
+                return Results.NotFound(new { Message = "Employee Import not found." });
+            }
+        })
+        .Produces(StatusCodes.Status200OK)
+        .Produces(StatusCodes.Status404NotFound)
+        .WithName("DeleteEmployeesImport")
+        .RequireAuthorization()
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Delete employee import",
+            Description = "Delete employee import",
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
     }
