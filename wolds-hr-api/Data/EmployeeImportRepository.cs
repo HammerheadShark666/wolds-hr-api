@@ -1,6 +1,7 @@
 ﻿using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
+using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
@@ -17,7 +18,8 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
     {
         EmployeeImport employeeImport = new()
         {
-            Date = DateTime.Now
+            Date = DateTime.Now,
+            Employees = []
         };
 
         _context.EmployeeImports.Add(employeeImport);
@@ -62,5 +64,17 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
     public int CountImportedEmployees(int id)
     {
         return _context.Employees.Where(e => e.EmployeeImportId == id).Count();
+    }
+
+    public void Delete(int id)
+    {
+        var employeeImport = _context.EmployeeImports.FirstOrDefault(e => e.Id == id);
+        if (employeeImport != null)
+        {
+            _context.EmployeeImports.Remove(employeeImport);
+            _context.SaveChangesAsync();
+        }
+        else
+            throw new EmployeeNotFoundException("employeeImport not found");
     }
 }

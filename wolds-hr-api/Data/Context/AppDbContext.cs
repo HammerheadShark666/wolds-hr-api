@@ -16,6 +16,12 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
         base.OnModelCreating(modelBuilder);
 
         modelBuilder.Entity<Employee>()
+        .HasOne(e => e.EmployeeImport)
+        .WithMany(i => i.Employees)
+        .HasForeignKey(e => e.EmployeeImportId)
+        .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Employee>()
             .HasOne<Department>(s => s.Department);
 
         var employees = DefaultData.Employees.GetEmployeeDefaultData().Concat(DefaultData.Employees.GetRandomEmployeeDefaultData());

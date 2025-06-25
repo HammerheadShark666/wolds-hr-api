@@ -8,4 +8,5 @@ public interface IEmployeeImportRepository
     EmployeeImport Add();
     int CountImportedEmployees(int id);
     List<Employee> GetImportedEmployees(int id, int page, int pageSize);
+    void Delete(int id);
 }
