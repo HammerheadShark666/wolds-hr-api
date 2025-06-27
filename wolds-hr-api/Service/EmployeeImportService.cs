@@ -13,7 +13,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
 
-    public async Task<EmployeeImportResponse> ImportAsync(IFormFile file)
+    public async Task<EmployeesImportedResponse> ImportAsync(IFormFile file)
     {
         List<Employee> ExistingEmployees = [];
         List<Employee> EmployeesImported = [];
@@ -72,7 +72,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             }
         }
 
-        return new EmployeeImportResponse(ExistingEmployees, employeeImport.Id, EmployeesErrorImporting);
+        return new EmployeesImportedResponse(ExistingEmployees, employeeImport.Id, EmployeesErrorImporting);
     }
 
     public EmployeePagedResponse GetImported(int id, int page, int pageSize)
@@ -158,4 +158,14 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return;
     }
 
+    public List<EmployeeImportResponse> Get()
+    {
+        var employeeImports = _employeeImportRepository.Get();
+
+        return employeeImports.Select(ei => new EmployeeImportResponse
+        {
+            Id = ei.Id,
+            Date = ei.Date
+        }).ToList();
+    }
 }
