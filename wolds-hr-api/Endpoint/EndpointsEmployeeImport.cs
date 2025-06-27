@@ -31,7 +31,7 @@ public static class EndpointsEmployeeImport
             return Results.Ok(await employeeImportService.ImportAsync(file)); ;
         })
         .Accepts<IFormFile>("multipart/form-data")
-        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
+        .Produces<EmployeesImportedResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
@@ -41,7 +41,7 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("", (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/employees", (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
             var employees = employeeImportService.GetImported(id, page, pageSize);
             return Results.Ok(employees);
@@ -53,6 +53,21 @@ public static class EndpointsEmployeeImport
         {
             Summary = "Get paged imported employees",
             Description = "Gets imported employees by paging",
+            Tags = [new() { Name = "Wolds HR - Employee Import" }]
+        });
+
+        employeeImportGroup.MapGet("", ([FromServices] IEmployeeImportService employeeImportService) =>
+        {
+            var employeeImports = employeeImportService.Get();
+            return Results.Ok(employeeImports);
+        })
+        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
+        .WithName("GetEmployeeImports")
+        .RequireAuthorization()
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Get employee import records",
+            Description = "Gets employee import records",
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 

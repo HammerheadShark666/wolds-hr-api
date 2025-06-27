@@ -1,10 +1,7 @@
-﻿using wolds_hr_api.Domain;
+﻿namespace wolds_hr_api.Helper.Dto.Responses;
 
-namespace wolds_hr_api.Helper.Dto.Responses;
-
-public class EmployeeImportResponse(List<Employee> existingEmployees, int employeeImportId, List<string> employeesErrorImporting)
+public class EmployeeImportResponse
 {
-    public List<Employee> ExistingEmployees { get; set; } = existingEmployees;
-    public int EmployeeImportId { get; set; } = employeeImportId;
-    public List<string> EmployeesErrorImporting { get; set; } = employeesErrorImporting;
+    public int Id { get; set; }
+    public DateTime Date { get; set; }
 }
