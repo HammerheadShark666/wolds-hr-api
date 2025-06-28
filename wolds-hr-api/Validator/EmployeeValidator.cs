@@ -24,13 +24,16 @@ public class EmployeeValidator : AbstractValidator<Employee>
             .WithMessage("First name must be at least 3 characters long.");
 
             RuleFor(_ => _)
-                .Must(employee => NumberOfEmployeesWithinMax())
+                .MustAsync(async (employee, cancellation) =>
+                {
+                    return await NumberOfEmployeesWithinMax();
+                })
                 .WithMessage($"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}");
         });
     }
 
-    protected bool NumberOfEmployeesWithinMax()
+    protected async Task<bool> NumberOfEmployeesWithinMax()
     {
-        return !(_employeeRepository.Count() > Constants.MaxNumberOfEmployees);
+        return !(await _employeeRepository.CountAsync() > Constants.MaxNumberOfEmployees);
     }
 }

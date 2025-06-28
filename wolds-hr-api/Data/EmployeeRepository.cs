@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Microsoft.EntityFrameworkCore;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
@@ -10,13 +11,15 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 {
     private readonly AppDbContext _context = context;
 
-    public List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize)
+    public async Task<List<Employee>> GetEmployeesAsync(string keyword, int departmentId, int page, int pageSize)
     {
+        var loweredKeyword = keyword.ToLower();
+
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
                     from department in dept.DefaultIfEmpty()
-                    where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-                    select new Employee()
+                    where e.Surname.StartsWith(loweredKeyword, StringComparison.CurrentCultureIgnoreCase)
+                    select new Employee
                     {
                         Id = e.Id,
                         Surname = e.Surname,
@@ -28,7 +31,7 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
                         Photo = e.Photo,
                         Created = e.Created,
                         DepartmentId = department != null ? department.Id : 0,
-                        Department = department ?? null
+                        Department = department
                     };
 
         if (departmentId > 0)
@@ -36,15 +39,48 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        return [.. query.OrderBy(a => a.Surname).ThenBy(a => a.FirstName).Skip((page - 1) * pageSize).Take(pageSize)];
+        var result = await query
+            .OrderBy(a => a.Surname)
+            .ThenBy(a => a.FirstName)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return result;
+
+        //var query = from e in _context.Employees
+        //            join d in _context.Departments on e.DepartmentId equals d.Id into dept
+        //            from department in dept.DefaultIfEmpty()
+        //            where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
+        //            select new Employee()
+        //            {
+        //                Id = e.Id,
+        //                Surname = e.Surname,
+        //                FirstName = e.FirstName,
+        //                DateOfBirth = e.DateOfBirth,
+        //                HireDate = e.HireDate,
+        //                Email = e.Email,
+        //                PhoneNumber = e.PhoneNumber,
+        //                Photo = e.Photo,
+        //                Created = e.Created,
+        //                DepartmentId = department != null ? department.Id : 0,
+        //                Department = department ?? null
+        //            };
+
+        //if (departmentId > 0)
+        //{
+        //    query = query.Where(e => e.DepartmentId == departmentId);
+        //}
+
+        //return [.. query.OrderBy(a => a.Surname).ThenBy(a => a.FirstName).Skip((page - 1) * pageSize).Take(pageSize)];
     }
 
-    public int CountEmployees(string keyword)
+    public async Task<int> CountEmployeesAsync(string keyword)
     {
-        return _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).Count();
+        return await _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).CountAsync();
     }
 
-    public int CountEmployees(string keyword, int departmentId)
+    public async Task<int> CountEmployeesAsync(string keyword, int departmentId)
     {
         var query = _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase));
 
@@ -53,21 +89,21 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        return query.Count();
+        return await query.CountAsync();
     }
 
-    public int Count()
+    public async Task<int> CountAsync()
     {
-        return _context.Employees.Count();
+        return await _context.Employees.CountAsync();
     }
 
-    public Employee? Get(long id)
+    public async Task<Employee?> GetAsync(long id)
     {
-        Employee? employee = (from e in _context.Employees
-                              join d in _context.Departments on e.DepartmentId equals d.Id into dept
-                              from department in dept.DefaultIfEmpty()
+        var employee = await (from e in _context.Employees
+                              join d in _context.Departments on e.DepartmentId equals d.Id into deptGroup
+                              from department in deptGroup.DefaultIfEmpty()
                               where e.Id == id
-                              select new Employee()
+                              select new Employee
                               {
                                   Id = e.Id,
                                   Surname = e.Surname,
@@ -79,26 +115,46 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
                                   Photo = e.Photo,
                                   Created = e.Created,
                                   DepartmentId = department != null ? department.Id : 0,
-                                  Department = department ?? null
-                              }).SingleOrDefault() ?? null;
+                                  Department = department
+                              }).SingleOrDefaultAsync();
 
-        if (employee?.DepartmentId > 0)
-            employee.Department = _context.Departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
+
+        //Employee? employee = (from e in _context.Employees
+        //                      join d in _context.Departments on e.DepartmentId equals d.Id into dept
+        //                      from department in dept.DefaultIfEmpty()
+        //                      where e.Id == id
+        //                      select new Employee()
+        //                      {
+        //                          Id = e.Id,
+        //                          Surname = e.Surname,
+        //                          FirstName = e.FirstName,
+        //                          DateOfBirth = e.DateOfBirth,
+        //                          HireDate = e.HireDate,
+        //                          Email = e.Email,
+        //                          PhoneNumber = e.PhoneNumber,
+        //                          Photo = e.Photo,
+        //                          Created = e.Created,
+        //                          DepartmentId = department != null ? department.Id : 0,
+        //                          Department = department ?? null
+        //                      }).SingleOrDefault() ?? null;
+
+        //if (employee?.DepartmentId > 0)
+        //    employee.Department = _context.Departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
 
         return employee;
     }
 
-    public Employee Add(Employee employee)
+    public async Task<Employee> AddAsync(Employee employee)
     {
         employee.Created = DateOnly.FromDateTime(DateTime.Now);
         _context.Employees.Add(employee);
-        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return employee;
     }
 
-    public Employee Update(Employee employee)
+    public async Task<Employee> UpdateAsync(Employee employee)
     {
-        var currentEmployee = _context.Employees.FirstOrDefault(e => e.Id == employee.Id);
+        var currentEmployee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == employee.Id);
 
         if (currentEmployee != null)
         {
@@ -116,7 +172,7 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
             }
 
             _context.Employees.Update(currentEmployee);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
         else
             throw new EmployeeNotFoundException("Employee not found");
@@ -124,25 +180,25 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
         return employee;
     }
 
-    public void Delete(long id)
+    public async Task DeleteAsync(long id)
     {
-        var employee = _context.Employees.FirstOrDefault(e => e.Id == id);
+        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
         if (employee != null)
         {
             _context.Employees.Remove(employee);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
         }
         else
             throw new EmployeeNotFoundException("Employee not found");
     }
 
-    public bool Exists(long id)
+    public async Task<bool> ExistsAsync(long id)
     {
-        return _context.Employees.Any(e => e.Id == id);
+        return await _context.Employees.AnyAsync(e => e.Id == id);
     }
 
-    public bool Exists(string surname, string firstName, DateOnly? dateOfBirth)
+    public async Task<bool> ExistsAsync(string surname, string firstName, DateOnly? dateOfBirth)
     {
-        return _context.Employees.Any(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
+        return await _context.Employees.AnyAsync(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
     }
 }
