@@ -12,4 +12,6 @@ public class EmployeeImport
     public DateTime Date { get; set; }
 
     public required ICollection<Employee> Employees { get; set; }
+
+    public required ICollection<ExistingEmployee> ExistingEmployees { get; set; }
 }
