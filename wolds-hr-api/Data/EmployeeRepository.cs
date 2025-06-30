@@ -39,40 +39,12 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        var result = await query
+        return await query
             .OrderBy(a => a.Surname)
             .ThenBy(a => a.FirstName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
-
-        return result;
-
-        //var query = from e in _context.Employees
-        //            join d in _context.Departments on e.DepartmentId equals d.Id into dept
-        //            from department in dept.DefaultIfEmpty()
-        //            where e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)
-        //            select new Employee()
-        //            {
-        //                Id = e.Id,
-        //                Surname = e.Surname,
-        //                FirstName = e.FirstName,
-        //                DateOfBirth = e.DateOfBirth,
-        //                HireDate = e.HireDate,
-        //                Email = e.Email,
-        //                PhoneNumber = e.PhoneNumber,
-        //                Photo = e.Photo,
-        //                Created = e.Created,
-        //                DepartmentId = department != null ? department.Id : 0,
-        //                Department = department ?? null
-        //            };
-
-        //if (departmentId > 0)
-        //{
-        //    query = query.Where(e => e.DepartmentId == departmentId);
-        //}
-
-        //return [.. query.OrderBy(a => a.Surname).ThenBy(a => a.FirstName).Skip((page - 1) * pageSize).Take(pageSize)];
     }
 
     public async Task<int> CountEmployeesAsync(string keyword)
@@ -99,49 +71,24 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 
     public async Task<Employee?> GetAsync(long id)
     {
-        var employee = await (from e in _context.Employees
-                              join d in _context.Departments on e.DepartmentId equals d.Id into deptGroup
-                              from department in deptGroup.DefaultIfEmpty()
-                              where e.Id == id
-                              select new Employee
-                              {
-                                  Id = e.Id,
-                                  Surname = e.Surname,
-                                  FirstName = e.FirstName,
-                                  DateOfBirth = e.DateOfBirth,
-                                  HireDate = e.HireDate,
-                                  Email = e.Email,
-                                  PhoneNumber = e.PhoneNumber,
-                                  Photo = e.Photo,
-                                  Created = e.Created,
-                                  DepartmentId = department != null ? department.Id : 0,
-                                  Department = department
-                              }).SingleOrDefaultAsync();
-
-
-        //Employee? employee = (from e in _context.Employees
-        //                      join d in _context.Departments on e.DepartmentId equals d.Id into dept
-        //                      from department in dept.DefaultIfEmpty()
-        //                      where e.Id == id
-        //                      select new Employee()
-        //                      {
-        //                          Id = e.Id,
-        //                          Surname = e.Surname,
-        //                          FirstName = e.FirstName,
-        //                          DateOfBirth = e.DateOfBirth,
-        //                          HireDate = e.HireDate,
-        //                          Email = e.Email,
-        //                          PhoneNumber = e.PhoneNumber,
-        //                          Photo = e.Photo,
-        //                          Created = e.Created,
-        //                          DepartmentId = department != null ? department.Id : 0,
-        //                          Department = department ?? null
-        //                      }).SingleOrDefault() ?? null;
-
-        //if (employee?.DepartmentId > 0)
-        //    employee.Department = _context.Departments.SingleOrDefault(e => e.Id == employee.DepartmentId);
-
-        return employee;
+        return await (from e in _context.Employees
+                      join d in _context.Departments on e.DepartmentId equals d.Id into deptGroup
+                      from department in deptGroup.DefaultIfEmpty()
+                      where e.Id == id
+                      select new Employee
+                      {
+                          Id = e.Id,
+                          Surname = e.Surname,
+                          FirstName = e.FirstName,
+                          DateOfBirth = e.DateOfBirth,
+                          HireDate = e.HireDate,
+                          Email = e.Email,
+                          PhoneNumber = e.PhoneNumber,
+                          Photo = e.Photo,
+                          Created = e.Created,
+                          DepartmentId = department != null ? department.Id : 0,
+                          Department = department
+                      }).SingleOrDefaultAsync();
     }
 
     public async Task<Employee> AddAsync(Employee employee)
