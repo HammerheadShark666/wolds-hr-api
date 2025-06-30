@@ -53,13 +53,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
                 if (await EmployeeExistsAsync(employee, employeeImport.Id))
                     continue;
 
-                //employee.EmployeeImportId = employeeImport.Id;
-
-                //_employeeRepository.Add(employee);
-
-                //if (employee.DepartmentId != null)
-                //    employee.Department = _departmentRepository.Get(employee.DepartmentId);
-
                 employee = await AddEmployeeAsync(employee, employeeImport.Id);
 
                 EmployeesImported.Add(employee);

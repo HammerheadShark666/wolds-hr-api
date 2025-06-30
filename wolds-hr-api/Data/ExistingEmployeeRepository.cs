@@ -11,8 +11,10 @@ public class ExistingEmployeeRepository(AppDbContext context) : IExistingEmploye
     public ExistingEmployee Add(ExistingEmployee existingEmployee)
     {
         existingEmployee.Created = DateOnly.FromDateTime(DateTime.Now);
+
         _context.ExistingEmployees.Add(existingEmployee);
         _context.SaveChangesAsync();
+
         return existingEmployee;
     }
 }

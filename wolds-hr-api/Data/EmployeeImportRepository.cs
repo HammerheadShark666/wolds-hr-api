@@ -32,7 +32,7 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
 
     public async Task<List<Employee>> GetImportedEmployeesAsync(int id, int page, int pageSize)
     {
-        var result = await _context.Employees
+        return await _context.Employees
                             .Where(e => e.EmployeeImportId == id)
                             .Join(
                                 _context.Departments,
@@ -60,41 +60,11 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();
-
-        //var departments = await _context.Departments.ToListAsync();
-        //var employees = await _context.Employees.ToListAsync();
-
-        //var result = await (from e in employees
-        //                    join d in departments
-        //                    on e.DepartmentId equals d.Id into deptGroup
-        //                    from dept in deptGroup.DefaultIfEmpty()
-        //                    where e.EmployeeImportId.Equals(id)
-        //                    select new Employee()
-        //                    {
-        //                        Id = e.Id,
-        //                        Surname = e.Surname,
-        //                        FirstName = e.FirstName,
-        //                        DateOfBirth = e.DateOfBirth,
-        //                        HireDate = e.HireDate,
-        //                        Email = e.Email,
-        //                        PhoneNumber = e.PhoneNumber,
-        //                        Photo = e.Photo,
-        //                        Created = e.Created,
-        //                        DepartmentId = dept != null ? dept.Id : 0,
-        //                        Department = dept ?? null,
-        //                        EmployeeImportId = e.EmployeeImportId
-        //                    })
-        //             .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
-        //             .Skip((page - 1) * pageSize)
-        //             .Take(pageSize)
-        //             .ToListAsync();
-
-        return result;
     }
 
     public async Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(int id, int page, int pageSize)
     {
-        var result = await _context.ExistingEmployees
+        return await _context.ExistingEmployees
                             .Where(e => e.EmployeeImportId == id)
                             .OrderBy(e => e.Surname)
                             .ThenBy(e => e.FirstName)
@@ -112,30 +82,6 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
                             .ToListAsync();
-
-
-
-        //var existingEmployees = _context.ExistingEmployees.ToList();
-
-        //var result = (from e in existingEmployees
-        //              where e.EmployeeImportId.Equals(id)
-        //              select new ExistingEmployee()
-        //              {
-        //                  Id = e.Id,
-        //                  Surname = e.Surname,
-        //                  FirstName = e.FirstName,
-        //                  DateOfBirth = e.DateOfBirth,
-        //                  Email = e.Email,
-        //                  PhoneNumber = e.PhoneNumber,
-        //                  Created = e.Created,
-        //                  EmployeeImportId = e.EmployeeImportId
-        //              })
-        //             .OrderBy(a => a.Surname).ThenBy(a => a.FirstName)
-        //             .Skip((page - 1) * pageSize)
-        //             .Take(pageSize)
-        //             .ToList();
-
-        return result;
     }
 
     public async Task<int> CountImportedEmployeesAsync(int id)
