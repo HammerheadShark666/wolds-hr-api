@@ -68,8 +68,13 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return new EmployeeImportResponse() { Id = employeeImport.Id, Date = DateTime.Now };
     }
 
+
     private async Task<Employee> AddEmployeeAsync(Employee employee, int employeeImportId)
     {
+
+        //TODO check to see if department exists is not then throw error
+
+
         employee.EmployeeImportId = employeeImportId;
 
         await _employeeRepository.AddAsync(employee);

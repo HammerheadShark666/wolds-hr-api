@@ -32,6 +32,10 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
 
     public async Task<List<Employee>> GetImportedEmployeesAsync(int id, int page, int pageSize)
     {
+
+        var a = await _context.Employees
+                            .Where(e => e.EmployeeImportId == id).ToListAsync();
+
         return await _context.Employees
                             .Where(e => e.EmployeeImportId == id)
                             .Join(
