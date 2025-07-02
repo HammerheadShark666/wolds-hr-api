@@ -4,9 +4,10 @@ namespace wolds_hr_api.Service.Interfaces;
 
 public interface IEmployeeImportService
 {
-    Task<EmployeesImportedResponse> ImportAsync(IFormFile file);
-    EmployeePagedResponse GetImported(int id, int page, int pageSize);
-    bool MaximumNumberOfEmployeesReached(IFormFile file);
-    void Delete(int id);
-    List<EmployeeImportResponse> Get();
+    Task<EmployeeImportResponse> ImportAsync(IFormFile file);
+    Task<EmployeePagedResponse> GetImportedEmployeesAsync(int id, int page, int pageSize);
+    Task<ExistingEmployeePagedResponse> GetExistingEmployeesImportedAsync(int id, int page, int pageSize);
+    Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file);
+    Task DeleteAsync(int id);
+    Task<List<EmployeeImportResponse>> GetAsync();
 }

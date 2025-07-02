@@ -4,9 +4,11 @@ namespace wolds_hr_api.Data.Interfaces;
 
 public interface IEmployeeImportRepository
 {
-    List<EmployeeImport> Get();
-    EmployeeImport Add();
-    int CountImportedEmployees(int id);
-    List<Employee> GetImportedEmployees(int id, int page, int pageSize);
-    void Delete(int id);
+    Task<List<EmployeeImport>> GetAsync();
+    Task<EmployeeImport> AddAsync();
+    Task<int> CountImportedEmployeesAsync(int id);
+    Task<List<Employee>> GetImportedEmployeesAsync(int id, int page, int pageSize);
+    Task<int> CountImportedExistingEmployeesAsync(int id);
+    Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(int id, int page, int pageSize);
+    Task DeleteAsync(int id);
 }

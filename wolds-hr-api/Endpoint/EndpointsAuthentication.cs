@@ -59,7 +59,7 @@ public static class EndpointsAuthentication
                 SetAccessTokenCookie(http, tokens.Token);
                 SetRefreshTokenCookie(http, tokens.RefreshToken);
 
-                return Results.Ok();
+                return Results.Ok(new { message = "Refresh token created" });
             }
             catch (RefreshTokenNotFoundException)
             {

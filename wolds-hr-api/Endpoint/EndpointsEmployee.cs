@@ -14,9 +14,9 @@ public static class EndpointsEmployee
     {
         var employeeGroup = webApplication.MapGroup("employees").WithTags("employees");
 
-        employeeGroup.MapGet("/search", (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        employeeGroup.MapGet("/search", async (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
         {
-            var employees = employeeService.Search(keyword, departmentId, page, pageSize);
+            var employees = await employeeService.SearchAsync(keyword, departmentId, page, pageSize);
             return Results.Ok(employees);
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
@@ -29,9 +29,9 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapGet("/employee/{id}", (IEmployeeService employeeService, int id) =>
+        employeeGroup.MapGet("/employee/{id}", async (IEmployeeService employeeService, int id) =>
         {
-            var employee = employeeService.Get(id);
+            var employee = await employeeService.GetAsync(id);
             if (employee == null)
                 return Results.NotFound();
 
@@ -89,11 +89,11 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapDelete("/{id}", (IEmployeeService employeeService, int id) =>
+        employeeGroup.MapDelete("/{id}", async (IEmployeeService employeeService, int id) =>
         {
             try
             {
-                employeeService.Delete(id);
+                await employeeService.DeleteAsync(id);
                 return Results.Ok();
             }
             catch (EmployeeNotFoundException)
