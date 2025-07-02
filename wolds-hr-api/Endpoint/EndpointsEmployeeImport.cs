@@ -25,13 +25,13 @@ public static class EndpointsEmployeeImport
             if (file == null || file.Length == 0)
                 return Results.BadRequest(new { Message = "No file uploaded." });
 
-            if (employeeImportService.MaximumNumberOfEmployeesReached(file))
+            if (await employeeImportService.MaximumNumberOfEmployeesReachedAsync(file))
                 return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
 
             return Results.Ok(await employeeImportService.ImportAsync(file)); ;
         })
         .Accepts<IFormFile>("multipart/form-data")
-        .Produces<EmployeesImportedResponse>((int)HttpStatusCode.OK)
+        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
@@ -41,9 +41,9 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("/employees", (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/employees", async (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
-            var employees = employeeImportService.GetImported(id, page, pageSize);
+            var employees = await employeeImportService.GetImportedEmployeesAsync(id, page, pageSize);
             return Results.Ok(employees);
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
@@ -56,26 +56,26 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("", ([FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/existing-employees", async (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
-            var employeeImports = employeeImportService.Get();
-            return Results.Ok(employeeImports);
+            var existingEmployees = await employeeImportService.GetExistingEmployeesImportedAsync(id, page, pageSize);
+            return Results.Ok(existingEmployees);
         })
-        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
-        .WithName("GetEmployeeImports")
+        .Produces<ExistingEmployeePagedResponse>((int)HttpStatusCode.OK)
+        .WithName("GetImportedExistingEmployeesWithPaging")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
-            Summary = "Get employee import records",
-            Description = "Gets employee import records",
+            Summary = "Get paged imported existing employees",
+            Description = "Gets imported existing employees by paging",
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapDelete("/{id}", (IEmployeeImportService employeeImportService, int id) =>
+        employeeImportGroup.MapDelete("/{id}", async (IEmployeeImportService employeeImportService, int id) =>
         {
             try
             {
-                employeeImportService.Delete(id);
+                await employeeImportService.DeleteAsync(id);
                 return Results.Ok();
             }
             catch (EmployeeImportNotFoundException)

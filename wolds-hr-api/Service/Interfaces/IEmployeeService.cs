@@ -5,11 +5,11 @@ namespace wolds_hr_api.Service.Interfaces;
 
 public interface IEmployeeService
 {
-    EmployeePagedResponse Search(string keyword, int departmentId, int page, int pageSize);
-    Employee? Get(long id);
+    Task<EmployeePagedResponse> SearchAsync(string keyword, int departmentId, int page, int pageSize);
+    Task<Employee?> GetAsync(long id);
     Task<(bool isValid, Employee? Employee, List<string>? Errors)> AddAsync(Employee employee);
     Task<(bool isValid, Employee? Employee, List<string>? Errors)> UpdateAsync(Employee updatedEmployee);
-    void Delete(long id);
+    Task DeleteAsync(long id);
     Task<string> UpdateEmployeePhotoAsync(long id, IFormFile file);
-    bool Exists(long id);
+    Task<bool> ExistsAsync(long id);
 }

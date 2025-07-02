@@ -4,13 +4,14 @@ namespace wolds_hr_api.Data.Interfaces;
 
 public interface IEmployeeRepository
 {
-    List<Employee> GetEmployees(string keyword, int departmentId, int page, int pageSize);
-    int CountEmployees(string keyword, int departmentId);
-    int Count();
-    Employee? Get(long id);
-    Employee Add(Employee employee);
-    Employee Update(Employee employee);
-    void Delete(long id);
-    bool Exists(long id);
-    bool Exists(string surname, string firstName, DateOnly? dateOfBirth);
+    Task<List<Employee>> GetEmployeesAsync(string keyword, int departmentId, int page, int pageSize);
+    Task<int> CountEmployeesAsync(string keyword);
+    Task<int> CountEmployeesAsync(string keyword, int departmentId);
+    Task<int> CountAsync();
+    Task<Employee?> GetAsync(long id);
+    Task<Employee> AddAsync(Employee employee);
+    Task<Employee> UpdateAsync(Employee employee);
+    Task DeleteAsync(long id);
+    Task<bool> ExistsAsync(long id);
+    Task<bool> ExistsAsync(string surname, string firstName, DateOnly? dateOfBirth);
 }

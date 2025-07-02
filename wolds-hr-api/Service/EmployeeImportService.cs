@@ -7,20 +7,21 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeImportService(IDepartmentRepository departmentRepository, IEmployeeImportRepository employeeImportRepository, IEmployeeRepository employeeRepository) : IEmployeeImportService
+public class EmployeeImportService(IDepartmentRepository departmentRepository, IEmployeeImportRepository employeeImportRepository, IEmployeeRepository employeeRepository, IExistingEmployeeRepository existingEmployeeRepository) : IEmployeeImportService
 {
     private readonly IEmployeeImportRepository _employeeImportRepository = employeeImportRepository;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IExistingEmployeeRepository _existingEmployeeRepository = existingEmployeeRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
 
-    public async Task<EmployeesImportedResponse> ImportAsync(IFormFile file)
+    public async Task<EmployeeImportResponse> ImportAsync(IFormFile file)
     {
-        List<Employee> ExistingEmployees = [];
         List<Employee> EmployeesImported = [];
         List<string> EmployeesErrorImporting = [];
         EmployeeImport employeeImport = new()
         {
-            Employees = []
+            Employees = [],
+            ExistingEmployees = []
         };
 
         bool createEmployeeImportRecord = true;
@@ -37,30 +38,22 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             {
                 if (createEmployeeImportRecord)
                 {
-                    employeeImport = _employeeImportRepository.Add();
+                    employeeImport = await _employeeImportRepository.AddAsync();
                     createEmployeeImportRecord = false;
                 }
+
+                if (employeeImport.Id == 0)
+                    throw new EmployeeImportNotCreated("Employee import record was not created.");
 
                 var employee = ParseEmployeeFromCsv(employeeLine);
 
                 if (employee.Surname == "Surname")
                     continue;
 
-                var (employeeExists, existingEmployees) = EmployeeExists(employee, ExistingEmployees);
-
-                ExistingEmployees = existingEmployees;
-                if (employeeExists)
+                if (await EmployeeExistsAsync(employee, employeeImport.Id))
                     continue;
 
-                if (employeeImport.Id == 0)
-                    throw new EmployeeImportNotCreated("Employee import record was not created.");
-
-                employee.EmployeeImportId = employeeImport.Id;
-
-                _employeeRepository.Add(employee);
-
-                if (employee.DepartmentId != null)
-                    employee.Department = _departmentRepository.Get(employee.DepartmentId);
+                employee = await AddEmployeeAsync(employee, employeeImport.Id);
 
                 EmployeesImported.Add(employee);
             }
@@ -72,26 +65,56 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             }
         }
 
-        return new EmployeesImportedResponse(ExistingEmployees, employeeImport.Id, EmployeesErrorImporting);
+        return new EmployeeImportResponse() { Id = employeeImport.Id, Date = DateTime.Now };
     }
 
-    public EmployeePagedResponse GetImported(int id, int page, int pageSize)
+
+    private async Task<Employee> AddEmployeeAsync(Employee employee, int employeeImportId)
+    {
+
+        //TODO check to see if department exists is not then throw error
+
+
+        employee.EmployeeImportId = employeeImportId;
+
+        await _employeeRepository.AddAsync(employee);
+
+        if (employee.DepartmentId != null)
+            employee.Department = _departmentRepository.Get(employee.DepartmentId);
+
+        return employee;
+    }
+
+    public async Task<EmployeePagedResponse> GetImportedEmployeesAsync(int id, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = _employeeImportRepository.CountImportedEmployees(id),
-            Employees = _employeeImportRepository.GetImportedEmployees(id, page, pageSize)
+            TotalEmployees = await _employeeImportRepository.CountImportedEmployeesAsync(id),
+            Employees = await _employeeImportRepository.GetImportedEmployeesAsync(id, page, pageSize)
         };
 
         return employeePagedResponse;
     }
 
-    public bool MaximumNumberOfEmployeesReached(IFormFile file)
+    public async Task<ExistingEmployeePagedResponse> GetExistingEmployeesImportedAsync(int id, int page, int pageSize)
+    {
+        var existingEmployeePagedResponse = new ExistingEmployeePagedResponse
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalEmployees = await _employeeImportRepository.CountImportedExistingEmployeesAsync(id),
+            ExistingEmployees = await _employeeImportRepository.GetImportedExistingEmployeesAsync(id, page, pageSize)
+        };
+
+        return existingEmployeePagedResponse;
+    }
+
+    public async Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file)
     {
         var numberOfEmployeesToImport = NumberOfEmployeesToImport(file);
-        var numberOfEmloyees = _employeeRepository.Count();
+        var numberOfEmloyees = await _employeeRepository.CountAsync();
 
         if (numberOfEmployeesToImport + numberOfEmloyees > Constants.MaxNumberOfEmployees)
         {
@@ -141,26 +164,38 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         };
     }
 
-    private (bool employeeExists, List<Employee> existingEmployees) EmployeeExists(Employee employee, List<Employee> existingEmployees)
+    private async Task<bool> EmployeeExistsAsync(Employee employee, int employeeImportId)
     {
-        var employeeExists = _employeeRepository.Exists(employee.Surname, employee.FirstName, employee.DateOfBirth);
+        var employeeExists = await _employeeRepository.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
         {
-            existingEmployees.Add(employee);
+            var existingEmployee = new ExistingEmployee()
+            {
+                Surname = employee.Surname,
+                FirstName = employee.FirstName,
+                DateOfBirth = employee.DateOfBirth,
+                Email = employee.Email,
+                PhoneNumber = employee.PhoneNumber,
+                EmployeeImportId = employeeImportId
+            };
+
+            _existingEmployeeRepository.Add(existingEmployee);
+
+            return true;
         }
 
-        return (employeeExists, existingEmployees);
+        return false;
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        _employeeImportRepository.Delete(id);
+        await _employeeImportRepository.DeleteAsync(id);
         return;
     }
 
-    public List<EmployeeImportResponse> Get()
+    public async Task<List<EmployeeImportResponse>> GetAsync()
     {
-        var employeeImports = _employeeImportRepository.Get();
+        var employeeImports = await _employeeImportRepository.GetAsync();
 
         return employeeImports.Select(ei => new EmployeeImportResponse
         {
