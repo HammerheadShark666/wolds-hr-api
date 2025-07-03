@@ -46,7 +46,7 @@ public static class EndpointsEmployeeImport
             var employees = await employeeImportService.GetImportedEmployeesAsync(id, page, pageSize);
             return Results.Ok(employees);
         })
-        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
+        .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeesWithPaging")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
