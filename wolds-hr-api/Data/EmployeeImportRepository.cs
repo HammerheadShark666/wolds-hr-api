@@ -32,38 +32,30 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
 
     public async Task<List<Employee>> GetImportedEmployeesAsync(int id, int page, int pageSize)
     {
-
-        var a = await _context.Employees
-                            .Where(e => e.EmployeeImportId == id).ToListAsync();
-
-        return await _context.Employees
-                            .Where(e => e.EmployeeImportId == id)
-                            .Join(
-                                _context.Departments,
-                                e => e.DepartmentId,
-                                d => d.Id,
-                                (e, d) => new { e, d }
-                            )
-                            .Select(x => new Employee
-                            {
-                                Id = x.e.Id,
-                                Surname = x.e.Surname,
-                                FirstName = x.e.FirstName,
-                                DateOfBirth = x.e.DateOfBirth,
-                                HireDate = x.e.HireDate,
-                                Email = x.e.Email,
-                                PhoneNumber = x.e.PhoneNumber,
-                                Photo = x.e.Photo,
-                                Created = x.e.Created,
-                                DepartmentId = x.d != null ? x.d.Id : 0,
-                                Department = x.d,
-                                EmployeeImportId = x.e.EmployeeImportId
-                            })
-                            .OrderBy(e => e.Surname)
-                            .ThenBy(e => e.FirstName)
-                            .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
-                            .ToListAsync();
+        return await (from e in _context.Employees
+                      where e.EmployeeImportId == id
+                      join d in _context.Departments on e.DepartmentId equals d.Id into deptGroup
+                      from dept in deptGroup.DefaultIfEmpty() // LEFT JOIN
+                      orderby e.Surname, e.FirstName
+                      select new Employee
+                      {
+                          Id = e.Id,
+                          Surname = e.Surname,
+                          FirstName = e.FirstName,
+                          DateOfBirth = e.DateOfBirth,
+                          HireDate = e.HireDate,
+                          Email = e.Email,
+                          PhoneNumber = e.PhoneNumber,
+                          Photo = e.Photo,
+                          Created = e.Created,
+                          DepartmentId = dept != null ? dept.Id : 0,
+                          Department = dept,
+                          EmployeeImportId = e.EmployeeImportId
+                      }
+                )
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
     }
 
     public async Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(int id, int page, int pageSize)
