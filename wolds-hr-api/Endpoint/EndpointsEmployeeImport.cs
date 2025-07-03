@@ -46,7 +46,7 @@ public static class EndpointsEmployeeImport
             var employees = await employeeImportService.GetImportedEmployeesAsync(id, page, pageSize);
             return Results.Ok(employees);
         })
-        .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
+        .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeesWithPaging")
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
@@ -70,6 +70,21 @@ public static class EndpointsEmployeeImport
             Description = "Gets imported existing employees by paging",
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
+
+        employeeImportGroup.MapGet("", async ([FromServices] IEmployeeImportService employeeImportService) =>
+        {
+            var employeeImports = await employeeImportService.GetAsync();
+            return Results.Ok(employeeImports);
+        })
+       .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
+       .WithName("GetEmployeeImports")
+       .RequireAuthorization()
+       .WithOpenApi(x => new OpenApiOperation(x)
+       {
+           Summary = "Get employee import records",
+           Description = "Gets employee import records",
+           Tags = [new() { Name = "Wolds HR - Employee Import" }]
+       });
 
         employeeImportGroup.MapDelete("/{id}", async (IEmployeeImportService employeeImportService, int id) =>
         {
