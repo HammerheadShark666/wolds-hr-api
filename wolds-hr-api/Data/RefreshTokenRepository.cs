@@ -42,12 +42,12 @@ public class RefreshTokenRepository(AppDbContext context) : IRefreshTokenReposit
                              .SingleOrDefaultAsync();
     }
 
-    public async Task<List<RefreshToken>> ByIdAsync(int accountId)
+    public async Task<List<RefreshToken>> ByIdAsync(Guid accountId)
     {
         return await _context.RefreshTokens.Where(a => a.Account.Id.Equals(accountId)).ToListAsync();
     }
 
-    public void RemoveExpired(int expireDays, int accountId)
+    public void RemoveExpired(int expireDays, Guid accountId)
     {
         var refreshTokens = _context.RefreshTokens.Where(a => a.Account.Id.Equals(accountId)
                                                             && DateTime.Now >= a.Expires

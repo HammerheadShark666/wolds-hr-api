@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using wolds_hr_api.Data.Context.Configuration;
 using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context;
@@ -16,25 +17,18 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Employee>()
-            .HasOne(e => e.EmployeeImport)
-            .WithMany(i => i.Employees)
-            .HasForeignKey(e => e.EmployeeImportId)
-            .OnDelete(DeleteBehavior.Cascade);
+        modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeImportConfiguration());
+        modelBuilder.ApplyConfiguration(new ExistingEmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new AccountConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
 
-        modelBuilder.Entity<ExistingEmployee>()
-            .HasOne(e => e.EmployeeImport)
-            .WithMany(i => i.ExistingEmployees)
-            .HasForeignKey(e => e.EmployeeImportId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Employee>()
-            .HasOne<Department>(s => s.Department);
-
-        var employees = DefaultData.Employees.GetEmployeeDefaultData().Concat(DefaultData.Employees.GetRandomEmployeeDefaultData());
+        var departments = DefaultData.Departments.GetDepartmentDefaultData();
+        var employees = DefaultData.Employees.GetEmployeeDefaultData(departments).Concat(DefaultData.Employees.GetRandomEmployeeDefaultData(departments));
 
         modelBuilder.Entity<Account>().HasData(DefaultData.Accounts.GetAccountDefaultData());
-        modelBuilder.Entity<Department>().HasData(DefaultData.Departments.GetDepartmentDefaultData());
+        modelBuilder.Entity<Department>().HasData(departments);
         modelBuilder.Entity<Employee>().HasData(employees);
     }
 }

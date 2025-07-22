@@ -4,7 +4,7 @@ namespace wolds_hr_api.Service.Interfaces;
 
 public interface IRefreshTokenService
 {
-    void RemoveExpiredRefreshTokens(int accountId);
+    void RemoveExpiredRefreshTokens(Guid accountId);
     Task AddRefreshTokenAsync(RefreshToken refreshToken);
     Task DeleteRefreshTokenAsync(string refreshTokenString);
     RefreshToken GenerateRefreshToken(string ipAddress, Account account);
