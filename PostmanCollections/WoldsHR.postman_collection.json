@@ -341,7 +341,8 @@
 						"exec": [
 							"let departments = JSON.parse(pm.globals.get(\"departments\"));\r",
 							"let selected = departments[3]; \r",
-							"pm.globals.set(\"selectedDepartmentId\", selected.id);"
+							"pm.globals.set(\"selectedDepartmentId\", selected.id);\r",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -406,6 +407,16 @@
 							"    pm.expect(jsonData.email).to.eql(\"rmason@hotmail.com\");\r",
 							"    pm.expect(jsonData.phoneNumber).to.eql(\"453427567567\");\r",
 							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"console.log(\"employeeId in pre-request:\", pm.globals.get(\"employeeId\"));"
 						],
 						"type": "text/javascript",
 						"packages": {}
