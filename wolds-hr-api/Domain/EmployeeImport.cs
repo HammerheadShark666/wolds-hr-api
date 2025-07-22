@@ -1,17 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace wolds_hr_api.Domain;
+﻿namespace wolds_hr_api.Domain;
 
 public class EmployeeImport
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public DateTime Date { get; set; }
 
-    public required ICollection<Employee> Employees { get; set; }
+    public required List<Employee> Employees { get; set; } = [];
 
-    public required ICollection<ExistingEmployee> ExistingEmployees { get; set; }
+    public required List<ExistingEmployee> ExistingEmployees { get; set; } = [];
 }
