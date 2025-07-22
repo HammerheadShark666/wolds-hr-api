@@ -10,7 +10,7 @@ public class RefreshTokenService(IRefreshTokenRepository refreshTokenRepository)
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
 
-    public void RemoveExpiredRefreshTokens(int accountId)
+    public void RemoveExpiredRefreshTokens(Guid accountId)
     {
         _refreshTokenRepository.RemoveExpired(EnvironmentVariablesHelper.JWTSettingsRefreshTokenTtl, accountId);
     }

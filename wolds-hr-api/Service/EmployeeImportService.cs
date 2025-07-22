@@ -42,7 +42,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
                     createEmployeeImportRecord = false;
                 }
 
-                if (employeeImport.Id == 0)
+                if (employeeImport.Id == Guid.Empty)
                     throw new EmployeeImportNotCreated("Employee import record was not created.");
 
                 var employee = ParseEmployeeFromCsv(employeeLine);
@@ -69,7 +69,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
     }
 
 
-    private async Task<Employee> AddEmployeeAsync(Employee employee, int employeeImportId)
+    private async Task<Employee> AddEmployeeAsync(Employee employee, Guid employeeImportId)
     {
 
         //TODO check to see if department exists is not then throw error
@@ -85,7 +85,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return employee;
     }
 
-    public async Task<EmployeePagedResponse> GetImportedEmployeesAsync(int id, int page, int pageSize)
+    public async Task<EmployeePagedResponse> GetImportedEmployeesAsync(Guid id, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
         {
@@ -98,7 +98,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return employeePagedResponse;
     }
 
-    public async Task<ExistingEmployeePagedResponse> GetExistingEmployeesImportedAsync(int id, int page, int pageSize)
+    public async Task<ExistingEmployeePagedResponse> GetExistingEmployeesImportedAsync(Guid id, int page, int pageSize)
     {
         var existingEmployeePagedResponse = new ExistingEmployeePagedResponse
         {
@@ -157,14 +157,14 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             FirstName = values[2],
             DateOfBirth = DateOnly.TryParse(values[3], out var dob) ? dob : null,
             HireDate = DateOnly.TryParse(values[4], out var hireDate) ? hireDate : null,
-            DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
+            DepartmentId = Guid.TryParse(values[5], out var deptId) ? deptId : null,
             Email = values[6],
             PhoneNumber = values[7],
             Created = DateOnly.FromDateTime(DateTime.Now)
         };
     }
 
-    private async Task<bool> EmployeeExistsAsync(Employee employee, int employeeImportId)
+    private async Task<bool> EmployeeExistsAsync(Employee employee, Guid employeeImportId)
     {
         var employeeExists = await _employeeRepository.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
@@ -187,7 +187,7 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         return false;
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         await _employeeImportRepository.DeleteAsync(id);
         return;

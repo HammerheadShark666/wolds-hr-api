@@ -13,13 +13,13 @@ public class DepartmentRepository(AppDbContext context) : IDepartmentRepository
         return [.. _context.Departments.OrderBy(e => e.Name)];
     }
 
-    public Department? Get(int? id)
+    public Department? Get(Guid? id)
     {
-        return (id == null) ? null : _context.Departments.FirstOrDefault(e => e.Id == id);
+        return (id == null) ? null : _context.Departments.FirstOrDefault(e => e.Id.Equals(id));
     }
 
-    public bool Exists(int? id)
+    public bool Exists(Guid? id)
     {
-        return _context.Departments.Any(e => e.Id == id);
+        return _context.Departments.Any(e => e.Equals(id));
     }
 }
