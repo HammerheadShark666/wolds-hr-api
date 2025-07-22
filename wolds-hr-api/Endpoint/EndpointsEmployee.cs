@@ -14,7 +14,7 @@ public static class EndpointsEmployee
     {
         var employeeGroup = webApplication.MapGroup("employees").WithTags("employees");
 
-        employeeGroup.MapGet("/search", async (string keyword, int departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        employeeGroup.MapGet("/search", async (string keyword, Guid? departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
         {
             var employees = await employeeService.SearchAsync(keyword, departmentId, page, pageSize);
             return Results.Ok(employees);
@@ -29,7 +29,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapGet("/employee/{id}", async (IEmployeeService employeeService, int id) =>
+        employeeGroup.MapGet("/employee/{id}", async (IEmployeeService employeeService, Guid id) =>
         {
             var employee = await employeeService.GetAsync(id);
             if (employee == null)
@@ -89,7 +89,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapDelete("/{id}", async (IEmployeeService employeeService, int id) =>
+        employeeGroup.MapDelete("/{id}", async (IEmployeeService employeeService, Guid id) =>
         {
             try
             {
@@ -112,7 +112,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapPost("/upload-photo/{id}", async (int id, HttpRequest request, IEmployeeService employeeService) =>
+        employeeGroup.MapPost("/upload-photo/{id}", async (Guid id, HttpRequest request, IEmployeeService employeeService) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
