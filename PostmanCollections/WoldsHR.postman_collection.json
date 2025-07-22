@@ -66,10 +66,10 @@
 							"});  \r",
 							"\r",
 							"let jsonData = pm.response.json();\r",
-							"pm.globals.set(\"departments\", JSON.stringify(jsonData)); \r",
+							"pm.environment.set(\"departments\", JSON.stringify(jsonData)); \r",
 							"\r",
 							"let selected = jsonData[3];\r",
-							"pm.globals.set(\"selectedDepartmentId\", selected.id);"
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -309,17 +309,15 @@
 							"\r",
 							"let jsonData = pm.response.json();   \r",
 							"\r",
-							"pm.globals.set(\"employeeId\", jsonData.id);  \r",
+							"pm.environment.set(\"employeeId\", jsonData.id);   \r",
 							"\r",
-							"console.log(jsonData.id)\r",
-							"\r",
-							"let departments = JSON.parse(pm.globals.get(\"departments\")); \r",
-							"let selectedDepartmentId = pm.globals.get(\"selectedDepartmentId\"); \r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\")); \r",
+							"let selectedDepartmentId = pm.environment.get(\"selectedDepartmentId\"); \r",
 							"let selectedDepartment = departments.find(d => d.id === selectedDepartmentId);\r",
 							" \r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
-							"    pm.expect(jsonData.id).to.eql(pm.globals.get('employeeId'));\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"Robert\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Mason\");\r",
 							"    pm.expect(jsonData.departmentId).to.eql(selectedDepartmentId);\r",
@@ -339,9 +337,9 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"let departments = JSON.parse(pm.globals.get(\"departments\"));\r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\"));\r",
 							"let selected = departments[3]; \r",
-							"pm.globals.set(\"selectedDepartmentId\", selected.id);\r",
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);\r",
 							""
 						],
 						"type": "text/javascript",
@@ -394,14 +392,14 @@
 							"\r",
 							"let jsonData = pm.response.json();   \r",
 							"\r",
-							"pm.globals.set(\"employeeId\", jsonData.id); \r",
+							"pm.environment.set(\"employeeId\", jsonData.id); \r",
 							"\r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
-							"    pm.expect(jsonData.id).to.eql(pm.globals.get('employeeId'));\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"Robert\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Mason\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(pm.globals.get(\"selectedDepartmentId\"));\r",
+							"    pm.expect(jsonData.departmentId).to.eql(pm.environment.get(\"selectedDepartmentId\"));\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2000-12-01\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2022-02-11\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"rmason@hotmail.com\");\r",
@@ -416,7 +414,7 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"console.log(\"employeeId in pre-request:\", pm.globals.get(\"employeeId\"));"
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -460,13 +458,13 @@
 							"\r",
 							"let jsonData = pm.response.json(); \r",
 							"\r",
-							"let departments = JSON.parse(pm.globals.get(\"departments\")); \r",
-							"let selectedDepartmentId = pm.globals.get(\"selectedDepartmentId\"); \r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\")); \r",
+							"let selectedDepartmentId = pm.environment.get(\"selectedDepartmentId\"); \r",
 							"let selectedDepartment = departments.find(d => d.id === selectedDepartmentId);\r",
 							"\r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
-							"    pm.expect(jsonData.id).to.eql(pm.globals.get('employeeId'));\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"James\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Norse\");\r",
 							"    pm.expect(jsonData.departmentId).to.eql(selectedDepartmentId);\r",
@@ -485,9 +483,9 @@
 					"listen": "prerequest",
 					"script": {
 						"exec": [
-							"let departments = JSON.parse(pm.globals.get(\"departments\"));\r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\"));\r",
 							"let selected = departments[4]; \r",
-							"pm.globals.set(\"selectedDepartmentId\", selected.id);"
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -541,10 +539,10 @@
 							"\r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
-							"    pm.expect(jsonData.id).to.eql(pm.globals.get('employeeId'));\r",
+							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"James\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Norse\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(pm.globals.get(\"selectedDepartmentId\"));;\r",
+							"    pm.expect(jsonData.departmentId).to.eql(pm.environment.get(\"selectedDepartmentId\"));;\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2001-11-21\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2023-02-10\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"jnorse@hotmail.com\");\r",
@@ -875,8 +873,8 @@
 							" \r",
 							"let jsonData = pm.response.json();   \r",
 							"\r",
-							"pm.globals.set(\"token\", jsonData.token);\r",
-							"pm.globals.set(\"refreshToken\", jsonData.refreshToken);\r",
+							"pm.environment.set(\"token\", jsonData.token);\r",
+							"pm.environment.set(\"refreshToken\", jsonData.refreshToken);\r",
 							""
 						],
 						"type": "text/javascript",
