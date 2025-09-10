@@ -20,7 +20,7 @@ public class EmployeeService(IValidator<Employee> validator,
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly IValidator<Employee> _validator = validator;
 
-    public async Task<EmployeePagedResponse> SearchAsync(string keyword, int departmentId, int page, int pageSize)
+    public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
         {
@@ -33,7 +33,7 @@ public class EmployeeService(IValidator<Employee> validator,
         return employeePagedResponse;
     }
 
-    public async Task<Employee?> GetAsync(long id)
+    public async Task<Employee?> GetAsync(Guid id)
     {
         return await _employeeRepository.GetAsync(id);
     }
@@ -48,8 +48,10 @@ public class EmployeeService(IValidator<Employee> validator,
         if (!result.IsValid)
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
-        await _employeeRepository.AddAsync(employee);
-        return (true, employee, null);
+        var newEmployee = await _employeeRepository.AddAsync(employee) ?? throw new EmployeeNotFoundException("Employee not found after attempt to create");
+        newEmployee = await _employeeRepository.GetAsync(newEmployee.Id);
+
+        return (true, newEmployee, null);
     }
 
     public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> UpdateAsync(Employee employee)
@@ -67,13 +69,13 @@ public class EmployeeService(IValidator<Employee> validator,
         return (true, await GetAsync(employee.Id), null);
     }
 
-    public async Task DeleteAsync(long id)
+    public async Task DeleteAsync(Guid id)
     {
         await _employeeRepository.DeleteAsync(id);
         return;
     }
 
-    public async Task<string> UpdateEmployeePhotoAsync(long id, IFormFile file)
+    public async Task<string> UpdateEmployeePhotoAsync(Guid id, IFormFile file)
     {
         var employee = await _employeeRepository.GetAsync(id) ?? throw new EmployeeNotFoundException("Employee not found.");
         string newFileName = FileHelper.getGuidFileName(Constants.FileExtensionJpg);
@@ -90,7 +92,7 @@ public class EmployeeService(IValidator<Employee> validator,
         return newFileName;
     }
 
-    public async Task<bool> ExistsAsync(long id)
+    public async Task<bool> ExistsAsync(Guid id)
     {
         return await _employeeRepository.ExistsAsync(id);
     }
