@@ -31,7 +31,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
                         DepartmentId = department != null ? department.Id : null,
                         Department = department
                     };
-        b
+
         if (departmentId.HasValue && departmentId != Guid.Empty)
         {
             query = query.Where(e => e.DepartmentId == departmentId);
