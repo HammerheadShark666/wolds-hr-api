@@ -41,7 +41,7 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("/employees", async (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/employees", async (Guid id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
             var employees = await employeeImportService.GetImportedEmployeesAsync(id, page, pageSize);
             return Results.Ok(employees);
@@ -56,7 +56,7 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("/existing-employees", async (int id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/existing-employees", async (Guid id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
         {
             var existingEmployees = await employeeImportService.GetExistingEmployeesImportedAsync(id, page, pageSize);
             return Results.Ok(existingEmployees);
@@ -86,7 +86,7 @@ public static class EndpointsEmployeeImport
            Tags = [new() { Name = "Wolds HR - Employee Import" }]
        });
 
-        employeeImportGroup.MapDelete("/{id}", async (IEmployeeImportService employeeImportService, int id) =>
+        employeeImportGroup.MapDelete("/{id}", async (IEmployeeImportService employeeImportService, Guid id) =>
         {
             try
             {

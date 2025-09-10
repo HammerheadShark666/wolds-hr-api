@@ -15,10 +15,10 @@ public class AuthenticateValidator : AbstractValidator<LoginRequest>
 
         RuleSet("LoginValidation", () =>
         {
-            RuleFor(login => login.Email)
-                .NotEmpty().WithMessage("Email is required.")
-                .Length(8, 150).WithMessage("Email length between 8 and 150.")
-                .EmailAddress().WithMessage("Invalid Email.");
+            RuleFor(login => login.Username)
+                .NotEmpty().WithMessage("Username is required.")
+                .Length(8, 150).WithMessage("Username length between 8 and 150.")
+                .EmailAddress().WithMessage("Invalid Username.");
 
             RuleFor(login => login.Password)
                 .NotEmpty().WithMessage("Password is required.")
@@ -32,7 +32,7 @@ public class AuthenticateValidator : AbstractValidator<LoginRequest>
 
     protected bool ValidLoginDetails(LoginRequest loginRequest)
     {
-        var account = _accountRepository.Get(loginRequest.Email);
+        var account = _accountRepository.Get(loginRequest.Username);
         if (account == null || !account.IsAuthenticated || !BC.Verify(loginRequest.Password, account.PasswordHash))
         {
             return false;

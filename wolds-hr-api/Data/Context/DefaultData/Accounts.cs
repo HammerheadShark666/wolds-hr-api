@@ -9,7 +9,7 @@ public class Accounts
         return
         [
             new() {
-                Id = 1,
+                Id = Guid.NewGuid(),
                 FirstName = "test",
                 LastName = "test",
                 Email = "Test100@hotmail.com",

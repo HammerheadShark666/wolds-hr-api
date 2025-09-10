@@ -3,7 +3,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context;
 
-public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
+public class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Department> Departments { get; set; }
@@ -30,11 +30,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(op
 
         modelBuilder.Entity<Employee>()
             .HasOne<Department>(s => s.Department);
-
-        var employees = DefaultData.Employees.GetEmployeeDefaultData().Concat(DefaultData.Employees.GetRandomEmployeeDefaultData());
-
-        modelBuilder.Entity<Account>().HasData(DefaultData.Accounts.GetAccountDefaultData());
-        modelBuilder.Entity<Department>().HasData(DefaultData.Departments.GetDepartmentDefaultData());
-        modelBuilder.Entity<Employee>().HasData(employees);
     }
 }
