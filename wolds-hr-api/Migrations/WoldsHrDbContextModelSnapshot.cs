@@ -26,42 +26,46 @@ namespace wolds_hr_api.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("AcceptTerms")
-                        .HasColumnType("bit");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTime?>("PasswordReset")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ResetToken")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTime?>("ResetTokenExpires")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Role")
+                        .HasMaxLength(50)
                         .HasColumnType("int");
+
+                    b.Property<string>("Surname")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -72,68 +76,77 @@ namespace wolds_hr_api.Migrations
 
                     b.Property<string>("VerificationToken")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<DateTime?>("Verified")
+                        .HasMaxLength(150)
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
-                    b.ToTable("WOLDS_HR_Account");
+                    b.ToTable("WOLDS_HR_Account", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.Department", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("WOLDS_HR_Department");
+                    b.ToTable("WOLDS_HR_Department", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateOnly>("Created")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly?>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<Guid?>("DepartmentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.Property<Guid?>("EmployeeImportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
-                    b.Property<DateOnly?>("HireDate")
+                    b.Property<DateTime?>("HireDate")
                         .HasColumnType("date");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
@@ -141,77 +154,84 @@ namespace wolds_hr_api.Migrations
 
                     b.HasIndex("EmployeeImportId");
 
-                    b.ToTable("WOLDS_HR_Employee");
+                    b.ToTable("WOLDS_HR_Employee", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.EmployeeImport", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.HasKey("Id");
 
-                    b.ToTable("WOLDS_HR_EmployeeImport");
+                    b.ToTable("WOLDS_HR_EmployeeImport", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.ExistingEmployee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<DateOnly>("Created")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly?>("DateOfBirth")
+                    b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("date");
 
                     b.Property<string>("Email")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
-                    b.Property<Guid>("EmployeeImportId")
+                    b.Property<Guid?>("EmployeeImportId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("EmployeeImportId");
 
-                    b.ToTable("WOLDS_HR_ExistingEmployee");
+                    b.ToTable("WOLDS_HR_ExistingEmployee", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<Guid>("AccountId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("CreatedByIp")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Expires")
-                        .HasColumnType("datetime2");
+                        .HasColumnType("datetime");
 
                     b.Property<string>("ReplacedByToken")
                         .IsRequired()
@@ -226,25 +246,27 @@ namespace wolds_hr_api.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("WOLDS_HR_RefreshToken");
+                    b.ToTable("WOLDS_HR_RefreshToken", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.Employee", b =>
                 {
                     b.HasOne("wolds_hr_api.Domain.Department", "Department")
                         .WithMany()
-                        .HasForeignKey("DepartmentId");
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("wolds_hr_api.Domain.EmployeeImport", "EmployeeImport")
                         .WithMany("Employees")
                         .HasForeignKey("EmployeeImportId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Department");
 
@@ -256,8 +278,7 @@ namespace wolds_hr_api.Migrations
                     b.HasOne("wolds_hr_api.Domain.EmployeeImport", "EmployeeImport")
                         .WithMany("ExistingEmployees")
                         .HasForeignKey("EmployeeImportId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("EmployeeImport");
                 });
@@ -265,12 +286,17 @@ namespace wolds_hr_api.Migrations
             modelBuilder.Entity("wolds_hr_api.Domain.RefreshToken", b =>
                 {
                     b.HasOne("wolds_hr_api.Domain.Account", "Account")
-                        .WithMany()
+                        .WithMany("RefreshTokens")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("wolds_hr_api.Domain.Account", b =>
+                {
+                    b.Navigation("RefreshTokens");
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.EmployeeImport", b =>

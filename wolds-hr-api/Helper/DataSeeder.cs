@@ -24,16 +24,15 @@ public class DataSeeder
         {
             Id = Guid.NewGuid(),
             FirstName = "test",
-            LastName = "test",
+            Surname = "test",
             Email = "Test100@hotmail.com",
             PasswordHash = "$2a$11$H.p94nv0W1/wdlYd4L3/S.q6SUGSh/GKQ88PYGIMW/L1zZh9O2k4e",
-            AcceptTerms = false,
             Role = 0,
             VerificationToken = "",
-            Verified = new DateTime(),
+            Verified = DateTime.UtcNow,
             ResetToken = "U6hLv0HSty17HSw8YR33MwQTXpWEDIO7ylVZke0TUHW7EtGNltlzNQ44",
-            ResetTokenExpires = new DateTime(),
-            Created = new DateTime()
+            ResetTokenExpires = DateTime.UtcNow,
+            Created = DateTime.UtcNow
         };
 
         context.Accounts.Add(account);

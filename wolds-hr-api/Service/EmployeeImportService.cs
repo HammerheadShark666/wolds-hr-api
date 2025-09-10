@@ -157,7 +157,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             FirstName = values[2],
             DateOfBirth = DateOnly.TryParse(values[3], out var dob) ? dob : null,
             HireDate = DateOnly.TryParse(values[4], out var hireDate) ? hireDate : null,
-            //DepartmentId = int.TryParse(values[5], out var deptId) ? deptId : null,
             DepartmentId = Guid.TryParse(values[5], out var deptId) ? deptId : null,
             Email = values[6],
             PhoneNumber = values[7],

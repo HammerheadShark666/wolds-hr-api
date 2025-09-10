@@ -1,14 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace wolds_hr_api.Domain;
 
-[Table("WOLDS_HR_RefreshToken")]
 public class RefreshToken
 {
-    [Key]
     public Guid Id { get; set; }
-    public Account Account { get; set; }
+    public Guid AccountId { get; set; }
+    public Account Account { get; set; } = null!;
     public string Token { get; set; } = string.Empty;
     public DateTime Expires { get; set; }
     public bool IsExpired => DateTime.Now >= Expires;

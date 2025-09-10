@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wolds_hr_api.Domain;
 
-[Table("WOLDS_HR_Employee")]
 public class Employee()
 {
     [Key]

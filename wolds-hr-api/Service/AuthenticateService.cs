@@ -40,7 +40,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
         _refreshTokenService.RemoveExpiredRefreshTokens(account.Id);
         await _refreshTokenService.AddRefreshTokenAsync(refreshToken);
 
-        return (true, new LoginResponse(jwtToken, refreshToken.Token, new Profile(account.FirstName, account.LastName, account.Email)), []);
+        return (true, new LoginResponse(jwtToken, refreshToken.Token, new Profile(account.FirstName, account.Surname, account.Email)), []);
     }
 
     public async Task<JwtRefreshToken> RefreshTokenAsync(string token, string ipAddress)
@@ -54,7 +54,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
         var jwtToken = _jWTHelper.GenerateJWTToken(refreshToken.Account);
 
         return new JwtRefreshToken(refreshToken.Account.IsAuthenticated, jwtToken, newRefreshToken.Token,
-                                                 new Profile(refreshToken.Account.FirstName, refreshToken.Account.LastName, refreshToken.Account.Email));
+                                                 new Profile(refreshToken.Account.FirstName, refreshToken.Account.Surname, refreshToken.Account.Email));
     }
 
     #endregion

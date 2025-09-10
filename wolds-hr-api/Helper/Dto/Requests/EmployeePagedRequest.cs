@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Helpers.Dto.Requests;
+﻿namespace wolds_hr_api.Helper.Dto.Requests;
 
 public record EmployeePagedRequest
 {

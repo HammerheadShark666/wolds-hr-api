@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using wolds_hr_api.Data.Context.Configuration;
 using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context;
@@ -16,19 +17,11 @@ public class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbCo
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Employee>()
-            .HasOne(e => e.EmployeeImport)
-            .WithMany(i => i.Employees)
-            .HasForeignKey(e => e.EmployeeImportId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<ExistingEmployee>()
-            .HasOne(e => e.EmployeeImport)
-            .WithMany(i => i.ExistingEmployees)
-            .HasForeignKey(e => e.EmployeeImportId)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<Employee>()
-            .HasOne<Department>(s => s.Department);
+        modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new EmployeeImportConfiguration());
+        modelBuilder.ApplyConfiguration(new ExistingEmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new AccountConfiguration());
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 }

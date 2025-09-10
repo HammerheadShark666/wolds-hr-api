@@ -38,7 +38,7 @@ public class Employees
             },
             new Employee()
             {
-                Id =  Guid.NewGuid(),
+                Id = Guid.NewGuid(),
                 Surname = "Johns",
                 FirstName = "Jill",
                 DateOfBirth = new DateOnly(2005, 4, 11),

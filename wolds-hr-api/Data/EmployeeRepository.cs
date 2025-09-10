@@ -13,12 +13,9 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 
     public async Task<List<Employee>> GetEmployeesAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
-        var loweredKeyword = keyword.ToLower();
-
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
                     from department in dept.DefaultIfEmpty()
-                        // where e.Surname.StartsWith(loweredKeyword, StringComparison.CurrentCultureIgnoreCase)
                     where (e.Surname.ToLower().StartsWith(keyword.ToLower()))
                     select new Employee
                     {
@@ -34,7 +31,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
                         DepartmentId = department != null ? department.Id : null,
                         Department = department
                     };
-
+        b
         if (departmentId.HasValue && departmentId != Guid.Empty)
         {
             query = query.Where(e => e.DepartmentId == departmentId);
@@ -75,7 +72,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
         return await (from e in _context.Employees
                       join d in _context.Departments on e.DepartmentId equals d.Id into deptGroup
                       from department in deptGroup.DefaultIfEmpty()
-                      where e.Id == id
+                      where e.Id.Equals(id)
                       select new Employee
                       {
                           Id = e.Id,
@@ -130,7 +127,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 
     public async Task DeleteAsync(Guid id)
     {
-        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id == id);
+        var employee = await _context.Employees.FirstOrDefaultAsync(e => e.Id.Equals(id));
         if (employee != null)
         {
             _context.Employees.Remove(employee);
@@ -142,7 +139,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 
     public async Task<bool> ExistsAsync(Guid id)
     {
-        return await _context.Employees.AnyAsync(e => e.Id == id);
+        return await _context.Employees.AnyAsync(e => e.Id.Equals(id));
     }
 
     public async Task<bool> ExistsAsync(string surname, string firstName, DateOnly? dateOfBirth)
