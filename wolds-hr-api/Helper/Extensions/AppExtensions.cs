@@ -12,7 +12,7 @@ public static class AppExtensions
     public static void BuildDatabase(this WebApplication webApplication)
     {
         using var scope = webApplication.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        var db = scope.ServiceProvider.GetRequiredService<WoldsHrDbContext>();
         db.Database.EnsureCreated();
     }
 }

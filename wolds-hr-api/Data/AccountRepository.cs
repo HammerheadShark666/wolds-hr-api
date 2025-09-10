@@ -4,9 +4,9 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class AccountRepository(AppDbContext context) : IAccountRepository
+public class AccountRepository(WoldsHrDbContext context) : IAccountRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public Account? Get(string email)
     {

@@ -8,7 +8,7 @@ public class EmployeeImportConfiguration : IEntityTypeConfiguration<EmployeeImpo
 {
     public void Configure(EntityTypeBuilder<EmployeeImport> builder)
     {
-        builder.ToTable("Employee");
+        builder.ToTable("WOLDS_HR_EmployeeImport");
 
         builder.HasKey(u => u.Id);
 
@@ -18,14 +18,14 @@ public class EmployeeImportConfiguration : IEntityTypeConfiguration<EmployeeImpo
         builder.Property(e => e.Date)
                .HasColumnType("datetime");
 
-        builder.HasMany(ei => ei.Employees)
-              .WithOne()
-              .HasForeignKey("EmployeeImportId")
-              .OnDelete(DeleteBehavior.Restrict);
-
         builder.HasMany(ei => ei.ExistingEmployees)
-               .WithOne()
-               .HasForeignKey("EmployeeImportId")
+               .WithOne(e => e.EmployeeImport)
+               .HasForeignKey(e => e.EmployeeImportId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+        builder.HasMany(ei => ei.Employees)
+               .WithOne(e => e.EmployeeImport)
+               .HasForeignKey(e => e.EmployeeImportId)
                .OnDelete(DeleteBehavior.Restrict);
     }
 }

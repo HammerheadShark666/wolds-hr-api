@@ -5,9 +5,9 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class RefreshTokenRepository(AppDbContext context) : IRefreshTokenRepository
+public class RefreshTokenRepository(WoldsHrDbContext context) : IRefreshTokenRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public async Task<bool> ExistsAsync(string token)
     {

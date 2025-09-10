@@ -8,7 +8,7 @@ public class AccountConfiguration : IEntityTypeConfiguration<Account>
 {
     public void Configure(EntityTypeBuilder<Account> builder)
     {
-        builder.ToTable("Account");
+        builder.ToTable("WOLDS_HR_Account");
 
         builder.HasKey(u => u.Id);
 

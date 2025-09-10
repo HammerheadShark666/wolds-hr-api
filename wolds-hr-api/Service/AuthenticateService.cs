@@ -33,7 +33,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
         if (!result.IsValid)
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var account = GetAccount(loginRequest.Email);
+        var account = GetAccount(loginRequest.Username);
         var jwtToken = _jWTHelper.GenerateJWTToken(account);
         var refreshToken = _refreshTokenService.GenerateRefreshToken(ipAddress, account);
 

@@ -1,9 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static wolds_hr_api.Helper.Enums;
 
 namespace wolds_hr_api.Domain;
 
 public class Account
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;

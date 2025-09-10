@@ -6,9 +6,9 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRepository
+public class EmployeeImportRepository(WoldsHrDbContext context) : IEmployeeImportRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public async Task<List<EmployeeImport>> GetAsync()
     {
