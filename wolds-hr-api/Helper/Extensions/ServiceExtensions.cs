@@ -99,9 +99,14 @@ public static class ServiceExtensions
         services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
     }
 
-    public static void ConfigureDbContext(this IServiceCollection services)
+    public static void ConfigureDbContext(this IServiceCollection services, ConfigurationManager configuration)
     {
-        services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
+        // services.AddDbContext<WoldsHrDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
+
+        services.AddDbContext<WoldsHrDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
+            options => options.EnableRetryOnFailure()
+            .MigrationsAssembly(typeof(WoldsHrDbContext).Assembly.FullName)));
     }
 
     public static void BuildCorsPolicy(this IServiceCollection services)

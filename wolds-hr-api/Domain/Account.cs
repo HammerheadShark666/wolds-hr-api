@@ -4,11 +4,12 @@ using static wolds_hr_api.Helper.Enums;
 
 namespace wolds_hr_api.Domain;
 
+[Table("WOLDS_HR_Account")]
 public class Account
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public Guid Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

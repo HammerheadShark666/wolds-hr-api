@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wolds_hr_api.Domain;
 
+[Table("WOLDS_HR_Employee")]
 public class Employee()
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public long Id { get; set; }
+    public Guid Id { get; set; }
     public string Surname { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;
     public DateOnly? DateOfBirth { get; set; }
@@ -16,8 +17,8 @@ public class Employee()
     public string? PhoneNumber { get; set; } = string.Empty;
     public string? Photo { get; set; } = string.Empty;
     public DateOnly Created { get; set; }
-    public int? DepartmentId { get; set; }
+    public Guid? DepartmentId { get; set; }
     public Department? Department { get; set; }
-    public int EmployeeImportId { get; set; }
+    public Guid? EmployeeImportId { get; set; }
     public EmployeeImport? EmployeeImport { get; set; }
 }

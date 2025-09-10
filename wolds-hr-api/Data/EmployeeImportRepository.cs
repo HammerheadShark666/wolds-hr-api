@@ -6,9 +6,9 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRepository
+public class EmployeeImportRepository(WoldsHrDbContext context) : IEmployeeImportRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public async Task<List<EmployeeImport>> GetAsync()
     {
@@ -30,7 +30,7 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
         return employeeImport;
     }
 
-    public async Task<List<Employee>> GetImportedEmployeesAsync(int id, int page, int pageSize)
+    public async Task<List<Employee>> GetImportedEmployeesAsync(Guid id, int page, int pageSize)
     {
         return await (from e in _context.Employees
                       where e.EmployeeImportId == id
@@ -48,7 +48,7 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
                           PhoneNumber = e.PhoneNumber,
                           Photo = e.Photo,
                           Created = e.Created,
-                          DepartmentId = dept != null ? dept.Id : 0,
+                          DepartmentId = dept != null ? dept.Id : null,
                           Department = dept,
                           EmployeeImportId = e.EmployeeImportId
                       }
@@ -58,7 +58,7 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
                 .ToListAsync();
     }
 
-    public async Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(int id, int page, int pageSize)
+    public async Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(Guid id, int page, int pageSize)
     {
         return await _context.ExistingEmployees
                             .Where(e => e.EmployeeImportId == id)
@@ -80,17 +80,17 @@ public class EmployeeImportRepository(AppDbContext context) : IEmployeeImportRep
                             .ToListAsync();
     }
 
-    public async Task<int> CountImportedEmployeesAsync(int id)
+    public async Task<int> CountImportedEmployeesAsync(Guid id)
     {
         return await _context.Employees.Where(e => e.EmployeeImportId == id).CountAsync();
     }
 
-    public async Task<int> CountImportedExistingEmployeesAsync(int id)
+    public async Task<int> CountImportedExistingEmployeesAsync(Guid id)
     {
         return await _context.ExistingEmployees.Where(e => e.EmployeeImportId == id).CountAsync();
     }
 
-    public async Task DeleteAsync(int id)
+    public async Task DeleteAsync(Guid id)
     {
         var employeeImport = await _context.EmployeeImports.FirstOrDefaultAsync(e => e.Id == id);
         if (employeeImport != null)
