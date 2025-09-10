@@ -15,20 +15,19 @@ namespace wolds_hr_api.Migrations
                 name: "WOLDS_HR_Account",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AcceptTerms = table.Column<bool>(type: "bit", nullable: false),
-                    Role = table.Column<int>(type: "int", nullable: false),
-                    VerificationToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Verified = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ResetToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ResetTokenExpires = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Surname = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Role = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    VerificationToken = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    Verified = table.Column<DateTime>(type: "datetime2", maxLength: 150, nullable: true),
+                    ResetToken = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    ResetTokenExpires = table.Column<DateTime>(type: "datetime", nullable: true),
                     PasswordReset = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
@@ -40,8 +39,8 @@ namespace wolds_hr_api.Migrations
                 name: "WOLDS_HR_Department",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -52,8 +51,8 @@ namespace wolds_hr_api.Migrations
                 name: "WOLDS_HR_EmployeeImport",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Date = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,11 +63,11 @@ namespace wolds_hr_api.Migrations
                 name: "WOLDS_HR_RefreshToken",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     AccountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Expires = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Created = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
+                    Expires = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Created = table.Column<DateTime>(type: "datetime", nullable: false),
                     CreatedByIp = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Revoked = table.Column<DateTime>(type: "datetime2", nullable: true),
                     RevokedByIp = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -89,13 +88,13 @@ namespace wolds_hr_api.Migrations
                 name: "WOLDS_HR_Employee",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
-                    HireDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Surname = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "date", nullable: true),
+                    HireDate = table.Column<DateTime>(type: "date", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateOnly>(type: "date", nullable: false),
                     DepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -108,27 +107,28 @@ namespace wolds_hr_api.Migrations
                         name: "FK_WOLDS_HR_Employee_WOLDS_HR_Department_DepartmentId",
                         column: x => x.DepartmentId,
                         principalTable: "WOLDS_HR_Department",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_WOLDS_HR_Employee_WOLDS_HR_EmployeeImport_EmployeeImportId",
                         column: x => x.EmployeeImportId,
                         principalTable: "WOLDS_HR_EmployeeImport",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
                 name: "WOLDS_HR_ExistingEmployee",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DateOfBirth = table.Column<DateOnly>(type: "date", nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
+                    Surname = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "date", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: true),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
                     Created = table.Column<DateOnly>(type: "date", nullable: false),
-                    EmployeeImportId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    EmployeeImportId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -138,7 +138,7 @@ namespace wolds_hr_api.Migrations
                         column: x => x.EmployeeImportId,
                         principalTable: "WOLDS_HR_EmployeeImport",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

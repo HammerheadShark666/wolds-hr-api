@@ -11,10 +11,9 @@ public class Accounts
             new() {
                 Id = Guid.NewGuid(),
                 FirstName = "test",
-                LastName = "test",
+                Surname = "test",
                 Email = "Test100@hotmail.com",
                 PasswordHash = "$2a$11$H.p94nv0W1/wdlYd4L3/S.q6SUGSh/GKQ88PYGIMW/L1zZh9O2k4e",
-                AcceptTerms = false,
                 Role = 0,
                 VerificationToken = "",
                 Verified = new DateTime(),

@@ -4,7 +4,7 @@
 		"name": "WoldsHR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "4654363",
-		"_collection_link": "https://jwm-demo-team.postman.co/workspace/Wolds-HR~aa8a5d16-4c7c-438d-bd2d-89bb65a3c19f/collection/4654363-c32e4871-45d6-4334-914e-5d70057f5a36?action=share&source=collection_link&creator=4654363"
+		"_collection_link": "https://jwm-demo-team.postman.co/workspace/aa8a5d16-4c7c-438d-bd2d-89bb65a3c19f/collection/4654363-c32e4871-45d6-4334-914e-5d70057f5a36?action=share&source=collection_link&creator=4654363"
 	},
 	"item": [
 		{
@@ -51,7 +51,7 @@
 			"response": []
 		},
 		{
-			"name": "{{baseUrl}}/employees/search?keyword=john&departmentId=0&page=1&pageSize=5 (No Department)",
+			"name": "{{baseUrl}}/departments",
 			"event": [
 				{
 					"listen": "test",
@@ -62,8 +62,79 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('departments_get_response_schema')));\r",
+							"});  \r",
+							"\r",
+							"let jsonData = pm.response.json();\r",
+							"pm.environment.set(\"departments\", JSON.stringify(jsonData)); \r",
+							"\r",
+							"let selected = jsonData[3];\r",
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/departments",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"departments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseUrl}}/employees/search?keyword=john&page=1&pageSize=5 (No Department)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test('Schema validation', () => { \r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_search_response_schema')));\r",
 							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							" "
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -77,7 +148,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/search?keyword=john&departmentId=0&page=1&pageSize=5",
+					"raw": "{{baseUrl}}/employees/search?keyword=john&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -89,10 +160,6 @@
 						{
 							"key": "keyword",
 							"value": "john"
-						},
-						{
-							"key": "departmentId",
-							"value": "0"
 						},
 						{
 							"key": "page",
@@ -119,7 +186,7 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_search_response_schema')));\r",
 							"}); "
 						],
 						"type": "text/javascript",
@@ -134,7 +201,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/search?keyword=&departmentId=1&page=1&pageSize=5",
+					"raw": "{{baseUrl}}/employees/search?keyword=&departmentId={{selectedDepartmentId}}&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -149,7 +216,7 @@
 						},
 						{
 							"key": "departmentId",
-							"value": "1"
+							"value": "{{selectedDepartmentId}}"
 						},
 						{
 							"key": "page",
@@ -165,7 +232,7 @@
 			"response": []
 		},
 		{
-			"name": "{{baseUrl}}/employees/search?keyword=john&departmentId=2&page=1&pageSize=5 (With Department)",
+			"name": "{{baseUrl}}/employees/search?keyword=john&departmentId={{selectedDepartmentId}}&page=1&pageSize=5 (With Department)",
 			"event": [
 				{
 					"listen": "test",
@@ -176,7 +243,7 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_search_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_search_response_schema')));\r",
 							"}); "
 						],
 						"type": "text/javascript",
@@ -191,7 +258,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/search?keyword=john&departmentId=2&page=1&pageSize=5",
+					"raw": "{{baseUrl}}/employees/search?keyword=john&departmentId={{selectedDepartmentId}}&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
@@ -206,7 +273,7 @@
 						},
 						{
 							"key": "departmentId",
-							"value": "2"
+							"value": "{{selectedDepartmentId}}"
 						},
 						{
 							"key": "page",
@@ -231,26 +298,49 @@
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
 							"});\r",
-							" \r",
+							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employee_add_response_schema')));\r",
+							"  const schema = JSON.parse(pm.globals.get('employee_add_response_schema'));\r",
+							"  const jsonData = pm.response.json();\r",
+							"  pm.expect(jsonData).to.be.an('object');\r",
+							"  pm.expect(jsonData).to.not.be.empty;\r",
+							"  pm.response.to.have.jsonSchema(schema);\r",
 							"}); \r",
 							"\r",
 							"let jsonData = pm.response.json();   \r",
 							"\r",
-							"pm.environment.set(\"employeeId\", jsonData.id); \r",
+							"pm.environment.set(\"employeeId\", jsonData.id);   \r",
 							"\r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\")); \r",
+							"let selectedDepartmentId = pm.environment.get(\"selectedDepartmentId\"); \r",
+							"let selectedDepartment = departments.find(d => d.id === selectedDepartmentId);\r",
+							" \r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
 							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"Robert\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Mason\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(7);\r",
+							"    pm.expect(jsonData.departmentId).to.eql(selectedDepartmentId);\r",
+							"    pm.expect(jsonData.department.name).to.eql(selectedDepartment.name);\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2000-12-01\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2022-02-11\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"rmason@hotmail.com\");\r",
 							"    pm.expect(jsonData.phoneNumber).to.eql(\"453427567567\");\r",
-							"}); "
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let departments = JSON.parse(pm.environment.get(\"departments\"));\r",
+							"let selected = departments[3]; \r",
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);\r",
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -265,7 +355,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"dateOfBirth\": \"2000-12-01\",\r\n    \"departmentId\": 7, \r\n    \"email\": \"rmason@hotmail.com\",\r\n    \"firstName\": \"Robert\",\r\n    \"hireDate\": \"2022-02-11\",\r\n    \"id\": 0,\r\n    \"phoneNumber\": \"453427567567\",\r\n    \"photo\": \"\",\r\n    \"surname\": \"Mason\"\r\n}",
+					"raw": "{\r\n    \"dateOfBirth\": \"2000-12-01\",\r\n    \"departmentId\": \"{{selectedDepartmentId}}\", \r\n    \"email\": \"rmason@hotmail.com\",\r\n    \"firstName\": \"Robert\",\r\n    \"hireDate\": \"2022-02-11\",\r\n    \"phoneNumber\": \"453427567567\",\r\n    \"photo\": \"\",\r\n    \"surname\": \"Mason\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -297,7 +387,7 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employee_get_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employee_get_response_schema')));\r",
 							"}); \r",
 							"\r",
 							"let jsonData = pm.response.json();   \r",
@@ -309,12 +399,22 @@
 							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"Robert\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Mason\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(7);\r",
+							"    pm.expect(jsonData.departmentId).to.eql(pm.environment.get(\"selectedDepartmentId\"));\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2000-12-01\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2022-02-11\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"rmason@hotmail.com\");\r",
 							"    pm.expect(jsonData.phoneNumber).to.eql(\"453427567567\");\r",
 							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -353,22 +453,39 @@
 							"});\r",
 							" \r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employee_add_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employee_add_response_schema')));\r",
 							"}); \r",
 							"\r",
-							"let jsonData = pm.response.json();   \r",
+							"let jsonData = pm.response.json(); \r",
+							"\r",
+							"let departments = JSON.parse(pm.environment.get(\"departments\")); \r",
+							"let selectedDepartmentId = pm.environment.get(\"selectedDepartmentId\"); \r",
+							"let selectedDepartment = departments.find(d => d.id === selectedDepartmentId);\r",
 							"\r",
 							"pm.test(\"Is correct employee\", function () {       \r",
 							"    pm.expect(jsonData).to.be.an(\"object\");\r",
 							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"James\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Norse\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(6);\r",
+							"    pm.expect(jsonData.departmentId).to.eql(selectedDepartmentId);\r",
+							"    pm.expect(jsonData.department.name).to.eql(selectedDepartment.name);\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2001-11-21\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2023-02-10\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"jnorse@hotmail.com\");\r",
 							"    pm.expect(jsonData.phoneNumber).to.eql(\"234546745645\");\r",
 							"}); "
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let departments = JSON.parse(pm.environment.get(\"departments\"));\r",
+							"let selected = departments[4]; \r",
+							"pm.environment.set(\"selectedDepartmentId\", selected.id);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -383,7 +500,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"id\": \"{{employeeId}}\",\r\n    \"dateOfBirth\": \"2001-11-21\",\r\n    \"departmentId\": 6, \r\n    \"email\": \"jnorse@hotmail.com\",\r\n    \"firstName\": \"James\",\r\n    \"hireDate\": \"2023-02-10\",\r\n    \"phoneNumber\": \"234546745645\",\r\n    \"photo\": \"\",\r\n    \"surname\": \"Norse\"\r\n}",
+					"raw": "{\r\n    \"id\": \"{{employeeId}}\",\r\n    \"dateOfBirth\": \"2001-11-21\",\r\n    \"departmentId\": \"{{selectedDepartmentId}}\", \r\n    \"email\": \"jnorse@hotmail.com\",\r\n    \"firstName\": \"James\",\r\n    \"hireDate\": \"2023-02-10\",\r\n    \"phoneNumber\": \"234546745645\",\r\n    \"photo\": \"\",\r\n    \"surname\": \"Norse\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -415,7 +532,7 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employee_get_response_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employee_get_response_schema')));\r",
 							"}); \r",
 							"\r",
 							"let jsonData = pm.response.json();   \r",
@@ -425,7 +542,7 @@
 							"    pm.expect(jsonData.id).to.eql(pm.environment.get('employeeId'));\r",
 							"    pm.expect(jsonData.firstName).to.eql(\"James\");\r",
 							"    pm.expect(jsonData.surname).to.eql(\"Norse\");\r",
-							"    pm.expect(jsonData.departmentId).to.eql(6);\r",
+							"    pm.expect(jsonData.departmentId).to.eql(pm.environment.get(\"selectedDepartmentId\"));;\r",
 							"    pm.expect(jsonData.dateOfBirth).to.eql(\"2001-11-21\");\r",
 							"    pm.expect(jsonData.hireDate).to.eql(\"2023-02-10\");\r",
 							"    pm.expect(jsonData.email).to.eql(\"jnorse@hotmail.com\");\r",
@@ -439,8 +556,11 @@
 				{
 					"listen": "prerequest",
 					"script": {
-						"packages": {},
-						"type": "text/javascript"
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
@@ -473,9 +593,7 @@
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							" \r",
-							"// pm.environment.set(\"employeeId\", \"\");"
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -538,7 +656,7 @@
 			"response": []
 		},
 		{
-			"name": "{{baseUrl}}employees/import",
+			"name": "{{baseUrl}}employees-import",
 			"event": [
 				{
 					"listen": "test",
@@ -549,61 +667,11 @@
 							"});\r",
 							"\r",
 							"pm.test('Schema validation', () => { \r",
-							"  pm.response.to.have.jsonSchema (JSON.parse(pm.environment.get('employees_imported_schema')));\r",
+							"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_imported_schema')));\r",
 							"}); \r",
 							"\r",
 							"let jsonData = pm.response.json(); \r",
-							"\r",
-							"console.log(jsonData);\r",
-							"\r",
-							"let existingEmployees = jsonData.existingEmployees;\r",
-							"let importedEmployees = jsonData.importedEmployees;\r",
-							"let employeesErrorImporting = jsonData.employeesErrorImporting; \r",
-							"   \r",
-							"pm.test(\"Is correct existing employees\", function () {  \r",
-							"\r",
-							"    pm.expect(existingEmployees.length).to.eql(1);\r",
-							"\r",
-							"    let existingEmployee = existingEmployees[0];\r",
-							"    pm.expect(existingEmployee).to.be.an(\"object\");\r",
-							"\r",
-							"    pm.expect(existingEmployee.id).to.eql(0);\r",
-							"    pm.expect(existingEmployee.firstName).to.eql(\"John\");\r",
-							"    pm.expect(existingEmployee.surname).to.eql(\"Miller\");\r",
-							"    pm.expect(existingEmployee.departmentId).to.eql(3);\r",
-							"    pm.expect(existingEmployee.dateOfBirth).to.eql(\"1966-03-21\");\r",
-							"    pm.expect(existingEmployee.hireDate).to.eql(\"2021-05-19\");\r",
-							"    pm.expect(existingEmployee.email).to.eql(\"jmiller@yahoo.com\");\r",
-							"    pm.expect(existingEmployee.phoneNumber).to.eql(\"07572922290\");\r",
-							"    pm.expect(existingEmployee.department).to.eql(null);\r",
-							"    pm.expect(existingEmployee.wasImported).to.eql(false);\r",
-							"    pm.expect(existingEmployee.photo).to.eql(\"\");\r",
-							"});\r",
-							"\r",
-							"\r",
-							"pm.test(\"Is correct imported employees\", function () {  \r",
-							" \r",
-							"    pm.expect(importedEmployees.employees.length).to.eql(10);\r",
-							"\r",
-							"    let importedEmployee = importedEmployees.employees[0];\r",
-							"    pm.expect(importedEmployee).to.be.an(\"object\"); \r",
-							" \r",
-							"    pm.expect(importedEmployee.firstName).to.eql(\"Adam\");\r",
-							"    pm.expect(importedEmployee.surname).to.eql(\"Barker\");\r",
-							"    pm.expect(importedEmployee.departmentId).to.eql(2);\r",
-							"    pm.expect(importedEmployee.dateOfBirth).to.eql(\"1982-04-13\");\r",
-							"    pm.expect(importedEmployee.hireDate).to.eql(\"2005-06-12\");\r",
-							"    pm.expect(importedEmployee.email).to.eql(\"smithdebra@yahoo.com\");\r",
-							"    pm.expect(importedEmployee.phoneNumber).to.eql(\"07112128110\");\r",
-							"    pm.expect(importedEmployee.department.id).to.eql(2);\r",
-							"    pm.expect(importedEmployee.department.name).to.eql(\"IT\");\r",
-							"    pm.expect(importedEmployee.wasImported).to.eql(true);\r",
-							"    pm.expect(importedEmployee.photo).to.eql(\"\"); \r",
-							"}); \r",
-							"\r",
-							"let ids = importedEmployees.employees.map(item => item.id);\r",
-							"pm.environment.set(\"imported_employee_ids\", JSON.stringify(ids));\r",
-							"pm.environment.set(\"imported_employee_current_index\", 0);"
+							"pm.environment.set(\"employee_import_id\", jsonData.id);"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -627,69 +695,27 @@
 					]
 				},
 				"url": {
-					"raw": "{{baseUrl}}/employees/import",
+					"raw": "{{baseUrl}}/employees-import",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"employees",
-						"import"
+						"employees-import"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "Delete Imported Employees",
+			"name": "{{baseUrl}}/employees-import",
 			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"exec": [
-							"let ids = JSON.parse(pm.environment.get(\"imported_employee_ids\") || \"[]\");\r",
-							"let index = parseInt(pm.environment.get(\"imported_employee_current_index\") || \"0\");\r",
-							"\r",
-							"console.log(\"All IDs:\", ids);\r",
-							"console.log(\"Current index:\", index);\r",
-							"\r",
-							"if (index < ids.length) {\r",
-							"    let currentId = ids[index];\r",
-							"    console.log(\"Deleting ID:\", currentId);\r",
-							"    pm.environment.set(\"imported_employee_current_employee_id\", currentId);\r",
-							"} else {\r",
-							"    console.log(\"Done looping.\");\r",
-							"    // Clean up\r",
-							"    pm.environment.unset(\"imported_employee_ids\");\r",
-							"    pm.environment.unset(\"imported_employee_current_index\");\r",
-							"    pm.environment.unset(\"imported_employee_current_employee_id\");\r",
-							"    pm.execution.setNextRequest(null); // stop the loop\r",
-							"}"
-						],
-						"type": "text/javascript",
-						"packages": {}
-					}
-				},
 				{
 					"listen": "test",
 					"script": {
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {\r",
 							"    pm.response.to.have.status(200);\r",
-							"});\r",
-							"\r",
-							"let index = parseInt(pm.environment.get(\"imported_employee_current_index\") || \"0\");\r",
-							"pm.environment.set(\"imported_employee_current_index\", index + 1);\r",
-							"\r",
-							"const ids = JSON.parse(pm.environment.get(\"imported_employee_ids\") || \"[]\");\r",
-							"\r",
-							"if (index + 1 < ids.length) {\r",
-							"    pm.execution.setNextRequest(\"Delete Imported Employees\");\r",
-							"} else {\r",
-							"    pm.environment.unset(\"imported_employee_ids\");\r",
-							"    pm.environment.unset(\"imported_employee_current_index\");\r",
-							"    pm.environment.unset(\"imported_employee_current_employee_id\");\r",
-							"    pm.execution.setNextRequest(null); // end\r",
-							"}"
+							"});"
 						],
 						"type": "text/javascript",
 						"packages": {}
@@ -698,18 +724,137 @@
 			],
 			"request": {
 				"auth": {
-					"type": "noauth"
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
 				},
-				"method": "DELETE",
+				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/employees/{{imported_employee_current_employee_id}}",
+					"raw": "{{baseUrl}}/employees-import/employees?id={{employee_import_id}}&page=1&pageSize=5",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"employees",
-						"{{imported_employee_current_employee_id}}"
+						"employees-import",
+						"employees"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{employee_import_id}}"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseUrl}}/employees-import/existing-employees?id=1&page=1&pageSize=5",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/employees-import/existing-employees?id={{employee_import_id}}&page=1&pageSize=5",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"employees-import",
+						"existing-employees"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{employee_import_id}}"
+						},
+						{
+							"key": "page",
+							"value": "1"
+						},
+						{
+							"key": "pageSize",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "{{baseUrl}}/employees-import",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/employees-import/{{employee_import_id}}",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"employees-import",
+						"{{employee_import_id}}"
 					]
 				}
 			},

@@ -48,8 +48,10 @@ public class EmployeeService(IValidator<Employee> validator,
         if (!result.IsValid)
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
-        await _employeeRepository.AddAsync(employee);
-        return (true, await GetAsync(employee.Id), null);
+        var newEmployee = await _employeeRepository.AddAsync(employee) ?? throw new EmployeeNotFoundException("Employee not found after attempt to create");
+        newEmployee = await _employeeRepository.GetAsync(newEmployee.Id);
+
+        return (true, newEmployee, null);
     }
 
     public async Task<(bool isValid, Employee? Employee, List<string>? Errors)> UpdateAsync(Employee employee)

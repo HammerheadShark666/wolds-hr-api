@@ -15,11 +15,11 @@ public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentReposit
 
     public Department? Get(Guid? id)
     {
-        return (id == null) ? null : _context.Departments.FirstOrDefault(e => e.Id == id);
+        return (id == null) ? null : _context.Departments.FirstOrDefault(e => e.Id.Equals(id));
     }
 
     public bool Exists(Guid? id)
     {
-        return _context.Departments.Any(e => e.Id == id);
+        return _context.Departments.Any(e => e.Equals(id));
     }
 }

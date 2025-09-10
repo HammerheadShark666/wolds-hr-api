@@ -3,7 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wolds_hr_api.Domain;
 
-[Table("WOLDS_HR_EmployeeImport")]
 public class EmployeeImport
 {
     [Key]
@@ -12,7 +11,7 @@ public class EmployeeImport
 
     public DateTime Date { get; set; }
 
-    public required ICollection<Employee> Employees { get; set; }
+    public required List<Employee> Employees { get; set; } = [];
 
-    public required ICollection<ExistingEmployee> ExistingEmployees { get; set; }
+    public required List<ExistingEmployee> ExistingEmployees { get; set; } = [];
 }
