@@ -4,7 +4,7 @@
 		"name": "WoldsHR",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "4654363",
-		"_collection_link": "https://jwm-demo-team.postman.co/workspace/Wolds-HR~aa8a5d16-4c7c-438d-bd2d-89bb65a3c19f/collection/4654363-c32e4871-45d6-4334-914e-5d70057f5a36?action=share&source=collection_link&creator=4654363"
+		"_collection_link": "https://jwm-demo-team.postman.co/workspace/aa8a5d16-4c7c-438d-bd2d-89bb65a3c19f/collection/4654363-c32e4871-45d6-4334-914e-5d70057f5a36?action=share&source=collection_link&creator=4654363"
 	},
 	"item": [
 		{
@@ -87,8 +87,8 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "noauth"
+				"auth": { 
+				"type": "noauth" 
 				},
 				"method": "GET",
 				"header": [],

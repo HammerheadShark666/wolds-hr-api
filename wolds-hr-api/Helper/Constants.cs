@@ -10,6 +10,8 @@ public static class Constants
 
     public const string DefaultEmployeePhotoFileName = "default.png";
 
+    public const string DatabaseConnectionString = "SQLAZURECONNSTR_WOLDS_HR";
+
     public const string JWTIssuer = "JWT_ISSUER";
     public const string JWTAudience = "JWT_AUDIENCE";
     public const string JWTSymmetricSecurityKey = "JWT_SYMMETRIC_SECURITY_KEY";

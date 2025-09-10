@@ -1,11 +1,13 @@
+using wolds_hr_api.Data.Context;
 using wolds_hr_api.Endpoint;
+using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Helpers.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.ConfigureJWT();
-builder.Services.ConfigureDbContext();
+builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.BuildCorsPolicy();
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -34,5 +36,11 @@ EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
 EndpointsEmployeeImport.ConfigureRoutes(app);
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<WoldsHrDbContext>();
+    await DataSeeder.SeedDatabaseAsync(context);
+}
 
 app.Run();

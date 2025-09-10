@@ -4,9 +4,9 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class ExistingEmployeeRepository(AppDbContext context) : IExistingEmployeeRepository
+public class ExistingEmployeeRepository(WoldsHrDbContext context) : IExistingEmployeeRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public ExistingEmployee Add(ExistingEmployee existingEmployee)
     {
