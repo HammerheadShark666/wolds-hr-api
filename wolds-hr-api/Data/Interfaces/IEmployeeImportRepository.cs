@@ -10,5 +10,5 @@ public interface IEmployeeImportRepository
     Task<List<Employee>> GetImportedEmployeesAsync(Guid id, int page, int pageSize);
     Task<int> CountImportedExistingEmployeesAsync(Guid id);
     Task<List<ExistingEmployee>> GetImportedExistingEmployeesAsync(Guid id, int page, int pageSize);
-    Task DeleteAsync(Guid Guid);
+    Task DeleteAsync(Guid id);
 }

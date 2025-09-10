@@ -8,7 +8,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
 {
     public void Configure(EntityTypeBuilder<Department> builder)
     {
-        builder.ToTable("Department");
+        builder.ToTable("WOLDS_HR_Department");
 
         builder.HasKey(u => u.Id);
 

@@ -197,10 +197,10 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
     {
         var employeeImports = await _employeeImportRepository.GetAsync();
 
-        return employeeImports.Select(ei => new EmployeeImportResponse
+        return [.. employeeImports.Select(ei => new EmployeeImportResponse
         {
             Id = ei.Id,
             Date = ei.Date
-        }).ToList();
+        })];
     }
 }

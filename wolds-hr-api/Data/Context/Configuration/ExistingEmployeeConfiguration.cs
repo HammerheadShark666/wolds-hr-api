@@ -9,7 +9,7 @@ public class ExistingEmployeeConfiguration : IEntityTypeConfiguration<ExistingEm
 {
     public void Configure(EntityTypeBuilder<ExistingEmployee> builder)
     {
-        builder.ToTable("Employee");
+        builder.ToTable("WOLDS_HR_ExistingEmployee");
 
         builder.HasKey(u => u.Id);
 
@@ -33,10 +33,5 @@ public class ExistingEmployeeConfiguration : IEntityTypeConfiguration<ExistingEm
 
         builder.Property(u => u.PhoneNumber)
               .HasMaxLength(25);
-
-        builder.HasOne(e => e.EmployeeImport)
-               .WithMany()
-               .HasForeignKey(e => e.EmployeeImportId)
-               .OnDelete(DeleteBehavior.Restrict);
     }
 }

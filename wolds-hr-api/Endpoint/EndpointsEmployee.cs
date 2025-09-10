@@ -14,7 +14,7 @@ public static class EndpointsEmployee
     {
         var employeeGroup = webApplication.MapGroup("employees").WithTags("employees");
 
-        employeeGroup.MapGet("/search", async (string keyword, Guid? departmentId, int page, int pageSize, [FromServices] IEmployeeService employeeService) =>
+        employeeGroup.MapGet("/search", async (string keyword, int page, int pageSize, Guid? departmentId, [FromServices] IEmployeeService employeeService) =>
         {
             var employees = await employeeService.SearchAsync(keyword, departmentId, page, pageSize);
             return Results.Ok(employees);

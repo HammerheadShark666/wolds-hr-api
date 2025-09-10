@@ -1,7 +1,12 @@
-﻿namespace wolds_hr_api.Domain;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace wolds_hr_api.Domain;
 
 public class Employee()
 {
+    [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
     public string Surname { get; set; } = string.Empty;
     public string FirstName { get; set; } = string.Empty;

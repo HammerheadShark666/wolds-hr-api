@@ -9,7 +9,7 @@ public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {
-        builder.ToTable("Employee");
+        builder.ToTable("WOLDS_HR_Employee");
 
         builder.HasKey(u => u.Id);
 

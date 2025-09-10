@@ -7,15 +7,16 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
+public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public async Task<List<Employee>> GetEmployeesAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
                     from department in dept.DefaultIfEmpty()
+                    where (e.Surname.ToLower().StartsWith(keyword.ToLower()))
                     select new Employee
                     {
                         Id = e.Id,
@@ -30,42 +31,11 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
                         DepartmentId = department != null ? department.Id : null,
                         Department = department
                     };
-
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            var loweredKeyword = keyword.ToLower();
-            query = query.Where(e => e.Surname.StartsWith(loweredKeyword, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        if (departmentId != Guid.Empty && departmentId != null)
+        b
+        if (departmentId.HasValue && departmentId != Guid.Empty)
         {
             query = query.Where(e => e.DepartmentId == departmentId);
         }
-
-
-        //var query = from e in _context.Employees
-        //            join d in _context.Departments on e.DepartmentId equals d.Id into dept
-        //            from department in dept.DefaultIfEmpty()
-        //            where e.Surname.StartsWith(loweredKeyword, StringComparison.CurrentCultureIgnoreCase)
-        //            select new Employee
-        //            {
-        //                Id = e.Id,
-        //                Surname = e.Surname,
-        //                FirstName = e.FirstName,
-        //                DateOfBirth = e.DateOfBirth,
-        //                HireDate = e.HireDate,
-        //                Email = e.Email,
-        //                PhoneNumber = e.PhoneNumber,
-        //                Photo = e.Photo,
-        //                Created = e.Created,
-        //                DepartmentId = department != null ? department.Id : null,
-        //                Department = department
-        //            };
-
-        //if (departmentId != Guid.Empty && departmentId != null)
-        //{
-        //    query = query.Where(e => e.DepartmentId.Equals(departmentId));
-        //}
 
         return await query
             .OrderBy(a => a.Surname)
@@ -82,15 +52,9 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
 
     public async Task<int> CountEmployeesAsync(string keyword, Guid? departmentId)
     {
-        var query = _context.Employees.AsQueryable();
+        var query = _context.Employees.Where(e => e.Surname.ToLower().StartsWith(keyword.ToLower()));
 
-        if (!string.IsNullOrWhiteSpace(keyword))
-        {
-            var loweredKeyword = keyword.ToLower();
-            query = query.Where(e => e.Surname.StartsWith(loweredKeyword, StringComparison.CurrentCultureIgnoreCase));
-        }
-
-        if (departmentId != Guid.Empty && departmentId != null)
+        if (departmentId.HasValue && departmentId != Guid.Empty)
         {
             query = query.Where(e => e.DepartmentId == departmentId);
         }
@@ -120,7 +84,7 @@ public class EmployeeRepository(AppDbContext context) : IEmployeeRepository
                           PhoneNumber = e.PhoneNumber,
                           Photo = e.Photo,
                           Created = e.Created,
-                          DepartmentId = department != null ? department.Id : Guid.Empty,
+                          DepartmentId = department != null ? department.Id : null,
                           Department = department
                       }).SingleOrDefaultAsync();
     }

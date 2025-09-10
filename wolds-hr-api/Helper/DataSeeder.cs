@@ -1,10 +1,77 @@
-﻿using wolds_hr_api.Domain;
+﻿using Microsoft.EntityFrameworkCore;
+using wolds_hr_api.Data.Context;
+using wolds_hr_api.Domain;
 
-namespace wolds_hr_api.Data.Context.DefaultData;
+namespace wolds_hr_api.Helper;
 
-public class Employees
+public class DataSeeder
 {
-    public static List<Employee> GetEmployeeDefaultData(List<Department> departments)
+    public static async Task SeedDatabaseAsync(WoldsHrDbContext context)
+    {
+        await SeedAccountAsync(context);
+        var departments = await SeedDepartmentsAsync(context);
+
+        if (departments != null)
+            await SeedEmployeesAsync(context, departments);
+    }
+
+    private static async Task SeedAccountAsync(WoldsHrDbContext context)
+    {
+        if (await context.Accounts.AnyAsync())
+            return;
+
+        Account account = new()
+        {
+            Id = Guid.NewGuid(),
+            FirstName = "test",
+            Surname = "test",
+            Email = "Test100@hotmail.com",
+            PasswordHash = "$2a$11$H.p94nv0W1/wdlYd4L3/S.q6SUGSh/GKQ88PYGIMW/L1zZh9O2k4e",
+            Role = 0,
+            VerificationToken = "",
+            Verified = DateTime.UtcNow,
+            ResetToken = "U6hLv0HSty17HSw8YR33MwQTXpWEDIO7ylVZke0TUHW7EtGNltlzNQ44",
+            ResetTokenExpires = DateTime.UtcNow,
+            Created = DateTime.UtcNow
+        };
+
+        context.Accounts.Add(account);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task<List<Department>?> SeedDepartmentsAsync(WoldsHrDbContext context)
+    {
+        if (await context.Departments.AnyAsync())
+            return null;
+
+        List<Department> departments =
+        [
+            new() { Id = Guid.NewGuid(), Name = "Human Resource" },
+            new() { Id = Guid.NewGuid(), Name = "IT" },
+            new() { Id = Guid.NewGuid(), Name = "Finance" },
+            new() { Id = Guid.NewGuid(), Name = "Marketing" },
+            new() { Id = Guid.NewGuid(), Name = "Operations" },
+            new() { Id = Guid.NewGuid(), Name = "QA" },
+            new() { Id = Guid.NewGuid(), Name = "Accounts" }
+        ];
+
+        context.Departments.AddRange(departments);
+        await context.SaveChangesAsync();
+
+        return departments;
+    }
+
+    private static async Task SeedEmployeesAsync(WoldsHrDbContext context, List<Department> departments)
+    {
+        if (await context.Employees.AnyAsync())
+            return;
+
+        var employees = GetEmployeeDefaultData(departments).Concat(GetRandomEmployeeDefaultData(departments));
+        context.Employees.AddRange(employees);
+        await context.SaveChangesAsync();
+    }
+
+    private static List<Employee> GetEmployeeDefaultData(List<Department> departments)
     {
         var random = new Random();
 
@@ -38,7 +105,7 @@ public class Employees
             },
             new Employee()
             {
-                Id = Guid.NewGuid(),
+                Id =  Guid.NewGuid(),
                 Surname = "Johns",
                 FirstName = "Jill",
                 DateOfBirth = new DateOnly(2005, 4, 11),
@@ -91,7 +158,7 @@ public class Employees
         ];
     }
 
-    public static List<Employee> GetRandomEmployeeDefaultData(List<Department> departments)
+    private static List<Employee> GetRandomEmployeeDefaultData(List<Department> departments)
     {
         List<Employee> employees = [];
         Random random = new();

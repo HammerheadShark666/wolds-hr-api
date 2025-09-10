@@ -8,13 +8,13 @@ public class Departments
     {
         return
         [
-            new() { Id= Guid.NewGuid(), Name = "Human Resource" },
-            new() { Id= Guid.NewGuid(), Name = "IT" },
-            new() { Id= Guid.NewGuid(), Name = "Finance" },
-            new() { Id= Guid.NewGuid(), Name = "Marketing" },
-            new() { Id= Guid.NewGuid(), Name = "Operations" },
-            new() { Id= Guid.NewGuid(), Name = "QA" },
-            new() { Id= Guid.NewGuid(), Name = "Accounts" }
+            new() { Id = Guid.NewGuid(), Name = "Human Resource" },
+            new() { Id = Guid.NewGuid(), Name = "IT" },
+            new() { Id = Guid.NewGuid(), Name = "Finance" },
+            new() { Id = Guid.NewGuid(), Name = "Marketing" },
+            new() { Id = Guid.NewGuid(), Name = "Operations" },
+            new() { Id = Guid.NewGuid(), Name = "QA" },
+            new() { Id = Guid.NewGuid(), Name = "Accounts" }
         ];
     }
 }

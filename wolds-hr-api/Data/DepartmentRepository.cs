@@ -4,9 +4,9 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class DepartmentRepository(AppDbContext context) : IDepartmentRepository
+public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentRepository
 {
-    private readonly AppDbContext _context = context;
+    private readonly WoldsHrDbContext _context = context;
 
     public List<Department> Get()
     {
