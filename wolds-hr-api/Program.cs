@@ -36,7 +36,7 @@ app.BuildDatabase();
 EndpointsAuthentication.ConfigureRoutes(app);
 EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
-EndpointsEmployeeImport.ConfigureRoutes(app);
+EndpointsImportEmployee.ConfigureRoutes(app);
 
 using (var scope = app.Services.CreateScope())
 {

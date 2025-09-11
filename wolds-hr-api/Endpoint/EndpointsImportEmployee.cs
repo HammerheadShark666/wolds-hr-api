@@ -10,13 +10,13 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
 
-public static class EndpointsEmployeeImport
+public static class EndpointsImportEmployee
 {
     public static void ConfigureRoutes(this WebApplication webApplication)
     {
-        var employeeImportGroup = webApplication.MapGroup("v{version:apiVersion}/employees-import/").WithTags("employees-import");
+        var employeeImportGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees/").WithTags("import-employees");
 
-        employeeImportGroup.MapPost("", async (HttpRequest request, IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapPost("", async (HttpRequest request, IImportEmployeeService employeeImportService) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
@@ -32,25 +32,54 @@ public static class EndpointsEmployeeImport
 
             return Results.Ok(await employeeImportService.ImportAsync(file)); ;
         })
-        .Accepts<IFormFile>("multipart/form-data")
-        .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
-        .WithName("ImportEmployees")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
-        .RequireAuthorization()
-        .WithOpenApi(x => new OpenApiOperation(x)
-        {
-            Summary = "Import employees",
-            Description = "Import employees",
-            Tags = [new() { Name = "Wolds HR - Employee Import" }]
-        });
+       .Accepts<IFormFile>("multipart/form-data")
+       .Produces<ImportEmployeeHistoryResponse>((int)HttpStatusCode.OK)
+       .WithName("ImportEmployees")
+       .WithApiVersionSet(webApplication.GetVersionSet())
+       .MapToApiVersion(new ApiVersion(1, 0))
+       .RequireAuthorization()
+       .WithOpenApi(x => new OpenApiOperation(x)
+       {
+           Summary = "Import employees",
+           Description = "Import employees",
+           Tags = [new() { Name = "Wolds HR - Employee Import" }]
+       });
 
-        employeeImportGroup.MapGet("/employees", async (Guid id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        //employeeImportGroup.MapPost("", async (HttpRequest request, IImportEmployeeService importEmployeeService) =>
+        //{
+        //    if (!request.HasFormContentType)
+        //        return Results.BadRequest(new { Message = "Invalid content type." });
+
+        //    var form = await request.ReadFormAsync();
+        //    var file = form.Files.GetFile("file");
+
+        //    if (file == null || file.Length == 0)
+        //        return Results.BadRequest(new { Message = "No file uploaded." });
+
+        //    if (await importEmployeeService.MaximumNumberOfEmployeesReachedAsync(file))
+        //        return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
+
+        //    return Results.Ok(await importEmployeeService.ImportAsync(file)); ;
+        //})
+        //.Accepts<IFormFile>("multipart/form-data")
+        //.Produces<ImportEmployeeHistoryResponse>((int)HttpStatusCode.OK)
+        //.WithName("ImportEmployees")
+        //.WithApiVersionSet(webApplication.GetVersionSet())
+        //.MapToApiVersion(new ApiVersion(1, 0))
+        //.RequireAuthorization()
+        //.WithOpenApi(x => new OpenApiOperation(x)
+        //{
+        //    Summary = "Import employees",
+        //    Description = "Import employees",
+        //    Tags = [new() { Name = "Wolds HR - Employee Import" }]
+        //});
+
+        employeeImportGroup.MapGet("/employees", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService employeeImportService) =>
         {
-            var employees = await employeeImportService.GetImportedEmployeesAsync(id, page, pageSize);
+            var employees = await employeeImportService.GetImportedEmployeesHistoryAsync(id, page, pageSize);
             return Results.Ok(employees);
         })
-        .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
+        .Produces<List<ImportEmployeeHistoryResponse>>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeesWithPaging")
         .WithApiVersionSet(webApplication.GetVersionSet())
         .MapToApiVersion(new ApiVersion(1, 0))
@@ -62,12 +91,12 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("/existing-employees", async (Guid id, int page, int pageSize, [FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("/existing-employees", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService employeeImportService) =>
         {
-            var existingEmployees = await employeeImportService.GetExistingEmployeesImportedAsync(id, page, pageSize);
+            var existingEmployees = await employeeImportService.GetImportedExistingEmployeesHistoryAsync(id, page, pageSize);
             return Results.Ok(existingEmployees);
         })
-        .Produces<ExistingEmployeePagedResponse>((int)HttpStatusCode.OK)
+        .Produces<ImportEmployeeExistingHistoryPagedResponse>((int)HttpStatusCode.OK)
         .WithName("GetImportedExistingEmployeesWithPaging")
         .WithApiVersionSet(webApplication.GetVersionSet())
         .MapToApiVersion(new ApiVersion(1, 0))
@@ -79,12 +108,12 @@ public static class EndpointsEmployeeImport
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        employeeImportGroup.MapGet("", async ([FromServices] IEmployeeImportService employeeImportService) =>
+        employeeImportGroup.MapGet("", async ([FromServices] IImportEmployeeHistoryService employeeImportService) =>
         {
             var employeeImports = await employeeImportService.GetAsync();
             return Results.Ok(employeeImports);
         })
-       .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
+       .Produces<List<ImportEmployeeHistoryResponse>>((int)HttpStatusCode.OK)
        .WithName("GetEmployeeImports")
        .WithApiVersionSet(webApplication.GetVersionSet())
        .MapToApiVersion(new ApiVersion(1, 0))
@@ -96,14 +125,14 @@ public static class EndpointsEmployeeImport
            Tags = [new() { Name = "Wolds HR - Employee Import" }]
        });
 
-        employeeImportGroup.MapDelete("/{id}", async (IEmployeeImportService employeeImportService, Guid id) =>
+        employeeImportGroup.MapDelete("/{id}", async (IImportEmployeeHistoryService employeeImportService, Guid id) =>
         {
             try
             {
                 await employeeImportService.DeleteAsync(id);
                 return Results.Ok();
             }
-            catch (EmployeeImportNotFoundException)
+            catch (ImportEmployeeHistoryNotFoundException)
             {
                 return Results.NotFound(new { Message = "Employee Import not found." });
             }
