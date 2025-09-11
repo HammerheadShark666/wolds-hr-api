@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
+using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
@@ -12,7 +14,7 @@ public static class EndpointsEmployeeImport
 {
     public static void ConfigureRoutes(this WebApplication webApplication)
     {
-        var employeeImportGroup = webApplication.MapGroup("employees-import").WithTags("employees-import");
+        var employeeImportGroup = webApplication.MapGroup("v{version:apiVersion}/employees-import/").WithTags("employees-import");
 
         employeeImportGroup.MapPost("", async (HttpRequest request, IEmployeeImportService employeeImportService) =>
         {
@@ -33,6 +35,8 @@ public static class EndpointsEmployeeImport
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<EmployeeImportResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
+        .WithApiVersionSet(webApplication.GetVersionSet())
+        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -48,6 +52,8 @@ public static class EndpointsEmployeeImport
         })
         .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeesWithPaging")
+        .WithApiVersionSet(webApplication.GetVersionSet())
+        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -63,6 +69,8 @@ public static class EndpointsEmployeeImport
         })
         .Produces<ExistingEmployeePagedResponse>((int)HttpStatusCode.OK)
         .WithName("GetImportedExistingEmployeesWithPaging")
+        .WithApiVersionSet(webApplication.GetVersionSet())
+        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -78,6 +86,8 @@ public static class EndpointsEmployeeImport
         })
        .Produces<List<EmployeeImportResponse>>((int)HttpStatusCode.OK)
        .WithName("GetEmployeeImports")
+       .WithApiVersionSet(webApplication.GetVersionSet())
+       .MapToApiVersion(new ApiVersion(1, 0))
        .RequireAuthorization()
        .WithOpenApi(x => new OpenApiOperation(x)
        {
@@ -101,6 +111,8 @@ public static class EndpointsEmployeeImport
         .Produces(StatusCodes.Status200OK)
         .Produces(StatusCodes.Status404NotFound)
         .WithName("DeleteEmployeesImport")
+        .WithApiVersionSet(webApplication.GetVersionSet())
+        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {

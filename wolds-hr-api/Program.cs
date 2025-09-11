@@ -17,6 +17,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDI();
+builder.Services.ConfigureApiVersioning();
 
 var app = builder.Build();
 
