@@ -3,15 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wolds_hr_api.Domain;
 
-public class EmployeeImport
+public class ImportEmployeeFailHistory
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
-    public DateTime Date { get; set; }
+    public string Employee { get; set; } = string.Empty;
 
-    public required List<Employee> Employees { get; set; } = [];
+    public Guid ImportEmployeeHistoryId { get; set; }
 
-    public required List<ExistingEmployee> ExistingEmployees { get; set; } = [];
+    public required List<ImportEmployeeFailErrorHistory> Errors { get; set; } = [];
 }

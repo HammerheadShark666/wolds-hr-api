@@ -9,8 +9,10 @@ public class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbCo
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Department> Departments { get; set; }
     public DbSet<Employee> Employees { get; set; }
-    public DbSet<ExistingEmployee> ExistingEmployees { get; set; }
-    public DbSet<EmployeeImport> EmployeeImports { get; set; }
+    public DbSet<ImportEmployeeExistingHistory> ImportEmployeesExistingHistory { get; set; }
+    public DbSet<ImportEmployeeFailHistory> ImportEmployeesFailHistory { get; set; }
+    public DbSet<ImportEmployeeFailErrorHistory> ImportEmployeeFailErrorHistory { get; set; }
+    public DbSet<ImportEmployeeHistory> ImportEmployeesHistory { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -19,8 +21,10 @@ public class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbCo
 
         modelBuilder.ApplyConfiguration(new DepartmentConfiguration());
         modelBuilder.ApplyConfiguration(new EmployeeConfiguration());
-        modelBuilder.ApplyConfiguration(new EmployeeImportConfiguration());
-        modelBuilder.ApplyConfiguration(new ExistingEmployeeConfiguration());
+        modelBuilder.ApplyConfiguration(new ImportEmployeeHistoryConfiguration());
+        modelBuilder.ApplyConfiguration(new ImportEmployeeExistingHistoryConfiguration());
+        modelBuilder.ApplyConfiguration(new ImportEmployeeFailHistoryConfiguration());
+        modelBuilder.ApplyConfiguration(new ImportEmployeeFailErrorHistoryConfiguration());
         modelBuilder.ApplyConfiguration(new AccountConfiguration());
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }

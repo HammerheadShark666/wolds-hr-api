@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace wolds_hr_api.Domain;
 
-public class ExistingEmployee
+public class ImportEmployeeExistingHistory
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,6 +14,6 @@ public class ExistingEmployee
     public string? Email { get; set; } = string.Empty;
     public string? PhoneNumber { get; set; } = string.Empty;
     public DateOnly Created { get; set; }
-    public Guid? EmployeeImportId { get; set; }
-    public EmployeeImport? EmployeeImport { get; set; }
+    public Guid? ImportEmployeeHistoryId { get; set; }
+    public ImportEmployeeHistory? EmployeeImportHistory { get; set; }
 }
