@@ -25,6 +25,7 @@ public class ImportEmployeeHistoryConfiguration : IEntityTypeConfiguration<Impor
                .HasForeignKey(x => x.ImportEmployeeHistoryId)
                .OnDelete(DeleteBehavior.Cascade);
 
+
         builder.HasMany(x => x.FailedEmployees)
                .WithOne()
                .HasForeignKey(x => x.ImportEmployeeHistoryId)
