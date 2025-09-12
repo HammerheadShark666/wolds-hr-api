@@ -17,11 +17,5 @@ public class ImportEmployeeFailErrorHistoryConfiguration : IEntityTypeConfigurat
 
         builder.Property(x => x.Error)
                .IsRequired();
-
-        builder.HasOne(x => x.ImportEmployeeFailHistory)
-           .WithMany(x => x.Errors)
-           .HasForeignKey(x => x.ImportEmployeeFailHistoryId)
-           .IsRequired()
-           .OnDelete(DeleteBehavior.Cascade);
     }
 }
