@@ -85,13 +85,15 @@ public static class ServiceExtensions
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IEmployeeService, EmployeeService>();
-        services.AddScoped<IEmployeeImportService, EmployeeImportService>();
+        services.AddScoped<IImportEmployeeService, ImportEmployeeService>();
+        services.AddScoped<IImportEmployeeHistoryService, ImportEmployeeHistoryService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-        services.AddScoped<IExistingEmployeeRepository, ExistingEmployeeRepository>();
-        services.AddScoped<IEmployeeImportRepository, EmployeeImportRepository>();
+        services.AddScoped<IImportEmployeeExistingHistoryRepository, ImportEmployeeExistingHistoryRepository>();
+        services.AddScoped<IImportEmployeeHistoryRepository, ImportEmployeeHistoryRepository>();
+        services.AddScoped<IImportEmployeeFailHistoryRepository, ImportEmployeeFailHistoryRepository>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();
@@ -102,8 +104,6 @@ public static class ServiceExtensions
 
     public static void ConfigureDbContext(this IServiceCollection services, ConfigurationManager configuration)
     {
-        // services.AddDbContext<WoldsHrDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
-
         services.AddDbContext<WoldsHrDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
             options => options.EnableRetryOnFailure()

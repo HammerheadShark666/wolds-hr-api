@@ -18,6 +18,6 @@ public class Employee()
     public DateOnly Created { get; set; }
     public Guid? DepartmentId { get; set; }
     public Department? Department { get; set; }
-    public Guid? EmployeeImportId { get; set; }
-    public EmployeeImport? EmployeeImport { get; set; }
+    public Guid? ImportEmployeeHistoryId { get; set; }
+    public ImportEmployeeHistory? ImportEmployeeHistory { get; set; }
 }
