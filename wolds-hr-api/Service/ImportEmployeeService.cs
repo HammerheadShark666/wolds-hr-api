@@ -1,4 +1,5 @@
-﻿using wolds_hr_api.Data.Interfaces;
+﻿using FluentValidation;
+using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
@@ -7,24 +8,23 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeImportService(IDepartmentRepository departmentRepository, IEmployeeImportRepository employeeImportRepository, IEmployeeRepository employeeRepository, IExistingEmployeeRepository existingEmployeeRepository) : IEmployeeImportService
+public class ImportEmployeeService(IValidator<Employee> validator, IDepartmentRepository departmentRepository, IImportEmployeeHistoryRepository importEmployeeRepository, IEmployeeRepository employeeRepository, IImportEmployeeExistingHistoryRepository existingEmployeeRepository, IImportEmployeeFailHistoryRepository importEmployeeFailHistoryRepository) : IImportEmployeeService
 {
-    private readonly IEmployeeImportRepository _employeeImportRepository = employeeImportRepository;
-    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
-    private readonly IExistingEmployeeRepository _existingEmployeeRepository = existingEmployeeRepository;
+    private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeRepository;
+    private readonly IImportEmployeeExistingHistoryRepository _existingEmployeeRepository = existingEmployeeRepository;
+    private readonly IImportEmployeeFailHistoryRepository _importEmployeeFailHistoryRepository = importEmployeeFailHistoryRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IValidator<Employee> _validator = validator;
 
-    public async Task<EmployeeImportResponse> ImportAsync(IFormFile file)
+    public async Task<ImportEmployeeHistoryResponse> ImportAsync(IFormFile file)
     {
         List<Employee> EmployeesImported = [];
-        List<string> EmployeesErrorImporting = [];
-        EmployeeImport employeeImport = new()
-        {
-            Employees = [],
-            ExistingEmployees = []
-        };
 
-        bool createEmployeeImportRecord = true;
+        var isFirstLine = true;
+        var importEmployeeHistory = await _importEmployeeHistoryRepository.AddAsync();
+        if (importEmployeeHistory.Id == Guid.Empty)
+            throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
 
         using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream);
@@ -36,46 +36,48 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
 
             try
             {
-                if (createEmployeeImportRecord)
+                if (isFirstLine)
                 {
-                    employeeImport = await _employeeImportRepository.AddAsync();
-                    createEmployeeImportRecord = false;
+                    isFirstLine = false;
+                    continue;
                 }
-
-                if (employeeImport.Id == Guid.Empty)
-                    throw new EmployeeImportNotCreated("Employee import record was not created.");
 
                 var employee = ParseEmployeeFromCsv(employeeLine);
 
-                if (employee.Surname == "Surname")
+                if (await EmployeeExistsAsync(employee, importEmployeeHistory.Id))
                     continue;
 
-                if (await EmployeeExistsAsync(employee, employeeImport.Id))
-                    continue;
+                var result = await _validator.ValidateAsync(employee);
 
-                employee = await AddEmployeeAsync(employee, employeeImport.Id);
-
-                EmployeesImported.Add(employee);
+                if (result.IsValid)
+                {
+                    employee = await AddEmployeeAsync(employee, importEmployeeHistory.Id);
+                    EmployeesImported.Add(employee);
+                }
+                else
+                {
+                    string[] errors = [.. result.Errors.Select(e => e.ErrorMessage)];
+                    await _importEmployeeFailHistoryRepository.AddAsync(employeeLine, importEmployeeHistory.Id, errors);
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Import Employee: {employeeLine}, Error: {ex.Message}");
-                EmployeesErrorImporting.Add(employeeLine);
+                await _importEmployeeFailHistoryRepository.AddAsync(employeeLine, importEmployeeHistory.Id, [ex.Message]);
                 continue;
             }
         }
 
-        return new EmployeeImportResponse() { Id = employeeImport.Id, Date = DateTime.Now };
+        return new ImportEmployeeHistoryResponse() { Id = importEmployeeHistory.Id, Date = DateTime.Now };
     }
 
-
-    private async Task<Employee> AddEmployeeAsync(Employee employee, Guid employeeImportId)
+    private async Task<Employee> AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
     {
 
         //TODO check to see if department exists is not then throw error
 
 
-        employee.EmployeeImportId = employeeImportId;
+        employee.ImportEmployeeHistoryId = importEmployeeHistoryId;
 
         await _employeeRepository.AddAsync(employee);
 
@@ -83,32 +85,6 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
             employee.Department = _departmentRepository.Get(employee.DepartmentId);
 
         return employee;
-    }
-
-    public async Task<EmployeePagedResponse> GetImportedEmployeesAsync(Guid id, int page, int pageSize)
-    {
-        var employeePagedResponse = new EmployeePagedResponse
-        {
-            Page = page,
-            PageSize = pageSize,
-            TotalEmployees = await _employeeImportRepository.CountImportedEmployeesAsync(id),
-            Employees = await _employeeImportRepository.GetImportedEmployeesAsync(id, page, pageSize)
-        };
-
-        return employeePagedResponse;
-    }
-
-    public async Task<ExistingEmployeePagedResponse> GetExistingEmployeesImportedAsync(Guid id, int page, int pageSize)
-    {
-        var existingEmployeePagedResponse = new ExistingEmployeePagedResponse
-        {
-            Page = page,
-            PageSize = pageSize,
-            TotalEmployees = await _employeeImportRepository.CountImportedExistingEmployeesAsync(id),
-            ExistingEmployees = await _employeeImportRepository.GetImportedExistingEmployeesAsync(id, page, pageSize)
-        };
-
-        return existingEmployeePagedResponse;
     }
 
     public async Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file)
@@ -164,19 +140,19 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         };
     }
 
-    private async Task<bool> EmployeeExistsAsync(Employee employee, Guid employeeImportId)
+    private async Task<bool> EmployeeExistsAsync(Employee employee, Guid importEmployeeHistoryId)
     {
         var employeeExists = await _employeeRepository.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
         {
-            var existingEmployee = new ExistingEmployee()
+            var existingEmployee = new ImportEmployeeExistingHistory()
             {
                 Surname = employee.Surname,
                 FirstName = employee.FirstName,
                 DateOfBirth = employee.DateOfBirth,
                 Email = employee.Email,
                 PhoneNumber = employee.PhoneNumber,
-                EmployeeImportId = employeeImportId
+                ImportEmployeeHistoryId = importEmployeeHistoryId
             };
 
             _existingEmployeeRepository.Add(existingEmployee);
@@ -185,22 +161,5 @@ public class EmployeeImportService(IDepartmentRepository departmentRepository, I
         }
 
         return false;
-    }
-
-    public async Task DeleteAsync(Guid id)
-    {
-        await _employeeImportRepository.DeleteAsync(id);
-        return;
-    }
-
-    public async Task<List<EmployeeImportResponse>> GetAsync()
-    {
-        var employeeImports = await _employeeImportRepository.GetAsync();
-
-        return [.. employeeImports.Select(ei => new EmployeeImportResponse
-        {
-            Id = ei.Id,
-            Date = ei.Date
-        })];
     }
 }
