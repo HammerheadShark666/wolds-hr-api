@@ -5,11 +5,11 @@ using wolds_hr_api.Helper;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class ExistingEmployeeConfiguration : IEntityTypeConfiguration<ExistingEmployee>
+public class ImportEmployeeExistingHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeExistingHistory>
 {
-    public void Configure(EntityTypeBuilder<ExistingEmployee> builder)
+    public void Configure(EntityTypeBuilder<ImportEmployeeExistingHistory> builder)
     {
-        builder.ToTable("WOLDS_HR_ExistingEmployee");
+        builder.ToTable("WOLDS_HR_ImportEmployeeExistingHistory");
 
         builder.HasKey(u => u.Id);
 
