@@ -34,12 +34,7 @@ public class ImportEmployeeValidator : AbstractValidator<Employee>
             .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2007");
 
         RuleFor(x => x.DepartmentId)
-            .MustAsync(async (deptId, cancellation) =>
-            {
-                if (deptId == null) return true;
-
-                return departmentRepository.Exists(deptId.Value);
-            })
+            .Must(deptId => deptId == null || departmentRepository.Exists(deptId.Value))
             .WithMessage("Department does not exist in database");
     }
 }
