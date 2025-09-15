@@ -39,17 +39,12 @@ public class EmployeeValidator : AbstractValidator<Employee>
                 .WithMessage("Hire date must be after Jan 1, 2000 and not in the future");
 
             RuleFor(x => x.DateOfBirth)
-                .Must(date => date == null || (date >= new DateOnly(2000, 1, 1) && date <= DateOnly.FromDateTime(DateTime.UtcNow)))
-                .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2007");
+                .Must(date => date == null || (date >= new DateOnly(1950, 1, 1) && date <= new DateOnly(2005, 1, 1)))
+                .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2005");
 
             RuleFor(x => x.DepartmentId)
-                .MustAsync(async (deptId, cancellation) =>
-                {
-                    if (deptId == null) return true;
-
-                    return _departmentRepository.Exists(deptId.Value);
-                })
-                .WithMessage("Department does not exist in database");
+            .Must(deptId => deptId == null || _departmentRepository.Exists(deptId.Value))
+            .WithMessage("Department does not exist in database");
 
             RuleFor(_ => _)
                 .MustAsync(async (employee, cancellation) =>

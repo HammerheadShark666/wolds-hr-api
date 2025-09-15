@@ -1,13 +1,20 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
+using wolds_hr_api.Helper;
 
 namespace wolds_hr_api.Validator;
 
 public class ImportEmployeeValidator : AbstractValidator<Employee>
 {
-    public ImportEmployeeValidator(IDepartmentRepository departmentRepository)
+    private readonly IEmployeeRepository _employeeRepository;
+    private readonly IDepartmentRepository _departmentRepository;
+
+    public ImportEmployeeValidator(IEmployeeRepository employeeRepository, IDepartmentRepository departmentRepository)
     {
+        _employeeRepository = employeeRepository;
+        _departmentRepository = departmentRepository;
+
         RuleFor(x => x.Surname)
             .NotEmpty().WithMessage("Surname is required")
             .MaximumLength(25).WithMessage("Surname must be at most 25 characters long");
@@ -30,11 +37,23 @@ public class ImportEmployeeValidator : AbstractValidator<Employee>
             .WithMessage("Hire date must be after Jan 1, 2000 and not in the future");
 
         RuleFor(x => x.DateOfBirth)
-            .Must(date => date == null || (date >= new DateOnly(2000, 1, 1) && date <= DateOnly.FromDateTime(DateTime.UtcNow)))
-            .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2007");
+                .Must(date => date == null || (date >= new DateOnly(1950, 1, 1) && date <= new DateOnly(2005, 1, 1)))
+                .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2005");
 
         RuleFor(x => x.DepartmentId)
-            .Must(deptId => deptId == null || departmentRepository.Exists(deptId.Value))
+            .Must(deptId => deptId == null || _departmentRepository.Exists(deptId.Value))
             .WithMessage("Department does not exist in database");
+
+        RuleFor(_ => _)
+                .MustAsync(async (employee, cancellation) =>
+                {
+                    return await NumberOfEmployeesWithinMax();
+                })
+                .WithMessage($"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}");
+    }
+
+    protected async Task<bool> NumberOfEmployeesWithinMax()
+    {
+        return !(await _employeeRepository.CountAsync() > Constants.MaxNumberOfEmployees);
     }
 }
