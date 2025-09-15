@@ -143,11 +143,11 @@ namespace wolds_hr_api.Migrations
                         column: x => x.ImportEmployeeHistoryId,
                         principalTable: "WOLDS_HR_ImportEmployeeHistory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "WOLDS_HR_ImportEmployeeFailHistory",
+                name: "WOLDS_HR_ImportEmployeeFailedHistory",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
@@ -156,38 +156,33 @@ namespace wolds_hr_api.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WOLDS_HR_ImportEmployeeFailHistory", x => x.Id);
+                    table.PrimaryKey("PK_WOLDS_HR_ImportEmployeeFailedHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_WOLDS_HR_ImportEmployeeFailHistory_WOLDS_HR_ImportEmployeeHistory_ImportEmployeeHistoryId",
+                        name: "FK_WOLDS_HR_ImportEmployeeFailedHistory_WOLDS_HR_ImportEmployeeHistory_ImportEmployeeHistoryId",
                         column: x => x.ImportEmployeeHistoryId,
                         principalTable: "WOLDS_HR_ImportEmployeeHistory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ImportEmployeeFailErrorHistory",
+                name: "WOLDS_HR_ImportEmployeeFailedErrorHistory",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false, defaultValueSql: "NEWID()"),
                     Error = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImportEmployeeFailHistoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ImportEmployeeFailedHistoryId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ImportEmployeeFailErrorHistory", x => x.Id);
+                    table.PrimaryKey("PK_WOLDS_HR_ImportEmployeeFailedErrorHistory", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ImportEmployeeFailErrorHistory_WOLDS_HR_ImportEmployeeFailHistory_ImportEmployeeFailHistoryId",
-                        column: x => x.ImportEmployeeFailHistoryId,
-                        principalTable: "WOLDS_HR_ImportEmployeeFailHistory",
+                        name: "FK_WOLDS_HR_ImportEmployeeFailedErrorHistory_WOLDS_HR_ImportEmployeeFailedHistory_ImportEmployeeFailedHistoryId",
+                        column: x => x.ImportEmployeeFailedHistoryId,
+                        principalTable: "WOLDS_HR_ImportEmployeeFailedHistory",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ImportEmployeeFailErrorHistory_ImportEmployeeFailHistoryId",
-                table: "ImportEmployeeFailErrorHistory",
-                column: "ImportEmployeeFailHistoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WOLDS_HR_Employee_DepartmentId",
@@ -210,8 +205,13 @@ namespace wolds_hr_api.Migrations
                 column: "ImportEmployeeHistoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WOLDS_HR_ImportEmployeeFailHistory_ImportEmployeeHistoryId",
-                table: "WOLDS_HR_ImportEmployeeFailHistory",
+                name: "IX_WOLDS_HR_ImportEmployeeFailedErrorHistory_ImportEmployeeFailedHistoryId",
+                table: "WOLDS_HR_ImportEmployeeFailedErrorHistory",
+                column: "ImportEmployeeFailedHistoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WOLDS_HR_ImportEmployeeFailedHistory_ImportEmployeeHistoryId",
+                table: "WOLDS_HR_ImportEmployeeFailedHistory",
                 column: "ImportEmployeeHistoryId");
 
             migrationBuilder.CreateIndex(
@@ -224,22 +224,22 @@ namespace wolds_hr_api.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ImportEmployeeFailErrorHistory");
-
-            migrationBuilder.DropTable(
                 name: "WOLDS_HR_Employee");
 
             migrationBuilder.DropTable(
                 name: "WOLDS_HR_ImportEmployeeExistingHistory");
 
             migrationBuilder.DropTable(
+                name: "WOLDS_HR_ImportEmployeeFailedErrorHistory");
+
+            migrationBuilder.DropTable(
                 name: "WOLDS_HR_RefreshToken");
 
             migrationBuilder.DropTable(
-                name: "WOLDS_HR_ImportEmployeeFailHistory");
+                name: "WOLDS_HR_Department");
 
             migrationBuilder.DropTable(
-                name: "WOLDS_HR_Department");
+                name: "WOLDS_HR_ImportEmployeeFailedHistory");
 
             migrationBuilder.DropTable(
                 name: "WOLDS_HR_Account");

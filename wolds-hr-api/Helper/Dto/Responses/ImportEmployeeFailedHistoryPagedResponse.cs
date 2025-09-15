@@ -2,9 +2,9 @@
 
 namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class ImportEmployeeExistingHistoryPagedResponse
+public class ImportEmployeeFailHistoryPagedResponse
 {
-    public List<ImportEmployeeExistingHistory> Employees { get; set; } = [];
+    public List<ImportEmployeeFailedHistory> Employees { get; set; } = [];
     public int Page { get; set; }
     public int PageSize { get; set; }
     public int TotalEmployees { get; set; }
