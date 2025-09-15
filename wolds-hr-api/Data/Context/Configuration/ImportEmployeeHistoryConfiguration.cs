@@ -23,11 +23,11 @@ public class ImportEmployeeHistoryConfiguration : IEntityTypeConfiguration<Impor
         builder.HasMany(x => x.ExistingEmployees)
                .WithOne()
                .HasForeignKey(x => x.ImportEmployeeHistoryId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.FailedEmployees)
                .WithOne()
                .HasForeignKey(x => x.ImportEmployeeHistoryId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }

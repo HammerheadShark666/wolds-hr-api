@@ -12,7 +12,7 @@ using wolds_hr_api.Data.Context;
 namespace wolds_hr_api.Migrations
 {
     [DbContext(typeof(WoldsHrDbContext))]
-    [Migration("20250911175107_initial-create")]
+    [Migration("20250915153041_initial-create")]
     partial class initialcreate
     {
         /// <inheritdoc />
@@ -206,27 +206,28 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_ImportEmployeeExistingHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailErrorHistory", b =>
+            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedErrorHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWID()");
 
                     b.Property<string>("Error")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("ImportEmployeeFailHistoryId")
+                    b.Property<Guid>("ImportEmployeeFailedHistoryId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ImportEmployeeFailHistoryId");
+                    b.HasIndex("ImportEmployeeFailedHistoryId");
 
-                    b.ToTable("ImportEmployeeFailErrorHistory");
+                    b.ToTable("WOLDS_HR_ImportEmployeeFailedErrorHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailHistory", b =>
+            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -245,7 +246,7 @@ namespace wolds_hr_api.Migrations
 
                     b.HasIndex("ImportEmployeeHistoryId");
 
-                    b.ToTable("WOLDS_HR_ImportEmployeeFailHistory", (string)null);
+                    b.ToTable("WOLDS_HR_ImportEmployeeFailedHistory", (string)null);
                 });
 
             modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeHistory", b =>
@@ -331,26 +332,26 @@ namespace wolds_hr_api.Migrations
                     b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", null)
                         .WithMany("ExistingEmployees")
                         .HasForeignKey("ImportEmployeeHistoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("EmployeeImportHistory");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailErrorHistory", b =>
+            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedErrorHistory", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeFailHistory", null)
+                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeFailedHistory", null)
                         .WithMany("Errors")
-                        .HasForeignKey("ImportEmployeeFailHistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ImportEmployeeFailedHistoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailHistory", b =>
+            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
                 {
                     b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", null)
                         .WithMany("FailedEmployees")
                         .HasForeignKey("ImportEmployeeHistoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
@@ -370,7 +371,7 @@ namespace wolds_hr_api.Migrations
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailHistory", b =>
+            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
                 {
                     b.Navigation("Errors");
                 });

@@ -85,12 +85,15 @@ public static class ServiceExtensions
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
         services.AddScoped<IEmployeeService, EmployeeService>();
+        services.AddScoped<IImportEmployeeService, ImportEmployeeService>();
         services.AddScoped<IImportEmployeeHistoryService, ImportEmployeeHistoryService>();
         services.AddScoped<IAccountRepository, AccountRepository>();
         services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
         services.AddScoped<IDepartmentRepository, DepartmentRepository>();
         services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.AddScoped<IImportEmployeeSuccessHistoryRepository, ImportEmployeeSuccessHistoryRepository>();
         services.AddScoped<IImportEmployeeExistingHistoryRepository, ImportEmployeeExistingHistoryRepository>();
+        services.AddScoped<IImportEmployeeFailedHistoryRepository, ImportEmployeeFailedHistoryRepository>();
         services.AddScoped<IImportEmployeeHistoryRepository, ImportEmployeeHistoryRepository>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();

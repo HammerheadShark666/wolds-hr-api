@@ -4,11 +4,11 @@ using global::wolds_hr_api.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class ImportEmployeeFailHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailHistory>
+public class ImportEmployeeFailedHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedHistory>
 {
-    public void Configure(EntityTypeBuilder<ImportEmployeeFailHistory> builder)
+    public void Configure(EntityTypeBuilder<ImportEmployeeFailedHistory> builder)
     {
-        builder.ToTable("WOLDS_HR_ImportEmployeeFailHistory");
+        builder.ToTable("WOLDS_HR_ImportEmployeeFailedHistory");
 
         builder.HasKey(u => u.Id);
 
@@ -21,7 +21,7 @@ public class ImportEmployeeFailHistoryConfiguration : IEntityTypeConfiguration<I
 
         builder.HasMany(x => x.Errors)
                .WithOne()
-               .HasForeignKey(x => x.ImportEmployeeFailHistoryId)
-               .OnDelete(DeleteBehavior.Restrict);
+               .HasForeignKey(x => x.ImportEmployeeFailedHistoryId)
+               .OnDelete(DeleteBehavior.Cascade);
     }
 }
