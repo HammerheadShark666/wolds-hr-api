@@ -13,11 +13,11 @@ public class ImportEmployeeService(IValidator<Employee> validator,
                                    IEmployeeRepository employeeRepository,
                                    IImportEmployeeHistoryRepository importEmployeeHistoryRepository,
                                    IImportEmployeeExistingHistoryRepository importEmployeeExistingRepository,
-                                   IImportEmployeeFailedHistoryRepository importEmployeeFailRepository) : IImportEmployeeService
+                                   IImportEmployeeFailedHistoryRepository importEmployeeFailedRepository) : IImportEmployeeService
 {
     private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeHistoryRepository;
     private readonly IImportEmployeeExistingHistoryRepository _importEmployeeExistingRepository = importEmployeeExistingRepository;
-    private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailRepository = importEmployeeFailRepository;
+    private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailedRepository = importEmployeeFailedRepository;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
@@ -66,14 +66,14 @@ public class ImportEmployeeService(IValidator<Employee> validator,
                 }
                 else
                 {
-                    await AddImportEmployeeFailAsync(employeeLine, importEmployeeHistory.Id, result);
+                    await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, result);
                     importEmployeesErrors++;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Import Employee: {employeeLine}, Error: {ex.Message}");
-                await AddImportEmployeeFailAsync(employeeLine, importEmployeeHistory.Id, ex.Message);
+                await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, ex.Message);
                 importEmployeesErrors++;
                 continue;
             }
@@ -172,9 +172,9 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         return false;
     }
 
-    private async Task AddImportEmployeeFailAsync(string employeeLine, Guid importEmployeeHistoryId, IEnumerable<string> errors)
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, IEnumerable<string> errors)
     {
-        var importEmployeeFailHistory = new ImportEmployeeFailedHistory
+        var importEmployeeFailedHistory = new ImportEmployeeFailedHistory
         {
             Employee = employeeLine,
             ImportEmployeeHistoryId = importEmployeeHistoryId,
@@ -183,17 +183,17 @@ public class ImportEmployeeService(IValidator<Employee> validator,
                      })]
         };
 
-        await _importEmployeeFailRepository.AddAsync(importEmployeeFailHistory);
+        await _importEmployeeFailedRepository.AddAsync(importEmployeeFailedHistory);
     }
 
-    private async Task AddImportEmployeeFailAsync(string employeeLine, Guid importEmployeeHistoryId, FluentValidation.Results.ValidationResult result)
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, FluentValidation.Results.ValidationResult result)
     {
-        await AddImportEmployeeFailAsync(employeeLine, importEmployeeHistoryId, result.Errors.Select(e => e.ErrorMessage));
+        await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, result.Errors.Select(e => e.ErrorMessage));
     }
 
-    private async Task AddImportEmployeeFailAsync(string employeeLine, Guid importEmployeeHistoryId, string error)
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, string error)
     {
-        await AddImportEmployeeFailAsync(employeeLine, importEmployeeHistoryId, [error]);
+        await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, [error]);
     }
 
 }

@@ -105,8 +105,6 @@ public static class ServiceExtensions
 
     public static void ConfigureDbContext(this IServiceCollection services, ConfigurationManager configuration)
     {
-        // services.AddDbContext<WoldsHrDbContext>(options => options.UseInMemoryDatabase(databaseName: "WoldHrDB"));
-
         services.AddDbContext<WoldsHrDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString(Constants.DatabaseConnectionString),
             options => options.EnableRetryOnFailure()
