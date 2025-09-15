@@ -1,31 +1,21 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext context) : IImportEmployeeExistingHistoryRepository
+public class ImportEmployeeSuccessHistoryRepository(WoldsHrDbContext context) : IImportEmployeeSuccessHistoryRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<ImportEmployeeExistingHistory> Add(ImportEmployeeExistingHistory employee)
+    public async Task<List<Employee>> GetAsync(Guid id, int page, int pageSize)
     {
-        employee.Created = DateOnly.FromDateTime(DateTime.Now);
-
-        _context.ImportEmployeesExistingHistory.Add(employee);
-        await _context.SaveChangesAsync();
-
-        return employee;
-    }
-
-    public async Task<List<ImportEmployeeExistingHistory>> GetAsync(Guid id, int page, int pageSize)
-    {
-        return await _context.ImportEmployeesExistingHistory
+        return await _context.Employees
                             .Where(e => e.ImportEmployeeHistoryId.Equals(id))
                             .OrderBy(e => e.Surname)
                             .ThenBy(e => e.FirstName)
-                            .Select(e => new ImportEmployeeExistingHistory
+                            .Select(e => new Employee
                             {
                                 Id = e.Id,
                                 Surname = e.Surname,
@@ -43,6 +33,6 @@ public class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext context) :
 
     public async Task<int> CountAsync(Guid id)
     {
-        return await _context.ImportEmployeesExistingHistory.Where(e => e.ImportEmployeeHistoryId.Equals(id)).CountAsync();
+        return await _context.Employees.Where(e => e.ImportEmployeeHistoryId.Equals(id)).CountAsync();
     }
 }

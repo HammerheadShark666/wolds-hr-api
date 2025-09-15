@@ -5,12 +5,25 @@ using wolds_hr_api.Service.Interfaces;
 namespace wolds_hr_api.Service;
 
 public class ImportEmployeeHistoryService(IImportEmployeeHistoryRepository importEmployeeHistoryRepository,
+                                          IImportEmployeeSuccessHistoryRepository importEmployeeSuccessHistoryRepository,
                                           IImportEmployeeExistingHistoryRepository importEmployeeExistingHistoryRepository,
-                                          IImportEmployeeFailHistoryRepository importEmployeeFailedHistoryRepository) : IImportEmployeeHistoryService
+                                          IImportEmployeeFailedHistoryRepository importEmployeeFailHistoryRepository) : IImportEmployeeHistoryService
 {
     private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeHistoryRepository;
     private readonly IImportEmployeeExistingHistoryRepository _importEmployeeExistingHistoryRepository = importEmployeeExistingHistoryRepository;
-    private readonly IImportEmployeeFailHistoryRepository _importEmployeeFailedHistoryRepository = importEmployeeFailedHistoryRepository;
+    private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailHistoryRepository = importEmployeeFailHistoryRepository;
+    private readonly IImportEmployeeSuccessHistoryRepository _importEmployeeSuccessHistoryRepository = importEmployeeSuccessHistoryRepository;
+
+    public async Task<List<ImportEmployeeHistoryResponse>> GetImportEmployeesHistoryAsync()
+    {
+        var importEmployeeHistory = await _importEmployeeHistoryRepository.GetAsync();
+
+        return [.. importEmployeeHistory.Select(h => new ImportEmployeeHistoryResponse
+        {
+            Id = h.Id,
+            Date = h.Date
+        })];
+    }
 
     public async Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize)
     {
@@ -18,37 +31,37 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryRepository impor
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = await _importEmployeeHistoryRepository.CountImportedEmployeesHistoryAsync(id),
-            Employees = await _importEmployeeHistoryRepository.GetImportedEmployeesHistoryAsync(id, page, pageSize)
+            TotalEmployees = await _importEmployeeSuccessHistoryRepository.CountAsync(id),
+            Employees = await _importEmployeeSuccessHistoryRepository.GetAsync(id, page, pageSize)
         };
 
         return employeePagedResponse;
     }
 
-    public async Task<ImportEmployeeExistingHistoryPagedResponse> GetImportedExistingEmployeesHistoryAsync(Guid id, int page, int pageSize)
+    public async Task<ImportEmployeeExistingHistoryPagedResponse> GetImportedEmployeeExistingHistoryAsync(Guid id, int page, int pageSize)
     {
         var importEmployeeExistingHistoryPagedResponse = new ImportEmployeeExistingHistoryPagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = await _importEmployeeExistingHistoryRepository.CountImportedExistingEmployeesHistoryAsync(id),
-            ExistingEmployees = await _importEmployeeExistingHistoryRepository.GetImportedExistingEmployeesHistoryAsync(id, page, pageSize)
+            TotalEmployees = await _importEmployeeExistingHistoryRepository.CountAsync(id),
+            Employees = await _importEmployeeExistingHistoryRepository.GetAsync(id, page, pageSize)
         };
 
         return importEmployeeExistingHistoryPagedResponse;
     }
 
-    public async Task<ImportEmployeeFailedHistoryPagedResponse> GetImportedFailedEmployeesHistoryAsync(Guid id, int page, int pageSize)
+    public async Task<ImportEmployeeFailHistoryPagedResponse> GetImportedEmployeeFailHistoryAsync(Guid id, int page, int pageSize)
     {
-        var importEmployeeFailedHistoryPagedResponse = new ImportEmployeeFailedHistoryPagedResponse
+        var importEmployeeFailHistoryPagedResponse = new ImportEmployeeFailHistoryPagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = await _importEmployeeFailedHistoryRepository.CountImportedFailedEmployeesHistoryAsync(id),
-            FailedEmployees = await _importEmployeeFailedHistoryRepository.GetImportedFailedEmployeesHistoryAsync(id, page, pageSize)
+            TotalEmployees = await _importEmployeeFailHistoryRepository.CountAsync(id),
+            Employees = await _importEmployeeFailHistoryRepository.GetAsync(id, page, pageSize)
         };
 
-        return importEmployeeFailedHistoryPagedResponse;
+        return importEmployeeFailHistoryPagedResponse;
     }
 
     public async Task DeleteAsync(Guid id)
@@ -57,11 +70,11 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryRepository impor
         return;
     }
 
-    public async Task<List<ImportEmployeeHistoryResponse>> GetAsync()
+    public async Task<List<ImportEmployeeHistorySummaryResponse>> GetAsync()
     {
         var employeeImports = await _importEmployeeHistoryRepository.GetAsync();
 
-        return [.. employeeImports.Select(ei => new ImportEmployeeHistoryResponse
+        return [.. employeeImports.Select(ei => new ImportEmployeeHistorySummaryResponse
         {
             Id = ei.Id,
             Date = ei.Date

@@ -4,11 +4,11 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class ImportEmployeeFailErrorHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailErrorHistory>
+public class ImportEmployeeFailedErrorHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedErrorHistory>
 {
-    public void Configure(EntityTypeBuilder<ImportEmployeeFailErrorHistory> builder)
+    public void Configure(EntityTypeBuilder<ImportEmployeeFailedErrorHistory> builder)
     {
-        builder.ToTable("WOLDS_HR_ImportEmployeeFailErrorHistory");
+        builder.ToTable("WOLDS_HR_ImportEmployeeFailedErrorHistory");
 
         builder.HasKey(u => u.Id);
 

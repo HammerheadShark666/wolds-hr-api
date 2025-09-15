@@ -8,20 +8,27 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class ImportEmployeeService(IValidator<Employee> validator, IDepartmentRepository departmentRepository, IImportEmployeeHistoryRepository importEmployeeRepository, IEmployeeRepository employeeRepository, IImportEmployeeExistingHistoryRepository existingEmployeeRepository, IImportEmployeeFailHistoryRepository importEmployeeFailHistoryRepository) : IImportEmployeeService
+public class ImportEmployeeService(IValidator<Employee> validator,
+                                   IDepartmentRepository departmentRepository,
+                                   IEmployeeRepository employeeRepository,
+                                   IImportEmployeeHistoryRepository importEmployeeHistoryRepository,
+                                   IImportEmployeeExistingHistoryRepository importEmployeeExistingRepository,
+                                   IImportEmployeeFailedHistoryRepository importEmployeeFailedRepository) : IImportEmployeeService
 {
-    private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeRepository;
-    private readonly IImportEmployeeExistingHistoryRepository _existingEmployeeRepository = existingEmployeeRepository;
-    private readonly IImportEmployeeFailHistoryRepository _importEmployeeFailHistoryRepository = importEmployeeFailHistoryRepository;
-    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
+    private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeHistoryRepository;
+    private readonly IImportEmployeeExistingHistoryRepository _importEmployeeExistingRepository = importEmployeeExistingRepository;
+    private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailedRepository = importEmployeeFailedRepository;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
 
-    public async Task<ImportEmployeeHistoryResponse> ImportAsync(IFormFile file)
+    public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(IFormFile file)
     {
-        List<Employee> EmployeesImported = [];
-
+        int importedEmployees = 0;
+        int importEmployeesExisting = 0;
+        int importEmployeesErrors = 0;
         var isFirstLine = true;
+
         var importEmployeeHistory = await _importEmployeeHistoryRepository.AddAsync();
         if (importEmployeeHistory.Id == Guid.Empty)
             throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
@@ -45,46 +52,48 @@ public class ImportEmployeeService(IValidator<Employee> validator, IDepartmentRe
                 var employee = ParseEmployeeFromCsv(employeeLine);
 
                 if (await EmployeeExistsAsync(employee, importEmployeeHistory.Id))
+                {
+                    importEmployeesExisting++;
                     continue;
+                }
 
                 var result = await _validator.ValidateAsync(employee);
 
                 if (result.IsValid)
                 {
-                    employee = await AddEmployeeAsync(employee, importEmployeeHistory.Id);
-                    EmployeesImported.Add(employee);
+                    await AddEmployeeAsync(employee, importEmployeeHistory.Id);
+                    importedEmployees++;
                 }
                 else
                 {
-                    string[] errors = [.. result.Errors.Select(e => e.ErrorMessage)];
-                    await _importEmployeeFailHistoryRepository.AddAsync(employeeLine, importEmployeeHistory.Id, errors);
+                    await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, result);
+                    importEmployeesErrors++;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Import Employee: {employeeLine}, Error: {ex.Message}");
-                await _importEmployeeFailHistoryRepository.AddAsync(employeeLine, importEmployeeHistory.Id, [ex.Message]);
+                await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, ex.Message);
+                importEmployeesErrors++;
                 continue;
             }
         }
 
-        return new ImportEmployeeHistoryResponse() { Id = importEmployeeHistory.Id, Date = DateTime.Now };
+        return new ImportEmployeeHistorySummaryResponse()
+        {
+            Id = importEmployeeHistory.Id,
+            Date = DateTime.Now,
+            ImportedEmployeesCount = importedEmployees,
+            ImportEmployeesExistingCount = importEmployeesExisting,
+            ImportEmployeesErrorsCount = importEmployeesErrors
+        };
     }
 
-    private async Task<Employee> AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
+    private async Task AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
     {
-
-        //TODO check to see if department exists is not then throw error
-
-
         employee.ImportEmployeeHistoryId = importEmployeeHistoryId;
-
         await _employeeRepository.AddAsync(employee);
-
-        if (employee.DepartmentId != null)
-            employee.Department = _departmentRepository.Get(employee.DepartmentId);
-
-        return employee;
+        return;
     }
 
     public async Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file)
@@ -155,11 +164,36 @@ public class ImportEmployeeService(IValidator<Employee> validator, IDepartmentRe
                 ImportEmployeeHistoryId = importEmployeeHistoryId
             };
 
-            _existingEmployeeRepository.Add(existingEmployee);
+            await _importEmployeeExistingRepository.Add(existingEmployee);
 
             return true;
         }
 
         return false;
     }
+
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, IEnumerable<string> errors)
+    {
+        var importEmployeeFailedHistory = new ImportEmployeeFailedHistory
+        {
+            Employee = employeeLine,
+            ImportEmployeeHistoryId = importEmployeeHistoryId,
+            Errors = [.. errors.Select(e => new ImportEmployeeFailedErrorHistory {
+                        Error = e
+                     })]
+        };
+
+        await _importEmployeeFailedRepository.AddAsync(importEmployeeFailedHistory);
+    }
+
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, FluentValidation.Results.ValidationResult result)
+    {
+        await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, result.Errors.Select(e => e.ErrorMessage));
+    }
+
+    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, string error)
+    {
+        await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, [error]);
+    }
+
 }

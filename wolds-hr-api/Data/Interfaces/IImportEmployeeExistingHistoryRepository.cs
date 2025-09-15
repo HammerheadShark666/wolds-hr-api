@@ -4,7 +4,7 @@ namespace wolds_hr_api.Data.Interfaces;
 
 public interface IImportEmployeeExistingHistoryRepository
 {
-    ImportEmployeeExistingHistory Add(ImportEmployeeExistingHistory employee);
-    Task<int> CountImportedExistingEmployeesHistoryAsync(Guid id);
-    Task<List<ImportEmployeeExistingHistory>> GetImportedExistingEmployeesHistoryAsync(Guid id, int page, int pageSize);
+    Task<ImportEmployeeExistingHistory> Add(ImportEmployeeExistingHistory employee);
+    Task<int> CountAsync(Guid id);
+    Task<List<ImportEmployeeExistingHistory>> GetAsync(Guid id, int page, int pageSize);
 }

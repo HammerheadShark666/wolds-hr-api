@@ -13,9 +13,9 @@ public static class EndpointsImportEmployee
 {
     public static void ConfigureRoutes(this WebApplication webApplication)
     {
-        var employeeImportGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees/").WithTags("import-employees");
+        var importEmployeeGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees/").WithTags("import-employees");
 
-        employeeImportGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService) =>
+        importEmployeeGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
@@ -29,10 +29,10 @@ public static class EndpointsImportEmployee
             if (await importEmployeeService.MaximumNumberOfEmployeesReachedAsync(file))
                 return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
 
-            return Results.Ok(await importEmployeeService.ImportAsync(file));
+            return Results.Ok(await importEmployeeService.ImportAsync(file)); ;
         })
         .Accepts<IFormFile>("multipart/form-data")
-        .Produces<ImportEmployeeHistoryResponse>((int)HttpStatusCode.OK)
+        .Produces<ImportEmployeeHistorySummaryResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
         .WithApiVersionSet(webApplication.GetVersionSet())
         .MapToApiVersion(new ApiVersion(1, 0))

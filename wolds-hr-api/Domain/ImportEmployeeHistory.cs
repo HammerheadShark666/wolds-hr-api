@@ -15,5 +15,5 @@ public class ImportEmployeeHistory
 
     public required List<ImportEmployeeExistingHistory> ExistingEmployees { get; set; } = [];
 
-    public required List<ImportEmployeeFailHistory> FailedEmployees { get; set; } = [];
+    public required List<ImportEmployeeFailedHistory> FailedEmployees { get; set; } = [];
 }
