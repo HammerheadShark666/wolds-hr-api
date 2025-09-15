@@ -36,14 +36,5 @@ public class ImportEmployeeValidator : AbstractValidator<Employee>
         RuleFor(x => x.DepartmentId)
             .Must(deptId => deptId == null || departmentRepository.Exists(deptId.Value))
             .WithMessage("Department does not exist in database");
-
-        //RuleFor(x => x.DepartmentId)
-        //    .Must((deptId, cancellation) =>
-        //    {
-        //        if (deptId == null) return true; // optional
-
-        //        return departmentRepository.Exists(deptId);
-        //    })
-        //    .WithMessage("Department does not exist in database");
     }
 }

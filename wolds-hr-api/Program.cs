@@ -38,6 +38,7 @@ EndpointsEmployee.ConfigureRoutes(app);
 EndpointsDepartment.ConfigureRoutes(app);
 EndpointsImportEmployeeHistory.ConfigureRoutes(app);
 EndpointsImportEmployee.ConfigureRoutes(app);
+EndpointsImportEmployeeHistory.ConfigureRoutes(app);
 
 using (var scope = app.Services.CreateScope())
 {
