@@ -14,17 +14,6 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryRepository impor
     private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailHistoryRepository = importEmployeeFailHistoryRepository;
     private readonly IImportEmployeeSuccessHistoryRepository _importEmployeeSuccessHistoryRepository = importEmployeeSuccessHistoryRepository;
 
-    public async Task<List<ImportEmployeeHistoryResponse>> GetImportEmployeesHistoryAsync()
-    {
-        var importEmployeeHistory = await _importEmployeeHistoryRepository.GetAsync();
-
-        return [.. importEmployeeHistory.Select(h => new ImportEmployeeHistoryResponse
-        {
-            Id = h.Id,
-            Date = h.Date
-        })];
-    }
-
     public async Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize)
     {
         var employeePagedResponse = new EmployeePagedResponse
@@ -70,14 +59,14 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryRepository impor
         return;
     }
 
-    public async Task<List<ImportEmployeeHistorySummaryResponse>> GetAsync()
+    public async Task<List<ImportEmployeeHistoryResponse>> GetAsync()
     {
-        var employeeImports = await _importEmployeeHistoryRepository.GetAsync();
+        var importEmployeeHistory = await _importEmployeeHistoryRepository.GetAsync();
 
-        return [.. employeeImports.Select(ei => new ImportEmployeeHistorySummaryResponse
+        return [.. importEmployeeHistory.Select(h => new ImportEmployeeHistoryResponse
         {
-            Id = ei.Id,
-            Date = ei.Date
+            Id = h.Id,
+            Date = h.Date
         })];
     }
 }
