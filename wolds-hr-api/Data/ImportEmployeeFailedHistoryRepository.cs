@@ -9,10 +9,9 @@ public class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext context) : I
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<ImportEmployeeFailedHistory> AddAsync(ImportEmployeeFailedHistory employee)
+    public ImportEmployeeFailedHistory Add(ImportEmployeeFailedHistory employee)
     {
         _context.ImportEmployeesFailedHistory.Add(employee);
-        await _context.SaveChangesAsync();
 
         return employee;
     }
@@ -22,15 +21,9 @@ public class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext context) : I
         return await _context.ImportEmployeesFailedHistory
                             .Where(e => e.ImportEmployeeHistoryId.Equals(id))
                             .OrderBy(e => e.Employee)
-                            .Select(e => new ImportEmployeeFailedHistory
-                            {
-                                Id = e.Id,
-                                Employee = e.Employee,
-                                ImportEmployeeHistoryId = e.ImportEmployeeHistoryId,
-                                Errors = e.Errors
-                            })
                             .Skip((page - 1) * pageSize)
                             .Take(pageSize)
+                            .AsNoTracking()
                             .ToListAsync();
     }
 
