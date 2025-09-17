@@ -13,7 +13,7 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
     {
         return await _context.ImportEmployeesHistory.OrderByDescending(a => a.Date).ToListAsync();
     }
-    public async Task<ImportEmployeeHistory> AddAsync()
+    public ImportEmployeeHistory Add()
     {
         ImportEmployeeHistory employeeImportHistory = new()
         {
@@ -24,7 +24,6 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
         };
 
         _context.ImportEmployeesHistory.Add(employeeImportHistory);
-        await _context.SaveChangesAsync();
 
         return employeeImportHistory;
     }
@@ -44,8 +43,6 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
                 _context.Employees.RemoveRange(import.ImportedEmployees);
                 _context.ImportEmployeesExistingHistory.RemoveRange(import.ExistingEmployees);
                 _context.ImportEmployeesHistory.Remove(import);
-
-                await _context.SaveChangesAsync();
             }
         }
         else

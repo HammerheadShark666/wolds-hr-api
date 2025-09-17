@@ -9,6 +9,8 @@ using System.Text;
 using wolds_hr_api.Data;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Data.UnitOfWork;
+using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Service;
 using wolds_hr_api.Service.Interfaces;
@@ -95,6 +97,7 @@ public static class ServiceExtensions
         services.AddScoped<IImportEmployeeExistingHistoryRepository, ImportEmployeeExistingHistoryRepository>();
         services.AddScoped<IImportEmployeeFailedHistoryRepository, ImportEmployeeFailedHistoryRepository>();
         services.AddScoped<IImportEmployeeHistoryRepository, ImportEmployeeHistoryRepository>();
+        services.AddScoped<IImportEmployeeHistoryUnitOfWork, ImportEmployeeHistoryUnitOfWork>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();
