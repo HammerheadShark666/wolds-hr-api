@@ -1,10 +1,8 @@
-﻿using wolds_hr_api.Domain;
+﻿namespace wolds_hr_api.Helper.Dto.Responses;
 
-namespace wolds_hr_api.Helper.Dto.Responses;
-
-public class ImportEmployeeFailHistoryPagedResponse
+public class ImportEmployeeFailedHistoryPagedResponse
 {
-    public List<ImportEmployeeFailedHistory> Employees { get; set; } = [];
+    public List<ImportEmployeeFailedResponse> Employees { get; set; } = [];
     public int Page { get; set; }
     public int PageSize { get; set; }
     public int TotalEmployees { get; set; }
