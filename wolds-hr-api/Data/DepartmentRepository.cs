@@ -10,7 +10,7 @@ public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentReposit
 
     public List<Department> Get()
     {
-        return [.. _context.Departments.OrderBy(e => e.Name)];
+        return _context.Departments.OrderBy(e => e.Name).ToList();
     }
 
     public Department? Get(Guid? id)

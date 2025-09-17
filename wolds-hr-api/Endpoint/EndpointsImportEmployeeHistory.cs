@@ -49,10 +49,10 @@ public static class EndpointsImportEmployeeHistory
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        importEmployeeGroup.MapGet("/fail", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
+        importEmployeeGroup.MapGet("/failed", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
         {
-            var existingEmployees = await importEmployeeHistoryService.GetImportedEmployeeFailHistoryAsync(id, page, pageSize);
-            return Results.Ok(existingEmployees);
+            var failedEmployeeImports = await importEmployeeHistoryService.GetImportedEmployeeFailedHistoryAsync(id, page, pageSize);
+            return Results.Ok(failedEmployeeImports);
         })
         .Produces<ImportEmployeeExistingHistoryPagedResponse>((int)HttpStatusCode.OK)
         .WithName("GetImportedEmployeeFailHistoryWithPaging")

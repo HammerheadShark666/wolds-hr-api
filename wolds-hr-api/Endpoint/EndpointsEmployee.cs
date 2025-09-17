@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Domain;
+using wolds_hr_api.Helper.Dto.Requests.Employee;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helper.Extensions;
@@ -53,13 +54,13 @@ public static class EndpointsEmployee
        });
 
 
-        employeeGroup.MapPost("/add", async (IEmployeeService employeeService, Employee employee) =>
+        employeeGroup.MapPost("", async (IEmployeeService employeeService, AddEmployeeRequest addEmployeeRequest) =>
         {
-            var (isValid, savedEmployee, errors) = await employeeService.AddAsync(employee);
+            var (isValid, savedEmployee, errors) = await employeeService.AddAsync(addEmployeeRequest);
             if (!isValid)
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
 
-            return Results.Ok(employee);
+            return Results.Ok(savedEmployee);
 
         })
         .Accepts<Employee>("application/json")
@@ -76,9 +77,9 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapPut("/update", async (IEmployeeService employeeService, Employee employee) =>
+        employeeGroup.MapPut("", async (IEmployeeService employeeService, UpdateEmployeeRequest updateEmployeeRequest) =>
         {
-            var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(employee); ;
+            var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(updateEmployeeRequest); ;
             if (!isValid)
                 return Results.BadRequest(new FailedValidationResponse { Errors = errors ?? ([]) });
 
