@@ -15,6 +15,4 @@ public class EmployeeResponse
     public DateOnly Created { get; set; }
     public Guid? DepartmentId { get; set; }
     public Department? Department { get; set; }
-    //public Guid? ImportEmployeeHistoryId { get; set; }
-    //public ImportEmployeeHistory? ImportEmployeeHistory { get; set; }
 }
