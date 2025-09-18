@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Requests;
@@ -12,13 +12,13 @@ namespace wolds_hr_api.Service;
 
 public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
                                  IRefreshTokenService refreshTokenService,
-                                 IAccountRepository accountRepository,
+                                 IAccountUnitOfWork accountUnitOfWork,
                                  IJWTHelper jWTHelper) : IAuthenticateService
 {
-    public readonly IValidator<LoginRequest> _validatorHelper = validatorHelper;
-    public readonly IAccountRepository _accountRepository = accountRepository;
-    public readonly IJWTHelper _jWTHelper = jWTHelper;
-    public readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
+    private readonly IValidator<LoginRequest> _validatorHelper = validatorHelper;
+    private readonly IAccountUnitOfWork _accountUnitOfWork = accountUnitOfWork;
+    private readonly IJWTHelper _jWTHelper = jWTHelper;
+    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
 
     #region Public Functions
 
@@ -64,7 +64,7 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
 
     private Account GetAccount(string email)
     {
-        return _accountRepository.Get(email) ?? throw new AppException(ConstantMessages.AccountNotFound);
+        return _accountUnitOfWork.Account.Get(email) ?? throw new AppException(ConstantMessages.AccountNotFound);
     }
 
     #endregion

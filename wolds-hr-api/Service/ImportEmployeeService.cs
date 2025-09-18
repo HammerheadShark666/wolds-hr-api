@@ -11,11 +11,11 @@ namespace wolds_hr_api.Service;
 
 public class ImportEmployeeService(IValidator<Employee> validator,
                                    IDepartmentRepository departmentRepository,
-                                   IEmployeeRepository employeeRepository,
+                                   IEmployeeUnitOfWork employeeUnitOfWork,
                                    IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork) : IImportEmployeeService
 {
     private readonly IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork = importEmployeeHistoryUnitOfWork;
-    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IEmployeeUnitOfWork _employeeUnitOfWork = employeeUnitOfWork;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
 
@@ -87,14 +87,16 @@ public class ImportEmployeeService(IValidator<Employee> validator,
     private async Task AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
     {
         employee.ImportEmployeeHistoryId = importEmployeeHistoryId;
-        await _employeeRepository.AddAsync(employee);
+        _employeeUnitOfWork.Employee.Add(employee);
+        await _employeeUnitOfWork.SaveChangesAsync();
+
         return;
     }
 
     public async Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file)
     {
         var numberOfEmployeesToImport = NumberOfEmployeesToImport(file);
-        var numberOfEmloyees = await _employeeRepository.CountAsync();
+        var numberOfEmloyees = await _employeeUnitOfWork.Employee.CountAsync();
 
         if (numberOfEmployeesToImport + numberOfEmloyees > Constants.MaxNumberOfEmployees)
         {
@@ -146,7 +148,7 @@ public class ImportEmployeeService(IValidator<Employee> validator,
 
     private async Task<bool> EmployeeExistsAsync(Employee employee, Guid importEmployeeHistoryId)
     {
-        var employeeExists = await _employeeRepository.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
+        var employeeExists = await _employeeUnitOfWork.Employee.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
         {
             var existingEmployee = new ImportEmployeeExistingHistory()

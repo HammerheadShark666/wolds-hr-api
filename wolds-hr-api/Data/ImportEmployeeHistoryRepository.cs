@@ -11,7 +11,10 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
     private readonly WoldsHrDbContext _context = context;
     public async Task<List<ImportEmployeeHistory>> GetAsync()
     {
-        return await _context.ImportEmployeesHistory.OrderByDescending(a => a.Date).ToListAsync();
+        return await _context.ImportEmployeesHistory
+                             .OrderByDescending(a => a.Date)
+                             .AsNoTracking()
+                             .ToListAsync();
     }
     public ImportEmployeeHistory Add()
     {
