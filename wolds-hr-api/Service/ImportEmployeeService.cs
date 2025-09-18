@@ -19,32 +19,21 @@ public class ImportEmployeeService(IValidator<Employee> validator,
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
 
-    public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(IFormFile file)
+    public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(List<String> fileLines)
     {
         int importedEmployees = 0;
         int importEmployeesExisting = 0;
         int importEmployeesErrors = 0;
-        var isFirstLine = true;
 
         var importEmployeeHistory = await AddImportEmployeeHistoryAsync();
 
-        using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-
-        while (!reader.EndOfStream)
+        foreach (var (line, index) in fileLines.Select((val, idx) => (val, idx)))
         {
-            var employeeLine = await reader.ReadLineAsync();
-            if (string.IsNullOrWhiteSpace(employeeLine)) continue;
-
             try
             {
-                if (isFirstLine)
-                {
-                    isFirstLine = false;
-                    continue;
-                }
+                if (index == 0) continue;
 
-                var employee = ParseEmployeeFromCsv(employeeLine);
+                var employee = ParseEmployeeFromCsv(line);
 
                 if (await EmployeeExistsAsync(employee, importEmployeeHistory.Id))
                 {
@@ -52,23 +41,20 @@ public class ImportEmployeeService(IValidator<Employee> validator,
                     continue;
                 }
 
-                var result = await _validator.ValidateAsync(employee);
-
-                if (result.IsValid)
+                if (await ValidateAndHandleAsync(employee, line, importEmployeeHistory.Id))
                 {
                     await AddEmployeeAsync(employee, importEmployeeHistory.Id);
                     importedEmployees++;
                 }
                 else
                 {
-                    await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, result);
                     importEmployeesErrors++;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Import Employee: {employeeLine}, Error: {ex.Message}");
-                await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistory.Id, ex.Message);
+                Console.WriteLine($"Import Employee: {line}, Error: {ex.Message}");
+                await AddImportEmployeeFailedAsync(line, importEmployeeHistory.Id, ex.Message);
                 importEmployeesErrors++;
                 continue;
             }
@@ -84,6 +70,16 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         };
     }
 
+    private async Task<bool> ValidateAndHandleAsync(Employee employee, string rawLine, Guid historyId)
+    {
+        var result = await _validator.ValidateAsync(employee, opts => opts.IncludeRuleSets("AddUpdate"));
+
+        if (result.IsValid) return true;
+
+        await AddImportEmployeeFailedAsync(rawLine, historyId, result.Errors.Select(e => e.ErrorMessage));
+        return false;
+    }
+
     private async Task AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
     {
         employee.ImportEmployeeHistoryId = importEmployeeHistoryId;
@@ -93,9 +89,9 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         return;
     }
 
-    public async Task<bool> MaximumNumberOfEmployeesReachedAsync(IFormFile file)
+    public async Task<bool> MaximumNumberOfEmployeesReachedAsync(List<String> fileLines)
     {
-        var numberOfEmployeesToImport = NumberOfEmployeesToImport(file);
+        var numberOfEmployeesToImport = fileLines.Count;
         var numberOfEmloyees = await _employeeUnitOfWork.Employee.CountAsync();
 
         if (numberOfEmployeesToImport + numberOfEmloyees > Constants.MaxNumberOfEmployees)
@@ -104,29 +100,6 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         }
 
         return false;
-    }
-
-    private static int NumberOfEmployeesToImport(IFormFile file)
-    {
-        int numberOfEmployees = 0;
-
-        using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-
-        while (!reader.EndOfStream)
-        {
-            var employeeLine = reader.ReadLine();
-            if (string.IsNullOrWhiteSpace(employeeLine)) continue;
-
-            var employee = ParseEmployeeFromCsv(employeeLine);
-            if (employee.Surname == "Surname") continue;
-
-            var values = employeeLine.Split(',');
-            if (values.Length > 1)
-                numberOfEmployees++;
-        }
-
-        return numberOfEmployees;
     }
 
     private static Employee ParseEmployeeFromCsv(string employeeLine)
@@ -186,11 +159,6 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
     }
 
-    private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, FluentValidation.Results.ValidationResult result)
-    {
-        await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, result.Errors.Select(e => e.ErrorMessage));
-    }
-
     private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, string error)
     {
         await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, [error]);
@@ -198,12 +166,36 @@ public class ImportEmployeeService(IValidator<Employee> validator,
 
     private async Task<ImportEmployeeHistory> AddImportEmployeeHistoryAsync()
     {
-        var importEmployeeHistory = _importEmployeeHistoryUnitOfWork.History.Add();
+        ImportEmployeeHistory importEmployeeHistory = new()
+        {
+            Date = DateTime.Now,
+            ImportedEmployees = [],
+            ExistingEmployees = [],
+            FailedEmployees = []
+        };
+
+        _importEmployeeHistoryUnitOfWork.History.Add(importEmployeeHistory);
         await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
 
         if (importEmployeeHistory.Id == Guid.Empty)
             throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
 
         return importEmployeeHistory;
+    }
+
+    public async Task<List<string>> ReadAllLinesAsync(IFormFile file)
+    {
+        var lines = new List<string>();
+        using var stream = file.OpenReadStream();
+        using var reader = new StreamReader(stream);
+
+        while (!reader.EndOfStream)
+        {
+            var line = await reader.ReadLineAsync();
+            if (!string.IsNullOrWhiteSpace(line))
+                lines.Add(line);
+        }
+
+        return lines;
     }
 }
