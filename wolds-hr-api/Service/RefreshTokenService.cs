@@ -1,4 +1,4 @@
-﻿using wolds_hr_api.Data.Interfaces;
+﻿using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Exceptions;
@@ -6,26 +6,29 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class RefreshTokenService(IRefreshTokenRepository refreshTokenRepository) : IRefreshTokenService
+public class RefreshTokenService(IRefreshTokenUnitOfWork refreshTokenUnitOfWork) : IRefreshTokenService
 {
-    private readonly IRefreshTokenRepository _refreshTokenRepository = refreshTokenRepository;
+    private readonly IRefreshTokenUnitOfWork _refreshTokenUnitOfWork = refreshTokenUnitOfWork;
 
     public void RemoveExpiredRefreshTokens(Guid accountId)
     {
-        _refreshTokenRepository.RemoveExpired(EnvironmentVariablesHelper.JWTSettingsRefreshTokenTtl, accountId);
+        _refreshTokenUnitOfWork.RefreshToken.RemoveExpired(EnvironmentVariablesHelper.JWTSettingsRefreshTokenTtl, accountId);
+        _refreshTokenUnitOfWork.SaveChangesAsync();
     }
 
     public async Task AddRefreshTokenAsync(RefreshToken refreshToken)
     {
-        await _refreshTokenRepository.AddAsync(refreshToken);
+        await _refreshTokenUnitOfWork.RefreshToken.AddAsync(refreshToken);
+        await _refreshTokenUnitOfWork.SaveChangesAsync();
     }
 
     public async Task DeleteRefreshTokenAsync(string refreshTokenString)
     {
-        var refreshToken = await _refreshTokenRepository.ByTokenAsync(refreshTokenString);
+        var refreshToken = await _refreshTokenUnitOfWork.RefreshToken.ByTokenAsync(refreshTokenString);
         if (refreshToken != null)
         {
-            _refreshTokenRepository.Delete(refreshToken);
+            _refreshTokenUnitOfWork.RefreshToken.Delete(refreshToken);
+            await _refreshTokenUnitOfWork.SaveChangesAsync();
         }
     }
 
@@ -40,7 +43,7 @@ public class RefreshTokenService(IRefreshTokenRepository refreshTokenRepository)
 
     public async Task<RefreshToken> GetRefreshTokenAsync(string token)
     {
-        var refreshToken = await _refreshTokenRepository.ByTokenAsync(token);
+        var refreshToken = await _refreshTokenUnitOfWork.RefreshToken.ByTokenAsync(token);
         if (refreshToken == null || !refreshToken.IsActive)
         {
             throw new RefreshTokenNotFoundException(ConstantMessages.InvalidToken);
