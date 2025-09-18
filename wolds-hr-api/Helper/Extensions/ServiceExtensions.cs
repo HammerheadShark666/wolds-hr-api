@@ -98,6 +98,9 @@ public static class ServiceExtensions
         services.AddScoped<IImportEmployeeFailedHistoryRepository, ImportEmployeeFailedHistoryRepository>();
         services.AddScoped<IImportEmployeeHistoryRepository, ImportEmployeeHistoryRepository>();
         services.AddScoped<IImportEmployeeHistoryUnitOfWork, ImportEmployeeHistoryUnitOfWork>();
+        services.AddScoped<IAccountUnitOfWork, AccountUnitOfWork>();
+        services.AddScoped<IRefreshTokenUnitOfWork, RefreshTokenUnitOfWork>();
+        services.AddScoped<IEmployeeUnitOfWork, EmployeeUnitOfWork>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();

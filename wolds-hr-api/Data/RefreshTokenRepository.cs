@@ -9,29 +9,14 @@ public class RefreshTokenRepository(WoldsHrDbContext context) : IRefreshTokenRep
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<bool> ExistsAsync(string token)
-    {
-        return await _context.RefreshTokens
-                                .AsNoTracking()
-                                .AnyAsync(a => a.Token.Equals(token));
-    }
-
     public async Task AddAsync(RefreshToken refreshToken)
     {
         await _context.RefreshTokens.AddAsync(refreshToken);
-        await _context.SaveChangesAsync();
-    }
-
-    public void Update(RefreshToken refreshToken)
-    {
-        _context.RefreshTokens.Update(refreshToken);
-        _context.SaveChanges();
     }
 
     public void Delete(RefreshToken refreshToken)
     {
         _context.RefreshTokens.Remove(refreshToken);
-        _context.SaveChanges();
     }
 
     public async Task<RefreshToken?> ByTokenAsync(string token)
@@ -54,6 +39,5 @@ public class RefreshTokenRepository(WoldsHrDbContext context) : IRefreshTokenRep
                                                                 && a.Created.AddDays(expireDays) <= DateTime.Now).ToList();
 
         _context.RefreshTokens.RemoveRange(refreshTokens);
-        _context.SaveChanges();
     }
 }
