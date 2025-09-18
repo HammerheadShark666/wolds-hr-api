@@ -9,12 +9,11 @@ public class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext context) :
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<ImportEmployeeExistingHistory> Add(ImportEmployeeExistingHistory employee)
+    public ImportEmployeeExistingHistory Add(ImportEmployeeExistingHistory employee)
     {
         employee.Created = DateOnly.FromDateTime(DateTime.Now);
 
         _context.ImportEmployeesExistingHistory.Add(employee);
-        await _context.SaveChangesAsync();
 
         return employee;
     }
@@ -24,20 +23,10 @@ public class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext context) :
         return await _context.ImportEmployeesExistingHistory
                             .Where(e => e.ImportEmployeeHistoryId.Equals(id))
                             .OrderBy(e => e.Surname)
-                            .ThenBy(e => e.FirstName)
-                            .Select(e => new ImportEmployeeExistingHistory
-                            {
-                                Id = e.Id,
-                                Surname = e.Surname,
-                                FirstName = e.FirstName,
-                                DateOfBirth = e.DateOfBirth,
-                                Email = e.Email,
-                                PhoneNumber = e.PhoneNumber,
-                                Created = e.Created,
-                                ImportEmployeeHistoryId = e.ImportEmployeeHistoryId
-                            })
+                                .ThenBy(e => e.FirstName)
                             .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
+                                .Take(pageSize)
+                            .AsNoTracking()
                             .ToListAsync();
     }
 

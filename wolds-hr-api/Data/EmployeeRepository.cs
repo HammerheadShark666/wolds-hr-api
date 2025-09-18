@@ -16,7 +16,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
                     from department in dept.DefaultIfEmpty()
-                    where (e.Surname.ToLower().StartsWith(keyword.ToLower()))
+                    where EF.Functions.Like(e.Surname, $"{keyword}%")
                     select new Employee
                     {
                         Id = e.Id,
@@ -42,6 +42,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             .ThenBy(a => a.FirstName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
+            .AsNoTracking()
             .ToListAsync();
     }
 
@@ -52,7 +53,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 
     public async Task<int> CountEmployeesAsync(string keyword, Guid? departmentId)
     {
-        var query = _context.Employees.Where(e => e.Surname.ToLower().StartsWith(keyword.ToLower()));
+        var query = _context.Employees.Where(e => EF.Functions.Like(e.Surname, $"{keyword}%"));
 
         if (departmentId.HasValue && departmentId != Guid.Empty)
         {

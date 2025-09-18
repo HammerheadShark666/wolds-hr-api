@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
@@ -11,13 +12,9 @@ namespace wolds_hr_api.Service;
 public class ImportEmployeeService(IValidator<Employee> validator,
                                    IDepartmentRepository departmentRepository,
                                    IEmployeeRepository employeeRepository,
-                                   IImportEmployeeHistoryRepository importEmployeeHistoryRepository,
-                                   IImportEmployeeExistingHistoryRepository importEmployeeExistingRepository,
-                                   IImportEmployeeFailedHistoryRepository importEmployeeFailedRepository) : IImportEmployeeService
+                                   IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork) : IImportEmployeeService
 {
-    private readonly IImportEmployeeHistoryRepository _importEmployeeHistoryRepository = importEmployeeHistoryRepository;
-    private readonly IImportEmployeeExistingHistoryRepository _importEmployeeExistingRepository = importEmployeeExistingRepository;
-    private readonly IImportEmployeeFailedHistoryRepository _importEmployeeFailedRepository = importEmployeeFailedRepository;
+    private readonly IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork = importEmployeeHistoryUnitOfWork;
     private readonly IEmployeeRepository _employeeRepository = employeeRepository;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
@@ -29,9 +26,7 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         int importEmployeesErrors = 0;
         var isFirstLine = true;
 
-        var importEmployeeHistory = await _importEmployeeHistoryRepository.AddAsync();
-        if (importEmployeeHistory.Id == Guid.Empty)
-            throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
+        var importEmployeeHistory = await AddImportEmployeeHistoryAsync();
 
         using var stream = file.OpenReadStream();
         using var reader = new StreamReader(stream);
@@ -164,7 +159,8 @@ public class ImportEmployeeService(IValidator<Employee> validator,
                 ImportEmployeeHistoryId = importEmployeeHistoryId
             };
 
-            await _importEmployeeExistingRepository.Add(existingEmployee);
+            _importEmployeeHistoryUnitOfWork.ExistingHistory.Add(existingEmployee);
+            await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
 
             return true;
         }
@@ -178,12 +174,14 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         {
             Employee = employeeLine,
             ImportEmployeeHistoryId = importEmployeeHistoryId,
-            Errors = [.. errors.Select(e => new ImportEmployeeFailedErrorHistory {
-                        Error = e
-                     })]
+            Errors = errors.Select(e => new ImportEmployeeFailedErrorHistory
+            {
+                Error = e
+            }).ToList()
         };
 
-        await _importEmployeeFailedRepository.AddAsync(importEmployeeFailedHistory);
+        _importEmployeeHistoryUnitOfWork.FailedHistory.Add(importEmployeeFailedHistory);
+        await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
     }
 
     private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, FluentValidation.Results.ValidationResult result)
@@ -196,4 +194,14 @@ public class ImportEmployeeService(IValidator<Employee> validator,
         await AddImportEmployeeFailedAsync(employeeLine, importEmployeeHistoryId, [error]);
     }
 
+    private async Task<ImportEmployeeHistory> AddImportEmployeeHistoryAsync()
+    {
+        var importEmployeeHistory = _importEmployeeHistoryUnitOfWork.History.Add();
+        await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
+
+        if (importEmployeeHistory.Id == Guid.Empty)
+            throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
+
+        return importEmployeeHistory;
+    }
 }

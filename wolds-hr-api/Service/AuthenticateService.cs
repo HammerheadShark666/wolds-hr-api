@@ -54,7 +54,8 @@ public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
         var jwtToken = _jWTHelper.GenerateJWTToken(refreshToken.Account);
 
         return new JwtRefreshToken(refreshToken.Account.IsAuthenticated, jwtToken, newRefreshToken.Token,
-                                                 new Profile(refreshToken.Account.FirstName, refreshToken.Account.Surname, refreshToken.Account.Email));
+                                      new Profile(refreshToken.Account.FirstName, refreshToken.Account.Surname,
+                                         refreshToken.Account.Email));
     }
 
     #endregion
