@@ -24,17 +24,14 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
-        var countTask = _employeeUnitOfWork.Employee.CountAsync(keyword, departmentId);
-        var employeesTask = _employeeUnitOfWork.Employee.GetAsync(keyword, departmentId, page, pageSize);
-
-        await Task.WhenAll(countTask, employeesTask);
+        var (employees, totalEmployees) = await _employeeUnitOfWork.Employee.GetAsync(keyword, departmentId, page, pageSize);
 
         return new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = countTask.Result,
-            Employees = EmployeeMapper.ToEmployeesResponse(employeesTask.Result)
+            TotalEmployees = totalEmployees,
+            Employees = EmployeeMapper.ToEmployeesResponse(employees)
         };
     }
 
@@ -48,13 +45,8 @@ public class EmployeeService(IValidator<Employee> validator,
     {
         var employee = EmployeeMapper.ToEmployee(addEmployeeRequest);
 
-        var result = await _validator.ValidateAsync(employee, options =>
-        {
-            options.IncludeRuleSets("AddUpdate");
-        });
-
-        if (!result.IsValid)
-            return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
+        var (isValid, errors) = await ValidateEmployeeAsync(employee);
+        if (!isValid) return (false, null, errors);
 
         _employeeUnitOfWork.Employee.Add(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
@@ -69,13 +61,8 @@ public class EmployeeService(IValidator<Employee> validator,
     {
         var employee = EmployeeMapper.ToEmployee(updateEmployeeRequest);
 
-        var result = await _validator.ValidateAsync(employee, options =>
-        {
-            options.IncludeRuleSets("AddUpdate");
-        });
-
-        if (!result.IsValid)
-            return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
+        var (isValid, errors) = await ValidateEmployeeAsync(employee);
+        if (!isValid) return (false, null, errors);
 
         await _employeeUnitOfWork.Employee.UpdateAsync(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
@@ -90,13 +77,12 @@ public class EmployeeService(IValidator<Employee> validator,
     {
         await _employeeUnitOfWork.Employee.DeleteAsync(id);
         await _employeeUnitOfWork.SaveChangesAsync();
-        return;
     }
 
     public async Task<string> UpdateEmployeePhotoAsync(Guid id, IFormFile file)
     {
         var employee = await _employeeUnitOfWork.Employee.GetAsync(id) ?? throw new EmployeeNotFoundException("Employee not found.");
-        string newFileName = FileHelper.getGuidFileName(Constants.FileExtensionJpg);
+        string newFileName = FileHelper.GetGuidFileName(Constants.FileExtensionJpg);
         string originalFileName = employee.Photo ?? "";
 
         await _azureStorageHelper.SaveBlobToAzureStorageContainerAsync(file, Constants.AzureStorageContainerEmployees, newFileName);
@@ -106,7 +92,7 @@ public class EmployeeService(IValidator<Employee> validator,
         await _employeeUnitOfWork.Employee.UpdateAsync(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
 
-        if (!String.IsNullOrEmpty(originalFileName))
+        if (string.IsNullOrWhiteSpace(originalFileName))
             await DeleteOriginalFileAsync(originalFileName, newFileName, Constants.AzureStorageContainerEmployees);
 
         return newFileName;
@@ -122,5 +108,17 @@ public class EmployeeService(IValidator<Employee> validator,
         EditPhoto editPhoto = _photoHelper.WasPhotoEdited(originalFileName, newFileName, Constants.DefaultEmployeePhotoFileName);
         if (editPhoto.PhotoWasChanged)
             await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
+    }
+
+    private async Task<(bool isValid, List<string>? Errors)> ValidateEmployeeAsync(Employee employee, string ruleSet = "AddUpdate")
+    {
+        var result = await _validator.ValidateAsync(employee, options =>
+        {
+            options.IncludeRuleSets(ruleSet);
+        });
+
+        return result.IsValid
+            ? (true, null)
+            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
     }
 }
