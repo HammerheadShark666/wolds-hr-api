@@ -24,15 +24,19 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
-        var employeePagedResponse = new EmployeePagedResponse
+
+        var countTask = _employeeRepository.CountEmployeesAsync(keyword, departmentId);
+        var employeesTask = _employeeRepository.GetEmployeesAsync(keyword, departmentId, page, pageSize);
+
+        await Task.WhenAll(countTask, employeesTask);
+
+        return new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = await _employeeRepository.CountEmployeesAsync(keyword, departmentId),
-            Employees = EmployeeMapper.ToEmployeesResponse(await _employeeRepository.GetEmployeesAsync(keyword, departmentId, page, pageSize))
+            TotalEmployees = countTask.Result,
+            Employees = EmployeeMapper.ToEmployeesResponse(employeesTask.Result)
         };
-
-        return employeePagedResponse;
     }
 
     public async Task<EmployeeResponse?> GetAsync(Guid id)

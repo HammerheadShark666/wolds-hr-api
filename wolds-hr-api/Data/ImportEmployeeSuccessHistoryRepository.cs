@@ -14,20 +14,10 @@ public class ImportEmployeeSuccessHistoryRepository(WoldsHrDbContext context) : 
         return await _context.Employees
                             .Where(e => e.ImportEmployeeHistoryId.Equals(id))
                             .OrderBy(e => e.Surname)
-                            .ThenBy(e => e.FirstName)
-                            .Select(e => new Employee
-                            {
-                                Id = e.Id,
-                                Surname = e.Surname,
-                                FirstName = e.FirstName,
-                                DateOfBirth = e.DateOfBirth,
-                                Email = e.Email,
-                                PhoneNumber = e.PhoneNumber,
-                                Created = e.Created,
-                                ImportEmployeeHistoryId = e.ImportEmployeeHistoryId
-                            })
+                                .ThenBy(e => e.FirstName)
                             .Skip((page - 1) * pageSize)
-                            .Take(pageSize)
+                                .Take(pageSize)
+                            .AsNoTracking()
                             .ToListAsync();
     }
 
