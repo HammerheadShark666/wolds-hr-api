@@ -26,10 +26,15 @@ public static class EndpointsImportEmployee
             if (file == null || file.Length == 0)
                 return Results.BadRequest(new { Message = "No file uploaded." });
 
-            if (await importEmployeeService.MaximumNumberOfEmployeesReachedAsync(file))
+            var fileLines = await importEmployeeService.ReadAllLinesAsync(file);
+            if (fileLines.Count == 0)
+                return Results.BadRequest(new { Message = "File is empty." });
+
+
+            if (await importEmployeeService.MaximumNumberOfEmployeesReachedAsync(fileLines))
                 return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
 
-            return Results.Ok(await importEmployeeService.ImportAsync(file)); ;
+            return Results.Ok(await importEmployeeService.ImportAsync(fileLines)); ;
         })
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<ImportEmployeeHistorySummaryResponse>((int)HttpStatusCode.OK)

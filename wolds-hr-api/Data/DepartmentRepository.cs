@@ -20,6 +20,6 @@ public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentReposit
 
     public bool Exists(Guid? id)
     {
-        return _context.Departments.Any(e => e.Equals(id));
+        return _context.Departments.Any(e => e.Id.Equals(id));
     }
 }
