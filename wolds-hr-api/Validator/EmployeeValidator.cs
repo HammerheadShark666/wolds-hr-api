@@ -43,8 +43,8 @@ public class EmployeeValidator : AbstractValidator<Employee>
                 .WithMessage("Date of birth must be in YYYY-MM-DD format, after Jan 1, 1950 and before Jan 1, 2005");
 
             RuleFor(x => x.DepartmentId)
-            .Must(deptId => deptId == null || _departmentRepository.Exists(deptId.Value))
-            .WithMessage("Department does not exist in database");
+                .Must(deptId => deptId == null || _departmentRepository.Exists(deptId.Value))
+                .WithMessage("Department does not exist in database");
 
             RuleFor(_ => _)
                 .MustAsync(async (employee, cancellation) =>

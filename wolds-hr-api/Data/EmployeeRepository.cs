@@ -11,7 +11,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<List<Employee>> GetAsync(string keyword, Guid? departmentId, int page, int pageSize)
+    public async Task<(List<Employee>, int)> GetAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
@@ -37,32 +37,17 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             query = query.Where(e => e.DepartmentId == departmentId);
         }
 
-        return await query
+        var totalEmployees = query.Count();
+
+        var employees = await query
             .OrderBy(a => a.Surname)
             .ThenBy(a => a.FirstName)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
             .AsNoTracking()
             .ToListAsync();
-    }
 
-    public async Task<int> CountAsync(string keyword)
-    {
-        return await _context.Employees
-                             .Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase))
-                             .CountAsync();
-    }
-
-    public async Task<int> CountAsync(string keyword, Guid? departmentId)
-    {
-        var query = _context.Employees.Where(e => EF.Functions.Like(e.Surname, $"{keyword}%"));
-
-        if (departmentId.HasValue && departmentId != Guid.Empty)
-        {
-            query = query.Where(e => e.DepartmentId == departmentId);
-        }
-
-        return await query.CountAsync();
+        return (employees, totalEmployees);
     }
 
     public async Task<int> CountAsync()
@@ -145,6 +130,8 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 
     public async Task<bool> ExistsAsync(string surname, string firstName, DateOnly? dateOfBirth)
     {
-        return await _context.Employees.AnyAsync(e => e.Surname == surname && e.FirstName == firstName && e.DateOfBirth == dateOfBirth);
+        return await _context.Employees.AnyAsync(e => e.Surname == surname
+                                                    && e.FirstName == firstName
+                                                        && e.DateOfBirth == dateOfBirth);
     }
 }
