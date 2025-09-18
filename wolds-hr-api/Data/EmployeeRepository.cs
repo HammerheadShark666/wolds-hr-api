@@ -11,7 +11,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
-    public async Task<List<Employee>> GetEmployeesAsync(string keyword, Guid? departmentId, int page, int pageSize)
+    public async Task<List<Employee>> GetAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
         var query = from e in _context.Employees
                     join d in _context.Departments on e.DepartmentId equals d.Id into dept
@@ -46,12 +46,14 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             .ToListAsync();
     }
 
-    public async Task<int> CountEmployeesAsync(string keyword)
+    public async Task<int> CountAsync(string keyword)
     {
-        return await _context.Employees.Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase)).CountAsync();
+        return await _context.Employees
+                             .Where(e => e.Surname.StartsWith(keyword, StringComparison.CurrentCultureIgnoreCase))
+                             .CountAsync();
     }
 
-    public async Task<int> CountEmployeesAsync(string keyword, Guid? departmentId)
+    public async Task<int> CountAsync(string keyword, Guid? departmentId)
     {
         var query = _context.Employees.Where(e => EF.Functions.Like(e.Surname, $"{keyword}%"));
 
@@ -90,12 +92,12 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
                       }).SingleOrDefaultAsync();
     }
 
-    public async Task<Employee> AddAsync(Employee employee)
+    public void Add(Employee employee)
     {
         employee.Created = DateOnly.FromDateTime(DateTime.Now);
         _context.Employees.Add(employee);
-        await _context.SaveChangesAsync();
-        return employee;
+
+        return;
     }
 
     public async Task<Employee> UpdateAsync(Employee employee)
@@ -118,7 +120,6 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             }
 
             _context.Employees.Update(currentEmployee);
-            await _context.SaveChangesAsync();
         }
         else
             throw new EmployeeNotFoundException("Employee not found");
@@ -132,7 +133,6 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
         if (employee != null)
         {
             _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
         }
         else
             throw new EmployeeNotFoundException("Employee not found");

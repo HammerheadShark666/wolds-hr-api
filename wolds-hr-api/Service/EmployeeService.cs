@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
+using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Requests.Employee;
@@ -13,20 +13,19 @@ using static wolds_hr_api.Helper.PhotoHelper;
 namespace wolds_hr_api.Service;
 
 public class EmployeeService(IValidator<Employee> validator,
-                             IEmployeeRepository employeeRepository,
+                             IEmployeeUnitOfWork employeeUnitOfWork,
                              IAzureStorageBlobHelper azureStorageHelper,
                              IPhotoHelper photoHelper) : IEmployeeService
 {
     private readonly IAzureStorageBlobHelper _azureStorageHelper = azureStorageHelper;
     private readonly IPhotoHelper _photoHelper = photoHelper;
-    private readonly IEmployeeRepository _employeeRepository = employeeRepository;
+    private readonly IEmployeeUnitOfWork _employeeUnitOfWork = employeeUnitOfWork;
     private readonly IValidator<Employee> _validator = validator;
 
     public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
-
-        var countTask = _employeeRepository.CountEmployeesAsync(keyword, departmentId);
-        var employeesTask = _employeeRepository.GetEmployeesAsync(keyword, departmentId, page, pageSize);
+        var countTask = _employeeUnitOfWork.Employee.CountAsync(keyword, departmentId);
+        var employeesTask = _employeeUnitOfWork.Employee.GetAsync(keyword, departmentId, page, pageSize);
 
         await Task.WhenAll(countTask, employeesTask);
 
@@ -41,7 +40,7 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task<EmployeeResponse?> GetAsync(Guid id)
     {
-        var employee = await _employeeRepository.GetAsync(id);
+        var employee = await _employeeUnitOfWork.Employee.GetAsync(id);
         return employee == null ? null : EmployeeMapper.ToEmployeeResponse(employee);
     }
 
@@ -57,10 +56,11 @@ public class EmployeeService(IValidator<Employee> validator,
         if (!result.IsValid)
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
-        var newEmployee = await _employeeRepository.AddAsync(employee);
+        _employeeUnitOfWork.Employee.Add(employee);
+        await _employeeUnitOfWork.SaveChangesAsync();
 
-        newEmployee = await _employeeRepository.GetAsync(newEmployee.Id)
-           ?? throw new EmployeeNotFoundException("Employee not found after adding.");
+        var newEmployee = await _employeeUnitOfWork.Employee.GetAsync(employee.Id)
+          ?? throw new EmployeeNotFoundException("Employee not found after adding.");
 
         return (true, EmployeeMapper.ToEmployeeResponse(newEmployee), null);
     }
@@ -77,9 +77,10 @@ public class EmployeeService(IValidator<Employee> validator,
         if (!result.IsValid)
             return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
 
-        await _employeeRepository.UpdateAsync(employee);
+        await _employeeUnitOfWork.Employee.UpdateAsync(employee);
+        await _employeeUnitOfWork.SaveChangesAsync();
 
-        var updatedEmployee = await _employeeRepository.GetAsync(employee.Id)
+        var updatedEmployee = await _employeeUnitOfWork.Employee.GetAsync(employee.Id)
             ?? throw new EmployeeNotFoundException("Employee not found after updating.");
 
         return (true, EmployeeMapper.ToEmployeeResponse(updatedEmployee), null);
@@ -87,20 +88,23 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task DeleteAsync(Guid id)
     {
-        await _employeeRepository.DeleteAsync(id);
+        await _employeeUnitOfWork.Employee.DeleteAsync(id);
+        await _employeeUnitOfWork.SaveChangesAsync();
         return;
     }
 
     public async Task<string> UpdateEmployeePhotoAsync(Guid id, IFormFile file)
     {
-        var employee = await _employeeRepository.GetAsync(id) ?? throw new EmployeeNotFoundException("Employee not found.");
+        var employee = await _employeeUnitOfWork.Employee.GetAsync(id) ?? throw new EmployeeNotFoundException("Employee not found.");
         string newFileName = FileHelper.getGuidFileName(Constants.FileExtensionJpg);
         string originalFileName = employee.Photo ?? "";
 
         await _azureStorageHelper.SaveBlobToAzureStorageContainerAsync(file, Constants.AzureStorageContainerEmployees, newFileName);
 
         employee.Photo = newFileName;
-        await _employeeRepository.UpdateAsync(employee);
+
+        await _employeeUnitOfWork.Employee.UpdateAsync(employee);
+        await _employeeUnitOfWork.SaveChangesAsync();
 
         if (!String.IsNullOrEmpty(originalFileName))
             await DeleteOriginalFileAsync(originalFileName, newFileName, Constants.AzureStorageContainerEmployees);
@@ -110,7 +114,7 @@ public class EmployeeService(IValidator<Employee> validator,
 
     public async Task<bool> ExistsAsync(Guid id)
     {
-        return await _employeeRepository.ExistsAsync(id);
+        return await _employeeUnitOfWork.Employee.ExistsAsync(id);
     }
 
     private async Task DeleteOriginalFileAsync(string originalFileName, string newFileName, string container)
