@@ -16,19 +16,9 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
                              .AsNoTracking()
                              .ToListAsync();
     }
-    public ImportEmployeeHistory Add()
+    public void Add(ImportEmployeeHistory importEmployeeHistory)
     {
-        ImportEmployeeHistory employeeImportHistory = new()
-        {
-            Date = DateTime.Now,
-            ImportedEmployees = [],
-            ExistingEmployees = [],
-            FailedEmployees = []
-        };
-
-        _context.ImportEmployeesHistory.Add(employeeImportHistory);
-
-        return employeeImportHistory;
+        _context.ImportEmployeesHistory.Add(importEmployeeHistory);
     }
 
     public async Task DeleteAsync(Guid id)

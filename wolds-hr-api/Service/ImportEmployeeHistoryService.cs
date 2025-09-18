@@ -9,49 +9,40 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork impor
 {
     public async Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize)
     {
-        var countTask = importEmployeeHistoryUnitOfWork.SuccessHistory.CountAsync(id);
-        var employeesTask = importEmployeeHistoryUnitOfWork.SuccessHistory.GetAsync(id, page, pageSize);
-
-        await Task.WhenAll(countTask, employeesTask);
+        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.SuccessHistory.GetAsync(id, page, pageSize);
 
         return new EmployeePagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = countTask.Result,
-            Employees = EmployeeMapper.ToEmployeesResponse(employeesTask.Result)
+            TotalEmployees = totalEmployees,
+            Employees = EmployeeMapper.ToEmployeesResponse(employees)
         };
     }
 
     public async Task<ImportEmployeeExistingHistoryPagedResponse> GetImportedEmployeeExistingHistoryAsync(Guid id, int page, int pageSize)
     {
-        var countTask = importEmployeeHistoryUnitOfWork.ExistingHistory.CountAsync(id);
-        var employeesTask = importEmployeeHistoryUnitOfWork.ExistingHistory.GetAsync(id, page, pageSize);
-
-        await Task.WhenAll(countTask, employeesTask);
+        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.ExistingHistory.GetAsync(id, page, pageSize);
 
         return new ImportEmployeeExistingHistoryPagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = countTask.Result,
-            Employees = EmployeeMapper.ToEmployeesResponse(employeesTask.Result)
+            TotalEmployees = totalEmployees,
+            Employees = EmployeeMapper.ToEmployeesResponse(employees)
         };
     }
 
     public async Task<ImportEmployeeFailedHistoryPagedResponse> GetImportedEmployeeFailedHistoryAsync(Guid id, int page, int pageSize)
     {
-        var countTask = importEmployeeHistoryUnitOfWork.FailedHistory.CountAsync(id);
-        var employeesTask = importEmployeeHistoryUnitOfWork.FailedHistory.GetAsync(id, page, pageSize);
-
-        await Task.WhenAll(countTask, employeesTask);
+        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.FailedHistory.GetAsync(id, page, pageSize);
 
         return new ImportEmployeeFailedHistoryPagedResponse
         {
             Page = page,
             PageSize = pageSize,
-            TotalEmployees = countTask.Result,
-            Employees = EmployeeMapper.ToImportEmployeesFailedResponse(employeesTask.Result)
+            TotalEmployees = totalEmployees,
+            Employees = EmployeeMapper.ToImportEmployeesFailedResponse(employees)
         };
     }
 
