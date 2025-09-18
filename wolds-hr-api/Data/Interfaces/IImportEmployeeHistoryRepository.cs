@@ -5,6 +5,6 @@ namespace wolds_hr_api.Data.Interfaces;
 public interface IImportEmployeeHistoryRepository
 {
     Task<List<ImportEmployeeHistory>> GetAsync();
-    ImportEmployeeHistory Add();
+    void Add(ImportEmployeeHistory importEmployeeHistory);
     Task DeleteAsync(Guid id);
 }
