@@ -12,12 +12,14 @@ namespace wolds_hr_api.Service;
 public class ImportEmployeeService(IValidator<Employee> validator,
                                    IDepartmentRepository departmentRepository,
                                    IEmployeeUnitOfWork employeeUnitOfWork,
-                                   IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork) : IImportEmployeeService
+                                   IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork,
+                                   ILogger<ImportEmployeeService> logger) : IImportEmployeeService
 {
     private readonly IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork = importEmployeeHistoryUnitOfWork;
     private readonly IEmployeeUnitOfWork _employeeUnitOfWork = employeeUnitOfWork;
     private readonly IDepartmentRepository _departmentRepository = departmentRepository;
     private readonly IValidator<Employee> _validator = validator;
+    private readonly ILogger<ImportEmployeeService> _logger = logger;
 
     public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(List<String> fileLines)
     {
@@ -53,12 +55,16 @@ public class ImportEmployeeService(IValidator<Employee> validator,
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Import Employee: {line}, Error: {ex.Message}");
+                logger.LogError($"Import Employee: {line}, Error: {ex.Message}");
                 await AddImportEmployeeFailedAsync(line, importEmployeeHistory.Id, ex.Message);
                 importEmployeesErrors++;
                 continue;
             }
         }
+
+        _logger.LogInformation("Imported {importedEmployees} employees (Success)", importedEmployees);
+        _logger.LogInformation("Imported {importEmployeesExisting} employees (Existing)", importEmployeesExisting);
+        _logger.LogInformation("Imported {importEmployeesErrors} employees (Failed)", importEmployeesErrors);
 
         return new ImportEmployeeHistorySummaryResponse()
         {
