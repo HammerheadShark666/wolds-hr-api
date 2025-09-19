@@ -4,6 +4,7 @@ using wolds_hr_api.Endpoint;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Helpers.Converters;
+using wolds_hr_api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.BuildDatabase();
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 var versionSet = app.NewApiVersionSet()
     .HasApiVersion(new ApiVersion(1, 0))
