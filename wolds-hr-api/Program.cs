@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Endpoint;
 using wolds_hr_api.Helper;
@@ -33,11 +34,16 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.BuildDatabase();
 
-EndpointsAuthentication.ConfigureRoutes(app);
-EndpointsEmployee.ConfigureRoutes(app);
-EndpointsDepartment.ConfigureRoutes(app);
-EndpointsImportEmployee.ConfigureRoutes(app);
-EndpointsImportEmployeeHistory.ConfigureRoutes(app);
+var versionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1, 0))
+    .ReportApiVersions()
+    .Build();
+
+EndpointsAuthentication.ConfigureRoutes(app, versionSet);
+EndpointsEmployee.ConfigureRoutes(app, versionSet);
+EndpointsDepartment.ConfigureRoutes(app, versionSet);
+EndpointsImportEmployee.ConfigureRoutes(app, versionSet);
+EndpointsImportEmployeeHistory.ConfigureRoutes(app, versionSet);
 
 using (var scope = app.Services.CreateScope())
 {
