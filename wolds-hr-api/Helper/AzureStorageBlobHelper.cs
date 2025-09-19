@@ -4,33 +4,36 @@ using wolds_hr_api.Helper.Interfaces;
 
 namespace wolds_hr_api.Helper;
 
-public class AzureStorageBlobHelper : IAzureStorageBlobHelper
+public class AzureStorageBlobHelper(BlobServiceClient blobServiceClient) : IAzureStorageBlobHelper
 {
-    public AzureStorageBlobHelper()
-    { }
+    private readonly BlobServiceClient _blobServiceClient = blobServiceClient;
 
-    public async Task SaveBlobToAzureStorageContainerAsync(IFormFile file, string containerName, string fileName)
+    public async Task SaveBlobToAzureStorageContainerAsync(IFormFile file,
+                                                           string containerName,
+                                                           string fileName)
     {
-        Stream fileStream = new MemoryStream();
-        fileStream = file.OpenReadStream();
-        var blobClient = new BlobContainerClient(EnvironmentVariablesHelper.AzureStorageConnectionString, containerName);
-        var blob = blobClient.GetBlobClient(fileName);
-        await blob.UploadAsync(fileStream, new BlobHttpHeaders { ContentType = Constants.ContentTypeImageJpg });
+        if (file is null) throw new ArgumentNullException(nameof(file));
+        if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name is required");
+        if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("File name is required");
 
-        return;
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        await containerClient.CreateIfNotExistsAsync(PublicAccessType.None);
+
+        var blobClient = containerClient.GetBlobClient(fileName);
+
+        await using var stream = file.OpenReadStream();
+        var headers = new BlobHttpHeaders { ContentType = file.ContentType ?? "application/octet-stream" };
+
+        await blobClient.UploadAsync(stream, headers);
     }
 
-    public async Task DeleteBlobInAzureStorageContainerAsync(string fileName, string containerName)
+    public async Task DeleteBlobInAzureStorageContainerAsync(string fileName,
+                                                             string containerName)
     {
-        if (fileName == null)
-        {
-            return;
-        }
+        if (string.IsNullOrWhiteSpace(fileName)) return;
+        if (string.IsNullOrWhiteSpace(containerName)) throw new ArgumentException("Container name is required");
 
-        BlobServiceClient blobServiceClient = new(EnvironmentVariablesHelper.AzureStorageConnectionString);
-        BlobContainerClient container = blobServiceClient.GetBlobContainerClient(containerName);
-        await container.DeleteBlobIfExistsAsync(fileName);
-
-        return;
+        var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+        await containerClient.DeleteBlobIfExistsAsync(fileName);
     }
 }

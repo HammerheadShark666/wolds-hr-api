@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Azure.Storage.Blobs;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -83,6 +84,7 @@ public static class ServiceExtensions
 
     public static void ConfigureDI(this IServiceCollection services)
     {
+        services.AddSingleton(new BlobServiceClient(EnvironmentVariablesHelper.AzureStorageConnectionString));
         services.AddScoped<IAuthenticateService, AuthenticateService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
