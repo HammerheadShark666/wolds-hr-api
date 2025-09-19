@@ -1,4 +1,4 @@
-﻿using Asp.Versioning;
+﻿using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
@@ -6,16 +6,18 @@ using wolds_hr_api.Domain;
 using wolds_hr_api.Helper.Dto.Requests.Employee;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
-using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
 
 public static class EndpointsEmployee
 {
-    public static void ConfigureRoutes(this WebApplication webApplication)
+    public static void ConfigureRoutes(this WebApplication webApplication, ApiVersionSet versionSet)
     {
-        var employeeGroup = webApplication.MapGroup("v{version:apiVersion}/employees/").WithTags("employees");
+        var employeeGroup = webApplication.MapGroup("v{version:apiVersion}/employees")
+                                .WithTags("employees")
+                                .WithApiVersionSet(versionSet)
+                                .MapToApiVersion(1.0);
 
         employeeGroup.MapGet("/search", async (string keyword, int page, int pageSize, Guid? departmentId, [FromServices] IEmployeeService employeeService) =>
         {
@@ -24,8 +26,6 @@ public static class EndpointsEmployee
         })
         .Produces<EmployeePagedResponse>((int)HttpStatusCode.OK)
         .WithName("SearchEmployeeWithPaging")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -43,8 +43,6 @@ public static class EndpointsEmployee
             return Results.Ok(employee);
         })
        .WithName("GetEmployee")
-       .WithApiVersionSet(webApplication.GetVersionSet())
-       .MapToApiVersion(new ApiVersion(1, 0))
        .RequireAuthorization()
        .WithOpenApi(x => new OpenApiOperation(x)
        {
@@ -67,8 +65,6 @@ public static class EndpointsEmployee
         .Produces<Employee>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("AddEmployee")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -90,8 +86,6 @@ public static class EndpointsEmployee
         .Produces<Employee>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("UpdateEmployee")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
@@ -116,8 +110,6 @@ public static class EndpointsEmployee
         .Produces(StatusCodes.Status404NotFound)
         .WithName("DeleteEmployees")
         .RequireAuthorization()
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Delete employee",
@@ -143,8 +135,6 @@ public static class EndpointsEmployee
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<UpdatedPhotoResponse>((int)HttpStatusCode.OK)
         .WithName("UploadPhoto")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {

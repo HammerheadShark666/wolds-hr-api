@@ -1,5 +1,4 @@
-﻿using FluentValidation;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;

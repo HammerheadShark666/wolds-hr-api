@@ -1,19 +1,21 @@
-﻿using Asp.Versioning;
+﻿using Asp.Versioning.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
 
 public static class EndpointsImportEmployee
 {
-    public static void ConfigureRoutes(this WebApplication webApplication)
+    public static void ConfigureRoutes(this WebApplication webApplication, ApiVersionSet versionSet)
     {
-        var importEmployeeGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees/").WithTags("import-employees");
+        var importEmployeeGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees")
+                                                  .WithTags("import-employees")
+                                                  .WithApiVersionSet(versionSet)
+                                                  .MapToApiVersion(1.0);
 
         importEmployeeGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService) =>
         {
@@ -39,8 +41,6 @@ public static class EndpointsImportEmployee
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<ImportEmployeeHistorySummaryResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .RequireAuthorization()
         .WithOpenApi(x => new OpenApiOperation(x)
         {

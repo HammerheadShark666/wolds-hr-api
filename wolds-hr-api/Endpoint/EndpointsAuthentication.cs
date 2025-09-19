@@ -1,20 +1,22 @@
-﻿using Asp.Versioning;
+﻿using Asp.Versioning.Builder;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Requests;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
-using wolds_hr_api.Helper.Extensions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
 
 public static class EndpointsAuthentication
 {
-    public static void ConfigureRoutes(this WebApplication webApplication)
+    public static void ConfigureRoutes(this WebApplication webApplication, ApiVersionSet versionSet)
     {
-        var authenticateGroup = webApplication.MapGroup("v{version:apiVersion}/").WithTags("authenticate");
+        var authenticateGroup = webApplication.MapGroup("v{version:apiVersion}/")
+                                              .WithTags("authenticate")
+                                              .WithApiVersionSet(versionSet)
+                                              .MapToApiVersion(1.0);
 
         authenticateGroup.MapPost("/login", async (HttpContext http, Helper.Dto.Requests.LoginRequest loginRequest, IAuthenticateService authenticateService) =>
         {
@@ -37,8 +39,6 @@ public static class EndpointsAuthentication
             return Results.Ok(new { message = "Logged in" });
         })
         .WithName("Login")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Login and return a jwt token and refresh token",
@@ -74,8 +74,6 @@ public static class EndpointsAuthentication
         .Produces<JwtRefreshToken>((int)HttpStatusCode.OK)
         .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
         .WithName("RefreshToken")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Authenticate refresh token and return a new jwt token and refresh token",
@@ -98,8 +96,6 @@ public static class EndpointsAuthentication
         })
         .Produces<JwtRefreshToken>((int)HttpStatusCode.OK)
         .WithName("Logout")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Logout of api",
@@ -116,8 +112,6 @@ public static class EndpointsAuthentication
         })
         .RequireAuthorization()
         .WithName("Authenticate")
-        .WithApiVersionSet(webApplication.GetVersionSet())
-        .MapToApiVersion(new ApiVersion(1, 0))
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Authenticate token",
