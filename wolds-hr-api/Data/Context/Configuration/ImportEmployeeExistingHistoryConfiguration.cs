@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.Converters;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
