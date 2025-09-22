@@ -1,7 +1,6 @@
 ﻿using Asp.Versioning;
 using Azure.Storage.Blobs;
 using FluentValidation;
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -106,8 +105,6 @@ public static class ServiceExtensions
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();
-
-        services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
     }
 
