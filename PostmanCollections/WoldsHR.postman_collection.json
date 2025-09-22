@@ -860,6 +860,96 @@
 			"name": "Import Employee",
 			"item": [
 				{
+					"name": "{{baseUrl}}/import-employees (Bad Data File)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_imported_schema')));\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json(); \r",
+									"pm.environment.set(\"employee_import_id\", jsonData.id);\r",
+									" \r",
+									"pm.test(\"Is import summary\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.importedEmployeesCount).to.eql(0);\r",
+									"    pm.expect(jsonData.importEmployeesExistingCount).to.eql(0);\r",
+									"    pm.expect(jsonData.importEmployeesErrorsCount).to.eql(5);\r",
+									" });"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "postman-cloud:///1f0957c2-6aef-4950-94ef-b6aaed893f60"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/import-employees",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"import-employees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/import-employee-history (Delete Bad Date Import)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/import-employee-history/{{employee_import_id}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"import-employee-history",
+								"{{employee_import_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "{{baseUrl}}/import-employees",
 					"event": [
 						{
@@ -911,61 +1001,6 @@
 									"value": "",
 									"type": "text",
 									"disabled": true
-								}
-							]
-						},
-						"url": {
-							"raw": "{{baseUrl}}/import-employees",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"import-employees"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "{{baseUrl}}/import-employees (Bad Data File)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Status code is 200\", function () {\r",
-									"    pm.response.to.have.status(200);\r",
-									"});\r",
-									"\r",
-									"pm.test('Schema validation', () => { \r",
-									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('employees_imported_schema')));\r",
-									"}); \r",
-									"\r",
-									"let jsonData = pm.response.json(); \r",
-									"pm.environment.set(\"employee_import_id\", jsonData.id);\r",
-									" \r",
-									"pm.test(\"Is import summary\", function () {       \r",
-									"    pm.expect(jsonData).to.be.an(\"object\");\r",
-									"    pm.expect(jsonData.importedEmployeesCount).to.eql(0);\r",
-									"    pm.expect(jsonData.importEmployeesExistingCount).to.eql(0);\r",
-									"    pm.expect(jsonData.importEmployeesErrorsCount).to.eql(5);\r",
-									" });"
-								],
-								"type": "text/javascript",
-								"packages": {}
-							}
-						}
-					],
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"type": "file",
-									"src": "postman-cloud:///1f0957c2-6aef-4950-94ef-b6aaed893f60"
 								}
 							]
 						},
