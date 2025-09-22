@@ -398,5 +398,11 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+ 
+/.env
+/wolds-hr-api/appsettings.Development.json
 
+.vs/
+.vscode/
+.idea/
 **/launchSettings.json
