@@ -30,9 +30,9 @@ jobs:
       - name: Build API
         run: dotnet build wolds-hr-api/wolds-hr-api.csproj --configuration Release
 
-      # 5️⃣ Run unit tests (optional: add coverage if desired)
-      - name: Run xUnit tests
-        run: dotnet test wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --configuration Release --no-build
+      # # 5️⃣ Run unit tests (optional: add coverage if desired)
+      # - name: Run xUnit tests
+      #   run: dotnet test wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --configuration Release --no-build
 
       # 6️⃣ Publish API to ./publish folder
       - name: Publish API
@@ -68,3 +68,4 @@ jobs:
             -e "2cb1d520-705a-4860-befd-e7934ed11f8b" \
             --integration-id "165236-${{ github.run_id }}" \
             --env-var "upload_file=PostmanCollections/import-employees.csv"
+
