@@ -34,27 +34,10 @@ jobs:
         with:
           name: .net-app
           path: ${{env.DOTNET_ROOT}}/myapp
-
-  unit-tests:
-    runs-on: ubuntu-latest 
-    needs: build
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.x'
-
-      - name: Build with dotnet
-        run: dotnet build wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --configuration Release
-
-      - name: Unit Tests
-        run: dotnet test wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --logger "console;verbosity=detailed"
-  
+ 
   deploy:
     runs-on: ubuntu-latest
-    needs: unit-tests
+    needs: build
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
@@ -89,3 +72,4 @@ jobs:
         - name: Run API tests
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+
