@@ -92,6 +92,4 @@ public class EmployeeMapper
     {
         return [.. failedEmployees!.Where(e => e is not null).Select(e => ToImportEmployeeFailedResponse(e!))];
     }
-
-
 }

@@ -1,0 +1,11 @@
+Run tests for coverage
+
+dotnet add package coverlet.collector
+
+dotnet test --settings ../coverlet.runsettings
+
+dotnet tool install --global dotnet-reportgenerator-globaltool
+
+reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:coveragereport
+
+file:///D:/Wolds-Hr-Project/wolds-hr-api/wolds-hr-api.xunit/coveragereport/index.html
