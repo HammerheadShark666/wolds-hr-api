@@ -162,6 +162,681 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Add) Success",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"  const schema = JSON.parse(pm.globals.get('department_add_response_schema'));\r",
+									"  const jsonData = pm.response.json();\r",
+									"  pm.expect(jsonData).to.be.an('object');\r",
+									"  pm.expect(jsonData).to.not.be.empty;\r",
+									"  pm.response.to.have.jsonSchema(schema);\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json();   \r",
+									"\r",
+									"pm.environment.set(\"departmentId\", jsonData.id);   \r",
+									"  \r",
+									"pm.test(\"Is correct employee\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get('departmentId'));\r",
+									"    pm.expect(jsonData.name).to.eql(\"Purchasing\");    \r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Purchasing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Add) Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									" \r",
+									"pm.test('Schema validation', () => { \r",
+									"    pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_fail_schema')));\r",
+									"}); \r",
+									"\r",
+									"pm.test('Validate error messages', () => { \r",
+									"\r",
+									"    const jsonData = pm.response.json();\r",
+									"    let errors = jsonData.errors;  \r",
+									"\r",
+									"    pm.expect(errors[0]).to.eql(\"Department already exists\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Purchasing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Add) Fail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									" \r",
+									"pm.test('Schema validation', () => { \r",
+									"    pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_fail_schema')));\r",
+									"}); \r",
+									"\r",
+									"pm.test('Validate error messages', () => { \r",
+									"\r",
+									"    const jsonData = pm.response.json();\r",
+									"    let errors = jsonData.errors;  \r",
+									"\r",
+									"    pm.expect(errors[0]).to.eql(\"Name must be at most 50 characters long\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"PurchasingPurchasingPurchasingPurchasingPurchasingPurchasing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments/department/{{deparmentId}} (Post Add)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_schema')));\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json();   \r",
+									"\r",
+									"pm.test(\"Is correct employee\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get('departmentId'));\r",
+									"    pm.expect(jsonData.name).to.eql(\"Purchasing\");\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/departments/department/{{departmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments",
+								"department",
+								"{{departmentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments/department/name/{{name}} (Post Add)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_schema')));\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json();   \r",
+									"\r",
+									"pm.test(\"Is correct employee\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get('departmentId'));\r",
+									"    pm.expect(jsonData.name).to.eql(\"Purchasing\");\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/departments/department/name/purchasing",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments",
+								"department",
+								"name",
+								"purchasing"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Update)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									" \r",
+									"pm.test('Schema validation', () => { \r",
+									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_add_response_schema')));\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json(); \r",
+									" \r",
+									"pm.test(\"Is correct employee\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get('departmentId'));\r",
+									"    pm.expect(jsonData.name).to.eql(\"Sales\");\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let departments = JSON.parse(pm.environment.get(\"departments\"));\r",
+									"let selected = departments[4]; \r",
+									"pm.environment.set(\"selectedDepartmentId\", selected.id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{departmentId}}\",\r\n    \"name\": \"Sales\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Update) Exists",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									" \r",
+									"pm.test('Schema validation', () => { \r",
+									"    pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_fail_schema')));\r",
+									"}); \r",
+									"\r",
+									"pm.test('Validate error messages', () => { \r",
+									"\r",
+									"    const jsonData = pm.response.json();\r",
+									"    let errors = jsonData.errors;  \r",
+									"\r",
+									"    pm.expect(errors[0]).to.eql(\"Department already exists\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"{{departmentId}}\",\r\n    \"name\": \"Sales\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments (Update) Fail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									" \r",
+									"pm.test('Schema validation', () => { \r",
+									"    pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_fail_schema')));\r",
+									"}); \r",
+									"\r",
+									"pm.test('Validate error messages', () => { \r",
+									"\r",
+									"    const jsonData = pm.response.json();\r",
+									"    let errors = jsonData.errors;  \r",
+									"\r",
+									"    pm.expect(errors[0]).to.eql(\"Name must be at most 50 characters long\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"PurchasingPurchasingPurchasingPurchasingPurchasingPurchasing\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/departments",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments/department/{{deparmentId}} (Post Update)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"  pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('department_schema')));\r",
+									"}); \r",
+									"\r",
+									"let jsonData = pm.response.json();   \r",
+									"\r",
+									"pm.test(\"Is correct employee\", function () {       \r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData.id).to.eql(pm.environment.get('departmentId'));\r",
+									"    pm.expect(jsonData.name).to.eql(\"Sales\");\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/departments/department/{{departmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments",
+								"department",
+								"{{departmentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments/{{departmentId}}",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/departments/{{departmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments",
+								"{{departmentId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/departments/department/{{deparmentId}} (Post Delete)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"}); "
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/departments/department/{{departmentId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"departments",
+								"department",
+								"{{departmentId}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -346,7 +1021,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees (Add)",
+					"name": "{{baseUrl}}/employees (Add) Success",
 					"event": [
 						{
 							"listen": "test",
@@ -889,13 +1564,7 @@
 							}
 						}
 					],
-					"protocolProfileBehavior": {
-						"disabledSystemHeaders": {}
-					},
 					"request": {
-						"auth": {
-							"type": "noauth"
-						},
 						"method": "POST",
 						"header": [],
 						"body": {
