@@ -34,7 +34,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapGet("/employee/{id}", async (IEmployeeService employeeService, Guid id) =>
+        employeeGroup.MapGet("/employee/{id}", async (Guid id, [FromServices] IEmployeeService employeeService) =>
         {
             var employee = await employeeService.GetAsync(id);
             if (employee == null)
@@ -52,7 +52,7 @@ public static class EndpointsEmployee
        });
 
 
-        employeeGroup.MapPost("", async (IEmployeeService employeeService, AddEmployeeRequest addEmployeeRequest) =>
+        employeeGroup.MapPost("", async (AddEmployeeRequest addEmployeeRequest, [FromServices] IEmployeeService employeeService) =>
         {
             var (isValid, savedEmployee, errors) = await employeeService.AddAsync(addEmployeeRequest);
             if (!isValid)
@@ -73,7 +73,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapPut("", async (IEmployeeService employeeService, UpdateEmployeeRequest updateEmployeeRequest) =>
+        employeeGroup.MapPut("", async (UpdateEmployeeRequest updateEmployeeRequest, [FromServices] IEmployeeService employeeService) =>
         {
             var (isValid, savedEmployee, errors) = await employeeService.UpdateAsync(updateEmployeeRequest); ;
             if (!isValid)
@@ -94,7 +94,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapDelete("/{id}", async (IEmployeeService employeeService, Guid id) =>
+        employeeGroup.MapDelete("/{id}", async (Guid id, [FromServices] IEmployeeService employeeService) =>
         {
             try
             {
@@ -117,7 +117,7 @@ public static class EndpointsEmployee
             Tags = [new() { Name = "Wolds HR - Employee" }]
         });
 
-        employeeGroup.MapPost("/upload-photo/{id}", async (Guid id, HttpRequest request, IEmployeeService employeeService) =>
+        employeeGroup.MapPost("/upload-photo/{id}", async (Guid id, HttpRequest request, [FromServices] IEmployeeService employeeService) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });

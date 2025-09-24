@@ -6,10 +6,8 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class RefreshTokenService(IRefreshTokenUnitOfWork refreshTokenUnitOfWork) : IRefreshTokenService
+public class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork) : IRefreshTokenService
 {
-    private readonly IRefreshTokenUnitOfWork _refreshTokenUnitOfWork = refreshTokenUnitOfWork;
-
     public void RemoveExpiredRefreshTokens(Guid accountId)
     {
         _refreshTokenUnitOfWork.RefreshToken.RemoveExpired(EnvironmentVariablesHelper.JWTSettingsRefreshTokenTtl, accountId);

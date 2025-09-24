@@ -18,7 +18,7 @@ public static class EndpointsAuthentication
                                               .WithApiVersionSet(versionSet)
                                               .MapToApiVersion(1.0);
 
-        authenticateGroup.MapPost("/login", async (HttpContext http, Helper.Dto.Requests.LoginRequest loginRequest, IAuthenticateService authenticateService) =>
+        authenticateGroup.MapPost("/login", async (HttpContext http, LoginRequest loginRequest, IAuthenticateService authenticateService) =>
         {
             http.Response.Headers.CacheControl = "no-store"; // Disable caching
             http.Response.Headers.Pragma = "no-cache";

@@ -102,6 +102,7 @@ public static class ServiceExtensions
         services.AddScoped<IAccountUnitOfWork, AccountUnitOfWork>();
         services.AddScoped<IRefreshTokenUnitOfWork, RefreshTokenUnitOfWork>();
         services.AddScoped<IEmployeeUnitOfWork, EmployeeUnitOfWork>();
+        services.AddScoped<IDepartmentUnitOfWork, DepartmentUnitOfWork>();
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();
