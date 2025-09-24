@@ -24,7 +24,7 @@ jobs:
           dotnet-version: '8.0'
 
       - name: Build with dotnet
-        run: dotnet build wolds-hr-api/wolds-hr-api.csproj --configuration Release
+        run: dotnet publish wolds-hr-api/wolds-hr-api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
       - name: dotnet publish
         run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
@@ -72,3 +72,4 @@ jobs:
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
             
+
