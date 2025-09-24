@@ -15,7 +15,7 @@ public class DepartmentValidator : AbstractValidator<Department>
         RuleSet("AddUpdate", () =>
         {
             RuleFor(x => x.Name)
-                .NotEmpty().WithMessage("Surname is required")
+                .NotEmpty().WithMessage("Name is required")
                 .MaximumLength(50).WithMessage("Name must be at most 50 characters long");
 
             RuleFor(x => x.Name)

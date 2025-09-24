@@ -6,6 +6,7 @@ using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helper.Mappers;
 using wolds_hr_api.Service.Interfaces;
+using wolds_hr_api.Validator;
 
 namespace wolds_hr_api.Service;
 
@@ -34,7 +35,7 @@ public class DepartmentService(IValidator<Department> _validator,
     {
         var department = DepartmentMapper.ToDepartment(addDepartmentRequest);
 
-        var (isValid, errors) = await ValidateDepartmentAsync(department, "AddUpdate");
+        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, department, "AddUpdate");
         if (!isValid) return (false, null, errors);
 
         _departmentUnitOfWork.Department.Add(department);
@@ -53,7 +54,7 @@ public class DepartmentService(IValidator<Department> _validator,
         if (!await _departmentUnitOfWork.Department.ExistsAsync(department.Id))
             throw new DepartmentNotFoundException("Department not found.");
 
-        var (isValid, errors) = await ValidateDepartmentAsync(department, "AddUpdate");
+        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, department, "AddUpdate");
         if (!isValid) return (false, null, errors);
 
         await _departmentUnitOfWork.Department.UpdateAsync(department);
@@ -75,17 +76,5 @@ public class DepartmentService(IValidator<Department> _validator,
     public async Task<bool> ExistsAsync(Guid id)
     {
         return await _departmentUnitOfWork.Department.ExistsAsync(id);
-    }
-
-    private async Task<(bool isValid, List<string>? Errors)> ValidateDepartmentAsync(Department department, string ruleSet)
-    {
-        var result = await _validator.ValidateAsync(department, options =>
-        {
-            options.IncludeRuleSets(ruleSet);
-        });
-
-        return result.IsValid
-            ? (true, null)
-            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
     }
 }

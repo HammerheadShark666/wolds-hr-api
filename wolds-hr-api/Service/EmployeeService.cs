@@ -8,6 +8,7 @@ using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Helper.Mappers;
 using wolds_hr_api.Service.Interfaces;
+using wolds_hr_api.Validator;
 using static wolds_hr_api.Helper.PhotoHelper;
 
 namespace wolds_hr_api.Service;
@@ -40,7 +41,7 @@ public class EmployeeService(IValidator<Employee> _validator,
     {
         var employee = EmployeeMapper.ToEmployee(addEmployeeRequest);
 
-        var (isValid, errors) = await ValidateEmployeeAsync(employee);
+        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, employee, "AddUpdate");
         if (!isValid) return (false, null, errors);
 
         _employeeUnitOfWork.Employee.Add(employee);
@@ -56,7 +57,7 @@ public class EmployeeService(IValidator<Employee> _validator,
     {
         var employee = EmployeeMapper.ToEmployee(updateEmployeeRequest);
 
-        var (isValid, errors) = await ValidateEmployeeAsync(employee);
+        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, employee, "AddUpdate");
         if (!isValid) return (false, null, errors);
 
         await _employeeUnitOfWork.Employee.UpdateAsync(employee);
@@ -105,15 +106,15 @@ public class EmployeeService(IValidator<Employee> _validator,
             await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
     }
 
-    private async Task<(bool isValid, List<string>? Errors)> ValidateEmployeeAsync(Employee employee, string ruleSet = "AddUpdate")
-    {
-        var result = await _validator.ValidateAsync(employee, options =>
-        {
-            options.IncludeRuleSets(ruleSet);
-        });
+    //private async Task<(bool isValid, List<string>? Errors)> ValidateEmployeeAsync(Employee employee, string ruleSet = "AddUpdate")
+    //{
+    //    var result = await _validator.ValidateAsync(employee, options =>
+    //    {
+    //        options.IncludeRuleSets(ruleSet);
+    //    });
 
-        return result.IsValid
-            ? (true, null)
-            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
-    }
+    //    return result.IsValid
+    //        ? (true, null)
+    //        : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
+    //}
 }

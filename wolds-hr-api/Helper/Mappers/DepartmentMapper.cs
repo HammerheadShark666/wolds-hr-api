@@ -24,7 +24,6 @@ public class DepartmentMapper
     {
         return _ = new Department()
         {
-
             Name = addDepartmentRequest.Name
         };
     }
