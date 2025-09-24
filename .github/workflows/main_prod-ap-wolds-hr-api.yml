@@ -54,7 +54,7 @@ jobs:
         with:
           app-name: 'prod-ap-wolds-hr-api'
           slot-name: 'Production'
-          package: ./publish
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D553457A9BF141058A55A3748812E1FC }}
           
   automated-api-tests:
@@ -72,6 +72,7 @@ jobs:
         - name: Run API tests
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+
 
 
 
