@@ -25,13 +25,16 @@ jobs:
     
         - name: Restore NuGet packages
           run: dotnet restore wolds-hr-api/wolds-hr-api.csproj
-    
-        - name: Build project
+        
+        - name: Build main project
           run: dotnet build wolds-hr-api/wolds-hr-api.csproj -c Release
-    
-        - name: Publish project
-          run: dotnet publish wolds-hr-api/wolds-hr-api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
-    
+        
+        - name: Clean publish folder
+          run: rm -rf ${{env.DOTNET_ROOT}}/myapp
+        
+        - name: Publish main project only
+          run: dotnet publish wolds-hr-api/wolds-hr-api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-dependencies
+ 
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v4
           with:
@@ -75,3 +78,4 @@ jobs:
         - name: Run API tests
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+
