@@ -89,14 +89,3 @@ jobs:
         - name: Run API tests
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e "2cb1d520-705a-4860-befd-e7934ed11f8b" --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
-            
-
-
-
-
-
-
-
-
-
-
