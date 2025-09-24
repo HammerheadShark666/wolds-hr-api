@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
 using wolds_hr_api.Helper;
@@ -9,18 +8,11 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class ImportEmployeeService(IValidator<Employee> validator,
-                                   IDepartmentRepository departmentRepository,
-                                   IEmployeeUnitOfWork employeeUnitOfWork,
-                                   IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork,
-                                   ILogger<ImportEmployeeService> logger) : IImportEmployeeService
+public class ImportEmployeeService(IValidator<Employee> _validator,
+                                   IEmployeeUnitOfWork _employeeUnitOfWork,
+                                   IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork,
+                                   ILogger<ImportEmployeeService> _logger) : IImportEmployeeService
 {
-    private readonly IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork = importEmployeeHistoryUnitOfWork;
-    private readonly IEmployeeUnitOfWork _employeeUnitOfWork = employeeUnitOfWork;
-    private readonly IDepartmentRepository _departmentRepository = departmentRepository;
-    private readonly IValidator<Employee> _validator = validator;
-    private readonly ILogger<ImportEmployeeService> _logger = logger;
-
     public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(List<String> fileLines)
     {
         int importedEmployees = 0;
@@ -55,7 +47,7 @@ public class ImportEmployeeService(IValidator<Employee> validator,
             }
             catch (Exception ex)
             {
-                logger.LogError($"Import Employee: {line}, Error: {ex.Message}");
+                _logger.LogError($"Import Employee: {line}, Error: {ex.Message}");
                 await AddImportEmployeeFailedAsync(line, importEmployeeHistory.Id, ex.Message);
                 importEmployeesErrors++;
                 continue;

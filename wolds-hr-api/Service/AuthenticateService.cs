@@ -10,18 +10,12 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class AuthenticateService(IValidator<LoginRequest> validatorHelper,
-                                 IRefreshTokenService refreshTokenService,
-                                 IAccountUnitOfWork accountUnitOfWork,
-                                 IJWTHelper jWTHelper) : IAuthenticateService
+public class AuthenticateService(IValidator<LoginRequest> _validatorHelper,
+                                 IRefreshTokenService _refreshTokenService,
+                                 IAccountUnitOfWork _accountUnitOfWork,
+                                 IJWTHelper _jWTHelper) : IAuthenticateService
 {
-    private readonly IValidator<LoginRequest> _validatorHelper = validatorHelper;
-    private readonly IAccountUnitOfWork _accountUnitOfWork = accountUnitOfWork;
-    private readonly IJWTHelper _jWTHelper = jWTHelper;
-    private readonly IRefreshTokenService _refreshTokenService = refreshTokenService;
-
-    #region Public Functions
-
+    #region Public Functions 
 
     public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress)
     {

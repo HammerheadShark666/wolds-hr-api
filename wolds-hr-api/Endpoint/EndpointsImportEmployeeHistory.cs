@@ -82,7 +82,7 @@ public static class EndpointsImportEmployeeHistory
             try
             {
                 await importEmployeeHistoryService.DeleteAsync(id);
-                return Results.Ok();
+                return Results.Ok(new { Message = "Import history deleted" });
             }
             catch (ImportEmployeeHistoryNotFoundException)
             {

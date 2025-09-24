@@ -5,11 +5,11 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork) : IImportEmployeeHistoryService
+public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork) : IImportEmployeeHistoryService
 {
     public async Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize)
     {
-        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.SuccessHistory.GetAsync(id, page, pageSize);
+        var (employees, totalEmployees) = await _importEmployeeHistoryUnitOfWork.SuccessHistory.GetAsync(id, page, pageSize);
 
         return new EmployeePagedResponse
         {
@@ -22,7 +22,7 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork impor
 
     public async Task<ImportEmployeeExistingHistoryPagedResponse> GetImportedEmployeeExistingHistoryAsync(Guid id, int page, int pageSize)
     {
-        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.ExistingHistory.GetAsync(id, page, pageSize);
+        var (employees, totalEmployees) = await _importEmployeeHistoryUnitOfWork.ExistingHistory.GetAsync(id, page, pageSize);
 
         return new ImportEmployeeExistingHistoryPagedResponse
         {
@@ -35,7 +35,7 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork impor
 
     public async Task<ImportEmployeeFailedHistoryPagedResponse> GetImportedEmployeeFailedHistoryAsync(Guid id, int page, int pageSize)
     {
-        var (employees, totalEmployees) = await importEmployeeHistoryUnitOfWork.FailedHistory.GetAsync(id, page, pageSize);
+        var (employees, totalEmployees) = await _importEmployeeHistoryUnitOfWork.FailedHistory.GetAsync(id, page, pageSize);
 
         return new ImportEmployeeFailedHistoryPagedResponse
         {
@@ -48,12 +48,12 @@ public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork impor
 
     public async Task DeleteAsync(Guid id)
     {
-        await importEmployeeHistoryUnitOfWork.History.DeleteAsync(id);
-        await importEmployeeHistoryUnitOfWork.SaveChangesAsync();
+        await _importEmployeeHistoryUnitOfWork.History.DeleteAsync(id);
+        await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
     }
 
     public async Task<List<ImportEmployeeHistoryResponse>> GetAsync() =>
-            (await importEmployeeHistoryUnitOfWork.History.GetAsync())
+            (await _importEmployeeHistoryUnitOfWork.History.GetAsync())
                 .Select(h => new ImportEmployeeHistoryResponse
                 {
                     Id = h.Id,

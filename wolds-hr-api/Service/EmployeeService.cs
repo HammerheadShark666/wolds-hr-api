@@ -12,16 +12,11 @@ using static wolds_hr_api.Helper.PhotoHelper;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeService(IValidator<Employee> validator,
-                             IEmployeeUnitOfWork employeeUnitOfWork,
-                             IAzureStorageBlobHelper azureStorageHelper,
-                             IPhotoHelper photoHelper) : IEmployeeService
+public class EmployeeService(IValidator<Employee> _validator,
+                             IEmployeeUnitOfWork _employeeUnitOfWork,
+                             IAzureStorageBlobHelper _azureStorageHelper,
+                             IPhotoHelper _photoHelper) : IEmployeeService
 {
-    private readonly IAzureStorageBlobHelper _azureStorageHelper = azureStorageHelper;
-    private readonly IPhotoHelper _photoHelper = photoHelper;
-    private readonly IEmployeeUnitOfWork _employeeUnitOfWork = employeeUnitOfWork;
-    private readonly IValidator<Employee> _validator = validator;
-
     public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
         var (employees, totalEmployees) = await _employeeUnitOfWork.Employee.GetAsync(keyword, departmentId, page, pageSize);
