@@ -37,7 +37,12 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
             {
                 if (index == 0) continue;
 
-                var employee = EmployeeCsvParser.Parse(line);
+                if (!EmployeeCsvParser.TryParse(line, out var employee, out var error) || employee == null)
+                {
+                    await AddImportEmployeeFailedAsync(line, importEmployeeHistory.Id, error ?? "Parsing failed");
+                    importEmployeesErrors++;
+                    continue;
+                }
 
                 if (await EmployeeExistsAsync(employee, importEmployeeHistory.Id))
                 {
