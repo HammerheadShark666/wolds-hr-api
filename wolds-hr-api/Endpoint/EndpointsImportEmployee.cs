@@ -22,21 +22,15 @@ public static class EndpointsImportEmployee
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
 
-            var form = await request.ReadFormAsync();
-            var file = form.Files.GetFile("file");
+            var file = await FileHelper.GetFileAsync(request);
+            if (file == null || !FileHelper.FileHasContent(file))
+                return Results.BadRequest(new { Message = "No data in file." });
 
-            if (file == null || file.Length == 0)
-                return Results.BadRequest(new { Message = "No file uploaded." });
+            var result = await importEmployeeService.ImportFromFileAsync(file);
 
-            var fileLines = await importEmployeeService.ReadAllLinesAsync(file);
-            if (fileLines.Count == 0)
-                return Results.BadRequest(new { Message = "File is empty." });
+            return Results.Ok(result);
 
 
-            if (await importEmployeeService.MaximumNumberOfEmployeesReachedAsync(fileLines))
-                return Results.BadRequest(new { Message = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}" });
-
-            return Results.Ok(await importEmployeeService.ImportAsync(fileLines)); ;
         })
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<ImportEmployeeHistorySummaryResponse>((int)HttpStatusCode.OK)
