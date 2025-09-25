@@ -13,7 +13,17 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
                                    IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork,
                                    ILogger<ImportEmployeeService> _logger) : IImportEmployeeService
 {
-    public async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(List<String> fileLines)
+    public async Task<ImportEmployeeHistorySummaryResponse> ImportFromFileAsync(IFormFile file)
+    {
+        var fileLines = await FileHelper.ReadAllLinesAsync(file);
+
+        if (await MaximumNumberOfEmployeesReachedAsync(fileLines))
+            throw new InvalidOperationException($"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}");
+
+        return await ImportAsync(fileLines);
+    }
+
+    private async Task<ImportEmployeeHistorySummaryResponse> ImportAsync(List<String> fileLines)
     {
         int importedEmployees = 0;
         int importEmployeesExisting = 0;
@@ -27,7 +37,7 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
             {
                 if (index == 0) continue;
 
-                var employee = ParseEmployeeFromCsv(line);
+                var employee = EmployeeCsvParser.Parse(line);
 
                 if (await EmployeeExistsAsync(employee, importEmployeeHistory.Id))
                 {
@@ -70,11 +80,11 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
 
     private async Task<bool> ValidateAndHandleAsync(Employee employee, string rawLine, Guid historyId)
     {
-        var result = await _validator.ValidateAsync(employee, opts => opts.IncludeRuleSets("AddUpdate"));
-
+        var result = await EmployeeValidationHelper.ValidateEmployeeAsync(employee, _validator);
         if (result.IsValid) return true;
 
-        await AddImportEmployeeFailedAsync(rawLine, historyId, result.Errors.Select(e => e.ErrorMessage));
+        await AddImportEmployeeFailedAsync(rawLine, historyId, ValidationErrorFormatter.ExtractErrorMessages(result));
+
         return false;
     }
 
@@ -89,32 +99,13 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
 
     public async Task<bool> MaximumNumberOfEmployeesReachedAsync(List<String> fileLines)
     {
+        if (fileLines == null || fileLines.Count == 0)
+            return false;
+
         var numberOfEmployeesToImport = fileLines.Count;
         var numberOfEmloyees = await _employeeUnitOfWork.Employee.CountAsync();
 
-        if (numberOfEmployeesToImport + numberOfEmloyees > Constants.MaxNumberOfEmployees)
-        {
-            return true;
-        }
-
-        return false;
-    }
-
-    private static Employee ParseEmployeeFromCsv(string employeeLine)
-    {
-        var values = employeeLine.Split(',');
-
-        return new Employee
-        {
-            Surname = values[1],
-            FirstName = values[2],
-            DateOfBirth = DateOnly.TryParse(values[3], out var dob) ? dob : null,
-            HireDate = DateOnly.TryParse(values[4], out var hireDate) ? hireDate : null,
-            DepartmentId = Guid.TryParse(values[5], out var deptId) ? deptId : null,
-            Email = values[6],
-            PhoneNumber = values[7],
-            Created = DateOnly.FromDateTime(DateTime.Now)
-        };
+        return EmployeeLimitHelper.WillExceedLimit(numberOfEmloyees, numberOfEmployeesToImport, Constants.MaxNumberOfEmployees);
     }
 
     private async Task<bool> EmployeeExistsAsync(Employee employee, Guid importEmployeeHistoryId)
@@ -179,21 +170,5 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
             throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
 
         return importEmployeeHistory;
-    }
-
-    public async Task<List<string>> ReadAllLinesAsync(IFormFile file)
-    {
-        var lines = new List<string>();
-        using var stream = file.OpenReadStream();
-        using var reader = new StreamReader(stream);
-
-        while (!reader.EndOfStream)
-        {
-            var line = await reader.ReadLineAsync();
-            if (!string.IsNullOrWhiteSpace(line))
-                lines.Add(line);
-        }
-
-        return lines;
     }
 }
