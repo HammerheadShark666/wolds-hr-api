@@ -2,7 +2,7 @@
 using FluentValidation.Results;
 using wolds_hr_api.Domain;
 
-namespace wolds_hr_api.Helper;
+namespace wolds_hr_api.Helper.Validation;
 
 public static class EmployeeValidationHelper
 {
