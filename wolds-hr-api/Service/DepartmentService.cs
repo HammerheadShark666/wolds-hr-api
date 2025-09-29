@@ -6,7 +6,6 @@ using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
 using wolds_hr_api.Helper.Mappers;
 using wolds_hr_api.Service.Interfaces;
-using wolds_hr_api.Validator;
 
 namespace wolds_hr_api.Service;
 
@@ -35,8 +34,9 @@ public class DepartmentService(IValidator<Department> _validator,
     {
         var department = DepartmentMapper.ToDepartment(addDepartmentRequest);
 
-        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, department, "AddUpdate");
-        if (!isValid) return (false, null, errors);
+        var validation = await ValidateDepartmentAsync(department, "AddUpdate");
+        if (!validation.isValid)
+            return (false, null, validation.errors);
 
         _departmentUnitOfWork.Department.Add(department);
         await _departmentUnitOfWork.SaveChangesAsync();
@@ -54,8 +54,9 @@ public class DepartmentService(IValidator<Department> _validator,
         if (!await _departmentUnitOfWork.Department.ExistsAsync(department.Id))
             throw new DepartmentNotFoundException("Department not found.");
 
-        var (isValid, errors) = await ValidatorHelper.ValidateAsync(_validator, department, "AddUpdate");
-        if (!isValid) return (false, null, errors);
+        var validation = await ValidateDepartmentAsync(department, "AddUpdate");
+        if (!validation.isValid)
+            return (false, null, validation.errors);
 
         await _departmentUnitOfWork.Department.UpdateAsync(department);
         await _departmentUnitOfWork.SaveChangesAsync();
@@ -76,5 +77,17 @@ public class DepartmentService(IValidator<Department> _validator,
     public async Task<bool> ExistsAsync(Guid id)
     {
         return await _departmentUnitOfWork.Department.ExistsAsync(id);
+    }
+
+    private async Task<(bool isValid, List<string> errors)> ValidateDepartmentAsync(Department department, string ruleSet)
+    {
+        var result = await _validator.ValidateAsync(department, options =>
+        {
+            options.IncludeRuleSets(ruleSet);
+        });
+
+        return result.IsValid
+            ? (true, new List<string>())
+            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
     }
 }
