@@ -3,7 +3,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class DateOnlyJsonConverter : JsonConverter<DateOnly?>
+internal sealed class DateOnlyJsonConverter : JsonConverter<DateOnly?>
 {
     private readonly string _format = "yyyy-MM-dd";
 

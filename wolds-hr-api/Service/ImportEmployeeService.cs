@@ -9,10 +9,10 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class ImportEmployeeService(IValidator<Employee> _validator,
-                                   IEmployeeUnitOfWork _employeeUnitOfWork,
-                                   IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork,
-                                   ILogger<ImportEmployeeService> _logger) : IImportEmployeeService
+internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
+                                            IEmployeeUnitOfWork _employeeUnitOfWork,
+                                            IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork,
+                                            ILogger<ImportEmployeeService> _logger) : IImportEmployeeService
 {
     public async Task<ImportEmployeeHistorySummaryResponse> ImportFromFileAsync(IFormFile file)
     {
@@ -86,7 +86,7 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
 
     private async Task<bool> ValidateAndHandleAsync(Employee employee, string rawLine, Guid historyId)
     {
-        var result = await EmployeeValidationHelper.ValidateEmployeeAsync(employee, _validator);
+        var result = await _validator.ValidateAsync(employee, opts => opts.IncludeRuleSets("AddUpdate"));
         if (result.IsValid) return true;
 
         await AddImportEmployeeFailedAsync(rawLine, historyId, ValidationErrorFormatter.ExtractErrorMessages(result));
@@ -103,15 +103,19 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
         return;
     }
 
-    public async Task<bool> MaximumNumberOfEmployeesReachedAsync(List<String> fileLines)
+    public async Task<bool> MaximumNumberOfEmployeesReachedAsync(List<String>? fileLines)
     {
-        if (fileLines == null || fileLines.Count == 0)
+        if (fileLines == null || !fileLines.Any())
             return false;
 
         var numberOfEmployeesToImport = fileLines.Count;
-        var numberOfEmloyees = await _employeeUnitOfWork.Employee.CountAsync();
+        var numberOfEmployees = await _employeeUnitOfWork.Employee.CountAsync();
 
-        return EmployeeLimitHelper.WillExceedLimit(numberOfEmloyees, numberOfEmployeesToImport, Constants.MaxNumberOfEmployees);
+        return EmployeeLimitHelper.WillExceedLimit(
+            numberOfEmployees,
+            numberOfEmployeesToImport,
+            Constants.MaxNumberOfEmployees
+        );
     }
 
     private async Task<bool> EmployeeExistsAsync(Employee employee, Guid importEmployeeHistoryId)
@@ -173,7 +177,7 @@ public class ImportEmployeeService(IValidator<Employee> _validator,
         await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
 
         if (importEmployeeHistory.Id == Guid.Empty)
-            throw new ImportEmployeeHistoryNotCreated("Employee import record was not created.");
+            throw new ImportEmployeeHistoryNotCreated();
 
         return importEmployeeHistory;
     }

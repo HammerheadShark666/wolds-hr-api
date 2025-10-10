@@ -4,7 +4,7 @@ using wolds_hr_api.Data.UnitOfWork.Interfaces;
 
 namespace wolds_hr_api.Data.UnitOfWork;
 
-public class AccountUnitOfWork(IAccountRepository account,
+internal sealed class AccountUnitOfWork(IAccountRepository account,
                                WoldsHrDbContext dbContext) : IAccountUnitOfWork
 {
     public IAccountRepository Account { get; } = account;

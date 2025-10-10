@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class ImportEmployeeFailedErrorHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedErrorHistory>
+internal sealed class ImportEmployeeFailedErrorHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedErrorHistory>
 {
     public void Configure(EntityTypeBuilder<ImportEmployeeFailedErrorHistory> builder)
     {

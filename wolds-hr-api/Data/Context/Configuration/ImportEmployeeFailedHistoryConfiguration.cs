@@ -4,7 +4,7 @@ using global::wolds_hr_api.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class ImportEmployeeFailedHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedHistory>
+internal sealed class ImportEmployeeFailedHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeFailedHistory>
 {
     public void Configure(EntityTypeBuilder<ImportEmployeeFailedHistory> builder)
     {

@@ -1,6 +1,6 @@
 ﻿namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class EmployeePagedResponse
+internal sealed class EmployeePagedResponse
 {
     public List<EmployeeResponse> Employees { get; set; } = [];
     public int Page { get; set; }

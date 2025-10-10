@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Service.Interfaces;
 
-public interface IImportEmployeeHistoryService
+internal interface IImportEmployeeHistoryService
 {
     Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize);
     Task<ImportEmployeeExistingHistoryPagedResponse> GetImportedEmployeeExistingHistoryAsync(Guid id, int page, int pageSize);

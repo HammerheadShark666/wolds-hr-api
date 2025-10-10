@@ -9,7 +9,7 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class DepartmentService(IValidator<Department> _validator,
+internal sealed class DepartmentService(IValidator<Department> _validator,
                                IDepartmentUnitOfWork _departmentUnitOfWork) : IDepartmentService
 {
     public async Task<List<DepartmentResponse>> GetAsync()
@@ -50,7 +50,7 @@ public class DepartmentService(IValidator<Department> _validator,
         var department = DepartmentMapper.ToDepartment(updateDepartmentRequest);
 
         if (!await _departmentUnitOfWork.Department.ExistsAsync(department.Id))
-            throw new DepartmentNotFoundException("Department not found.");
+            throw new DepartmentNotFoundException();
 
         await ValidateDepartmentAsync(department);
 

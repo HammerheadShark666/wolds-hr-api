@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Helper;
 
-public class DataSeeder
+internal class DataSeeder
 {
     public static async Task SeedDatabaseAsync(WoldsHrDbContext context)
     {

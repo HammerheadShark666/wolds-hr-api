@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Data.UnitOfWork.Interfaces;
 
-public interface IRefreshTokenUnitOfWork
+internal interface IRefreshTokenUnitOfWork
 {
     IRefreshTokenRepository RefreshToken { get; }
     Task SaveChangesAsync();

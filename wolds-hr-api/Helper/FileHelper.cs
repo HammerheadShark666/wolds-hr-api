@@ -1,6 +1,6 @@
 ﻿namespace wolds_hr_api.Helper;
 
-public class FileHelper
+internal static class FileHelper
 {
     public static string GetGuidFileName(string extension)
     {

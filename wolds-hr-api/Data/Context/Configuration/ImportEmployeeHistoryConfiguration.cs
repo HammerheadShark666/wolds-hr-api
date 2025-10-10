@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class ImportEmployeeHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeHistory>
+internal sealed class ImportEmployeeHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeHistory>
 {
     public void Configure(EntityTypeBuilder<ImportEmployeeHistory> builder)
     {

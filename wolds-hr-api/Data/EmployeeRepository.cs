@@ -6,7 +6,7 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
+internal sealed class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
@@ -106,7 +106,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             _context.Employees.Update(currentEmployee);
         }
         else
-            throw new EmployeeNotFoundException("Employee not found");
+            throw new EmployeeNotFoundException();
 
         return employee;
     }
@@ -119,7 +119,7 @@ public class EmployeeRepository(WoldsHrDbContext context) : IEmployeeRepository
             _context.Employees.Remove(employee);
         }
         else
-            throw new EmployeeNotFoundException("Employee not found");
+            throw new EmployeeNotFoundException();
     }
 
     public async Task<bool> ExistsAsync(Guid id)

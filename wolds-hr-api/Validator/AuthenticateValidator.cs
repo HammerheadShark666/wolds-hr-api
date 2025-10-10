@@ -5,7 +5,7 @@ using BC = BCrypt.Net.BCrypt;
 
 namespace wolds_hr_api.Validator;
 
-public class AuthenticateValidator : AbstractValidator<LoginRequest>
+public sealed class AuthenticateValidator : AbstractValidator<LoginRequest>
 {
     private readonly IAccountRepository _accountRepository;
 

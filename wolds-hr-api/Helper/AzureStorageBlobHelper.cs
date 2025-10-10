@@ -4,7 +4,7 @@ using wolds_hr_api.Helper.Interfaces;
 
 namespace wolds_hr_api.Helper;
 
-public class AzureStorageBlobHelper(BlobServiceClient blobServiceClient, ILogger<AzureStorageBlobHelper> logger) : IAzureStorageBlobHelper
+internal sealed class AzureStorageBlobHelper(BlobServiceClient blobServiceClient, ILogger<AzureStorageBlobHelper> logger) : IAzureStorageBlobHelper
 {
     private readonly BlobServiceClient _blobServiceClient = blobServiceClient;
     private readonly ILogger<AzureStorageBlobHelper> _logger = logger;

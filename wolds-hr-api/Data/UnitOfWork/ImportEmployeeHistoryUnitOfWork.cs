@@ -4,7 +4,7 @@ using wolds_hr_api.Data.UnitOfWork.Interfaces;
 
 namespace wolds_hr_api.Data.UnitOfWork;
 
-public class ImportEmployeeHistoryUnitOfWork(IImportEmployeeHistoryRepository history,
+internal sealed class ImportEmployeeHistoryUnitOfWork(IImportEmployeeHistoryRepository history,
                                              IImportEmployeeSuccessHistoryRepository successHistory,
                                              IImportEmployeeExistingHistoryRepository existingHistory,
                                              IImportEmployeeFailedHistoryRepository failedHistory,

@@ -6,7 +6,7 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImportEmployeeHistoryRepository
+internal sealed class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImportEmployeeHistoryRepository
 {
     private readonly WoldsHrDbContext _context = context;
     public async Task<List<ImportEmployeeHistory>> GetAsync()
@@ -39,6 +39,6 @@ public class ImportEmployeeHistoryRepository(WoldsHrDbContext context) : IImport
             }
         }
         else
-            throw new ImportEmployeeHistoryNotFoundException("ImportEmployee not found");
+            throw new ImportEmployeeHistoryNotFoundException();
     }
 }

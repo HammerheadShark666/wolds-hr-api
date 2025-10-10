@@ -5,7 +5,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext context) : IImportEmployeeFailedHistoryRepository
+internal sealed class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext context) : IImportEmployeeFailedHistoryRepository
 {
     private readonly WoldsHrDbContext _context = context;
 

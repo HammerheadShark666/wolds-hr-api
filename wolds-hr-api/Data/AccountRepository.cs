@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class AccountRepository(WoldsHrDbContext context) : IAccountRepository
+internal sealed class AccountRepository(WoldsHrDbContext context) : IAccountRepository
 {
     private readonly WoldsHrDbContext _context = context;
 

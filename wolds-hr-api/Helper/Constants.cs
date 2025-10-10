@@ -1,6 +1,6 @@
 ﻿namespace wolds_hr_api.Helper;
 
-public static class Constants
+internal static class Constants
 {
     public const string ContentTypeImageJpg = "image/jpeg";
     public const string FileExtensionJpg = "jpg";

@@ -5,7 +5,7 @@ using wolds_hr_api.Helper.Converters;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class ImportEmployeeExistingHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeExistingHistory>
+internal sealed class ImportEmployeeExistingHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeExistingHistory>
 {
     public void Configure(EntityTypeBuilder<ImportEmployeeExistingHistory> builder)
     {

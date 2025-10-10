@@ -19,7 +19,7 @@ using wolds_hr_api.Validator;
 
 namespace wolds_hr_api.Helper.Extensions;
 
-public static class ServiceExtensions
+internal static class ServiceExtensions
 {
     public static void ConfigureSwagger(this IServiceCollection services)
     {

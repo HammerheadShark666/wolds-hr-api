@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class EmployeeResponse
+internal class EmployeeResponse
 {
     public Guid Id { get; set; }
     public string Surname { get; set; } = string.Empty;

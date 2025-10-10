@@ -4,7 +4,7 @@ using wolds_hr_api.Data.UnitOfWork.Interfaces;
 
 namespace wolds_hr_api.Data.UnitOfWork;
 
-public class RefreshTokenUnitOfWork(IRefreshTokenRepository refreshToken,
+internal sealed class RefreshTokenUnitOfWork(IRefreshTokenRepository refreshToken,
                                     WoldsHrDbContext dbContext) : IRefreshTokenUnitOfWork
 {
     public IRefreshTokenRepository RefreshToken { get; } = refreshToken;

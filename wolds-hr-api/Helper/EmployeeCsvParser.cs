@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper;
 
-public static class EmployeeCsvParser
+internal static class EmployeeCsvParser
 {
     public static bool TryParse(string employeeLine, out Employee? employee, out string? error)
     {

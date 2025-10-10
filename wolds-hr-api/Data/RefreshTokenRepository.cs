@@ -5,7 +5,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-public class RefreshTokenRepository(WoldsHrDbContext context) : IRefreshTokenRepository
+internal sealed class RefreshTokenRepository(WoldsHrDbContext context) : IRefreshTokenRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
