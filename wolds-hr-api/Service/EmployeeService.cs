@@ -12,10 +12,10 @@ using static wolds_hr_api.Helper.PhotoHelper;
 
 namespace wolds_hr_api.Service;
 
-public class EmployeeService(IValidator<Employee> _validator,
-                             IEmployeeUnitOfWork _employeeUnitOfWork,
-                             IAzureStorageBlobHelper _azureStorageHelper,
-                             IPhotoHelper _photoHelper) : IEmployeeService
+internal sealed class EmployeeService(IValidator<Employee> _validator,
+                                      IEmployeeUnitOfWork _employeeUnitOfWork,
+                                      IAzureStorageBlobHelper _azureStorageHelper,
+                                      IPhotoHelper _photoHelper) : IEmployeeService
 {
     public async Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize)
     {
@@ -41,11 +41,6 @@ public class EmployeeService(IValidator<Employee> _validator,
         var employee = EmployeeMapper.ToEmployee(addEmployeeRequest);
 
         await ValidateEmployeeAsync(employee);
-
-        //var validation = await ValidateEmployeeAsync(employee, "AddUpdate");
-        //if (!validation.isValid) 
-        //    return (false, null, validation.Errors);
-
         _employeeUnitOfWork.Employee.Add(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
 
@@ -60,7 +55,6 @@ public class EmployeeService(IValidator<Employee> _validator,
         var employee = EmployeeMapper.ToEmployee(updateEmployeeRequest);
 
         await ValidateEmployeeAsync(employee);
-
         await _employeeUnitOfWork.Employee.UpdateAsync(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
 
@@ -78,7 +72,7 @@ public class EmployeeService(IValidator<Employee> _validator,
 
     public async Task<string> UpdateEmployeePhotoAsync(Guid id, IFormFile file)
     {
-        var employee = await _employeeUnitOfWork.Employee.GetAsync(id) ?? throw new EmployeeNotFoundException("Employee not found.");
+        var employee = await _employeeUnitOfWork.Employee.GetAsync(id) ?? throw new EmployeeNotFoundException();
         string newFileName = FileHelper.GetGuidFileName(Constants.FileExtensionJpg);
         string originalFileName = employee.Photo ?? "";
 

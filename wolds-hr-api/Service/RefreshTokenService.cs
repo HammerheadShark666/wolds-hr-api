@@ -6,7 +6,7 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork) : IRefreshTokenService
+internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork) : IRefreshTokenService
 {
     public void RemoveExpiredRefreshTokens(Guid accountId)
     {
@@ -44,7 +44,7 @@ public class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork
         var refreshToken = await _refreshTokenUnitOfWork.RefreshToken.ByTokenAsync(token);
         if (refreshToken == null || !refreshToken.IsActive)
         {
-            throw new RefreshTokenNotFoundException(ConstantMessages.InvalidToken);
+            throw new RefreshTokenNotFoundException();
         }
 
         return refreshToken;

@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class ImportEmployeeSuccessHistoryPagedResponse
+internal class ImportEmployeeSuccessHistoryPagedResponse
 {
     public List<Employee> Employees { get; set; } = [];
     public int Page { get; set; }

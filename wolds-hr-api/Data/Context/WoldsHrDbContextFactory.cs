@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace wolds_hr_api.Data.Context;
 
-public class WoldsHrDbContextFactory : IDesignTimeDbContextFactory<WoldsHrDbContext>
+internal sealed class WoldsHrDbContextFactory : IDesignTimeDbContextFactory<WoldsHrDbContext>
 {
     public WoldsHrDbContext CreateDbContext(string[] args)
     {

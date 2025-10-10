@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper;
 
-public class EnvironmentVariablesHelper
+internal class EnvironmentVariablesHelper
 {
     public static string AzureStorageConnectionString => GetEnvironmentVariableString(Constants.AzureStorageConnectionString);
     public static string JWTIssuer => GetEnvironmentVariableString(Constants.JWTIssuer);
@@ -19,7 +19,7 @@ public class EnvironmentVariablesHelper
         var variable = Environment.GetEnvironmentVariable(name);
 
         if (string.IsNullOrEmpty(variable))
-            throw new EnvironmentVariableNotFoundException($"Environment Variable Not Found: {name}.");
+            throw new EnvironmentVariableNotFoundException(name);
 
         return variable;
     }
@@ -29,7 +29,7 @@ public class EnvironmentVariablesHelper
         var variable = Environment.GetEnvironmentVariable(name);
 
         if (string.IsNullOrEmpty(variable))
-            throw new EnvironmentVariableNotFoundException($"Environment Variable Not Found: {name}.");
+            throw new EnvironmentVariableNotFoundException(name);
 
         return Convert.ToInt16(variable);
     }

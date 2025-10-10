@@ -1,7 +1,7 @@
 ﻿using wolds_hr_api.Data.Interfaces;
 
 namespace wolds_hr_api.Data.UnitOfWork.Interfaces;
-public interface IImportEmployeeHistoryUnitOfWork
+internal interface IImportEmployeeHistoryUnitOfWork
 {
     IImportEmployeeHistoryRepository History { get; }
     IImportEmployeeSuccessHistoryRepository SuccessHistory { get; }

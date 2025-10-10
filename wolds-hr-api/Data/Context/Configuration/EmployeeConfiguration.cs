@@ -5,7 +5,7 @@ using wolds_hr_api.Helper.Converters;
 
 namespace wolds_hr_api.Data.Context.Configuration;
 
-public class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
+internal sealed class EmployeeConfiguration : IEntityTypeConfiguration<Employee>
 {
     public void Configure(EntityTypeBuilder<Employee> builder)
     {

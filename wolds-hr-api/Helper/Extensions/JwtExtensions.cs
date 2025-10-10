@@ -6,7 +6,7 @@ using System.Text;
 
 namespace wolds_hr_api.Helper.Extensions;
 
-public static class JwtExtensions
+internal static class JwtExtensions
 {
     public static void AddJwtAuthentication(this IServiceCollection services)
     {

@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Data.UnitOfWork.Interfaces;
 
-public interface IEmployeeUnitOfWork
+internal interface IEmployeeUnitOfWork
 {
     IEmployeeRepository Employee { get; }
     Task SaveChangesAsync();

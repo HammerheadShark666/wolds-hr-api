@@ -5,7 +5,7 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork) : IImportEmployeeHistoryService
+internal sealed class ImportEmployeeHistoryService(IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork) : IImportEmployeeHistoryService
 {
     public async Task<EmployeePagedResponse> GetImportedEmployeesHistoryAsync(Guid id, int page, int pageSize)
     {

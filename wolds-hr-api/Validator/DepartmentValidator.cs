@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Validator;
 
-public class DepartmentValidator : AbstractValidator<Department>
+public sealed class DepartmentValidator : AbstractValidator<Department>
 {
     private readonly IDepartmentRepository _departmentRepository;
 

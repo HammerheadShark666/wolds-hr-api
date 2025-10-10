@@ -1,6 +1,6 @@
 ﻿namespace wolds_hr_api.Helper.Dto.Responses;
 
-public class ImportEmployeeExistingHistoryPagedResponse
+internal sealed class ImportEmployeeExistingHistoryPagedResponse
 {
     public List<EmployeeResponse> Employees { get; set; } = [];
     public int Page { get; set; }

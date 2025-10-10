@@ -5,7 +5,7 @@ using wolds_hr_api.Helper.Dto.Responses;
 
 namespace wolds_hr_api.Helper.Mappers;
 
-public class EmployeeMapper
+internal static class EmployeeMapper
 {
     public static Employee ToEmployee(AddEmployeeRequest addEmployeeRequest)
     {

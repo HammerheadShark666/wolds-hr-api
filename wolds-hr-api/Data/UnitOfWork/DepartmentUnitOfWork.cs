@@ -4,7 +4,7 @@ using wolds_hr_api.Data.UnitOfWork.Interfaces;
 
 namespace wolds_hr_api.Data.UnitOfWork;
 
-public class DepartmentUnitOfWork(IDepartmentRepository departmentRepository, WoldsHrDbContext dbContext) : IDepartmentUnitOfWork
+internal sealed class DepartmentUnitOfWork(IDepartmentRepository departmentRepository, WoldsHrDbContext dbContext) : IDepartmentUnitOfWork
 {
     public IDepartmentRepository Department { get; } = departmentRepository;
 

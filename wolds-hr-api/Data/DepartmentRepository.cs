@@ -6,7 +6,7 @@ using wolds_hr_api.Helper.Exceptions;
 
 namespace wolds_hr_api.Data;
 
-public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentRepository
+internal sealed class DepartmentRepository(WoldsHrDbContext context) : IDepartmentRepository
 {
     private readonly WoldsHrDbContext _context = context;
 
@@ -62,7 +62,7 @@ public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentReposit
     public async Task UpdateAsync(Department department)
     {
         var currentDepartment = await _context.Departments.FirstOrDefaultAsync(e => e.Id == department.Id)
-                                                    ?? throw new DepartmentNotFoundException("Department not found");
+                                                    ?? throw new DepartmentNotFoundException();
 
         currentDepartment.Name = department.Name;
         _context.Departments.Update(currentDepartment);
@@ -73,7 +73,7 @@ public class DepartmentRepository(WoldsHrDbContext context) : IDepartmentReposit
     public async Task DeleteAsync(Guid id)
     {
         var currentDepartment = await _context.Departments.FirstOrDefaultAsync(e => e.Id == id)
-                                                    ?? throw new DepartmentNotFoundException("Department not found");
+                                                    ?? throw new DepartmentNotFoundException();
 
         _context.Departments.Remove(currentDepartment);
 

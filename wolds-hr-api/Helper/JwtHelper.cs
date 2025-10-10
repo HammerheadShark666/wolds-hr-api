@@ -8,7 +8,7 @@ using wolds_hr_api.Helper.Interfaces;
 
 namespace wolds_hr_api.Helper;
 
-public class JWTHelper() : IJWTHelper
+internal sealed class JWTHelper() : IJWTHelper
 {
     public string GenerateJWTToken(Account account)
     {

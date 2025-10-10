@@ -4,7 +4,7 @@ using wolds_hr_api.Helper.Dto.Responses;
 
 namespace wolds_hr_api.Helper.Mappers;
 
-public class DepartmentMapper
+internal static class DepartmentMapper
 {
     public static DepartmentResponse ToDepartmentResponse(Department department)
     {

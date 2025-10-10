@@ -3,7 +3,7 @@ using wolds_hr_api.Helper.Dto.Responses;
 
 namespace wolds_hr_api.Service.Interfaces;
 
-public interface IEmployeeService
+internal interface IEmployeeService
 {
     Task<EmployeePagedResponse> SearchAsync(string keyword, Guid? departmentId, int page, int pageSize);
     Task<EmployeeResponse?> GetAsync(Guid id);

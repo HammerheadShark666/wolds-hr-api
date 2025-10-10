@@ -1,18 +1,10 @@
 ﻿namespace wolds_hr_api.Helper.Exceptions;
 
-public class DepartmentNotFoundException : Exception
+internal sealed class DepartmentNotFoundException : Exception
 {
-    public DepartmentNotFoundException()
-    {
-    }
+    public DepartmentNotFoundException() : base(ConstantMessages.DocumentNotFound) { }
 
     public DepartmentNotFoundException(string message)
         : base(message)
-    {
-    }
-
-    public DepartmentNotFoundException(string message, Exception inner)
-        : base(message, inner)
-    {
-    }
+    { }
 }

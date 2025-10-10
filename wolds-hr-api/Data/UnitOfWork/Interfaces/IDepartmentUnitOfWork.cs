@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Data.UnitOfWork.Interfaces;
 
-public interface IDepartmentUnitOfWork
+internal interface IDepartmentUnitOfWork
 {
     IDepartmentRepository Department { get; }
     Task SaveChangesAsync();

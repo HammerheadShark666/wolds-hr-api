@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Requests;
 using wolds_hr_api.Helper.Dto.Responses;
 using wolds_hr_api.Helper.Exceptions;
@@ -10,13 +9,11 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class AuthenticateService(IValidator<LoginRequest> _validator,
+internal sealed class AuthenticateService(IValidator<LoginRequest> _validator,
                                  IRefreshTokenService _refreshTokenService,
                                  IAccountUnitOfWork _accountUnitOfWork,
                                  IJWTHelper _jWTHelper) : IAuthenticateService
 {
-    #region Public Functions 
-
     public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress)
     {
         var result = await _validator.ValidateAsync(loginRequest, options =>
@@ -51,14 +48,8 @@ public class AuthenticateService(IValidator<LoginRequest> _validator,
                                          refreshToken.Account.Email));
     }
 
-    #endregion
-
-    #region Private Functions
-
     private Account GetAccount(string email)
     {
-        return _accountUnitOfWork.Account.Get(email) ?? throw new AppException(ConstantMessages.AccountNotFound);
+        return _accountUnitOfWork.Account.Get(email) ?? throw new AccountNotFoundException();
     }
-
-    #endregion
 }

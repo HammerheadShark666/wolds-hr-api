@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper;
 
-public class PhotoHelper : IPhotoHelper
+internal sealed class PhotoHelper : IPhotoHelper
 {
     public PhotoHelper() { }
 

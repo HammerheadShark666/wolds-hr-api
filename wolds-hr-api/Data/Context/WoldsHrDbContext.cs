@@ -4,7 +4,7 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data.Context;
 
-public class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbContext(options)
+internal sealed class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbContext(options)
 {
     public DbSet<Account> Accounts { get; set; }
     public DbSet<Department> Departments { get; set; }
