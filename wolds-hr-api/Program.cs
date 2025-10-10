@@ -2,21 +2,19 @@ using Asp.Versioning;
 using wolds_hr_api.Data.Context;
 using wolds_hr_api.Endpoint;
 using wolds_hr_api.Helper;
+using wolds_hr_api.Helper.ExceptionHandlers;
 using wolds_hr_api.Helper.Extensions;
-using wolds_hr_api.Helpers.Converters;
-using wolds_hr_api.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.ConfigureProblemDetails();
+builder.Services.AddExceptionHandler<ValidationExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.ConfigureJWT();
 builder.Services.ConfigureDbContext(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.BuildCorsPolicy();
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
-});
-
+builder.Services.ConfigureJsonSerializer();
 builder.Services.ConfigureSwagger();
 builder.Services.ConfigureDI();
 builder.Services.ConfigureApiVersioning();
@@ -34,7 +32,7 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.BuildDatabase();
-app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseExceptionHandler();
 
 var versionSet = app.NewApiVersionSet()
     .HasApiVersion(new ApiVersion(1, 0))

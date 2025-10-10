@@ -40,9 +40,11 @@ public class EmployeeService(IValidator<Employee> _validator,
     {
         var employee = EmployeeMapper.ToEmployee(addEmployeeRequest);
 
-        var validation = await ValidateEmployeeAsync(employee, "AddUpdate");
-        if (!validation.isValid)
-            return (false, null, validation.Errors);
+        await ValidateEmployeeAsync(employee);
+
+        //var validation = await ValidateEmployeeAsync(employee, "AddUpdate");
+        //if (!validation.isValid) 
+        //    return (false, null, validation.Errors);
 
         _employeeUnitOfWork.Employee.Add(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
@@ -57,9 +59,7 @@ public class EmployeeService(IValidator<Employee> _validator,
     {
         var employee = EmployeeMapper.ToEmployee(updateEmployeeRequest);
 
-        var validation = await ValidateEmployeeAsync(employee, "AddUpdate");
-        if (!validation.isValid)
-            return (false, null, validation.Errors);
+        await ValidateEmployeeAsync(employee);
 
         await _employeeUnitOfWork.Employee.UpdateAsync(employee);
         await _employeeUnitOfWork.SaveChangesAsync();
@@ -107,15 +107,15 @@ public class EmployeeService(IValidator<Employee> _validator,
             await _azureStorageHelper.DeleteBlobInAzureStorageContainerAsync(editPhoto.OriginalPhotoName, container);
     }
 
-    private async Task<(bool isValid, List<string>? Errors)> ValidateEmployeeAsync(Employee employee, string ruleSet = "AddUpdate")
+    private async Task<(bool isValid, List<string>? Errors)> ValidateEmployeeAsync(Employee employee)
     {
         var result = await _validator.ValidateAsync(employee, options =>
         {
-            options.IncludeRuleSets(ruleSet);
+            options.IncludeRuleSets("AddUpdate");
         });
 
         return result.IsValid
             ? (true, null)
-            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
+            : throw new ValidationException(result.Errors);
     }
 }

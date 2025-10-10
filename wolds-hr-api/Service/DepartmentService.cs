@@ -34,9 +34,7 @@ public class DepartmentService(IValidator<Department> _validator,
     {
         var department = DepartmentMapper.ToDepartment(addDepartmentRequest);
 
-        var validation = await ValidateDepartmentAsync(department, "AddUpdate");
-        if (!validation.isValid)
-            return (false, null, validation.errors);
+        await ValidateDepartmentAsync(department);
 
         _departmentUnitOfWork.Department.Add(department);
         await _departmentUnitOfWork.SaveChangesAsync();
@@ -54,9 +52,7 @@ public class DepartmentService(IValidator<Department> _validator,
         if (!await _departmentUnitOfWork.Department.ExistsAsync(department.Id))
             throw new DepartmentNotFoundException("Department not found.");
 
-        var validation = await ValidateDepartmentAsync(department, "AddUpdate");
-        if (!validation.isValid)
-            return (false, null, validation.errors);
+        await ValidateDepartmentAsync(department);
 
         await _departmentUnitOfWork.Department.UpdateAsync(department);
         await _departmentUnitOfWork.SaveChangesAsync();
@@ -79,15 +75,15 @@ public class DepartmentService(IValidator<Department> _validator,
         return await _departmentUnitOfWork.Department.ExistsAsync(id);
     }
 
-    private async Task<(bool isValid, List<string> errors)> ValidateDepartmentAsync(Department department, string ruleSet)
+    private async Task<(bool isValid, List<string> errors)> ValidateDepartmentAsync(Department department)
     {
         var result = await _validator.ValidateAsync(department, options =>
         {
-            options.IncludeRuleSets(ruleSet);
+            options.IncludeRuleSets("AddUpdate");
         });
 
         return result.IsValid
-            ? (true, new List<string>())
-            : (false, result.Errors.Select(e => e.ErrorMessage).ToList());
+            ? (true, [])
+            : throw new ValidationException(result.Errors);
     }
 }
