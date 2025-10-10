@@ -10,7 +10,7 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-public class AuthenticateService(IValidator<LoginRequest> _validatorHelper,
+public class AuthenticateService(IValidator<LoginRequest> _validator,
                                  IRefreshTokenService _refreshTokenService,
                                  IAccountUnitOfWork _accountUnitOfWork,
                                  IJWTHelper _jWTHelper) : IAuthenticateService
@@ -19,13 +19,12 @@ public class AuthenticateService(IValidator<LoginRequest> _validatorHelper,
 
     public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress)
     {
-
-        var result = await _validatorHelper.ValidateAsync(loginRequest, options =>
+        var result = await _validator.ValidateAsync(loginRequest, options =>
         {
             options.IncludeRuleSets("LoginValidation");
         });
         if (!result.IsValid)
-            return (false, null, result.Errors.Select(e => e.ErrorMessage).ToList());
+            throw new ValidationException(result.Errors);
 
         var account = GetAccount(loginRequest.Username);
         var jwtToken = _jWTHelper.GenerateJWTToken(account);

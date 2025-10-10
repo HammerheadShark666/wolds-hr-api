@@ -12,6 +12,7 @@ using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Data.UnitOfWork;
 using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Helpers.Converters;
 using wolds_hr_api.Service;
 using wolds_hr_api.Service.Interfaces;
 using wolds_hr_api.Validator;
@@ -151,6 +152,25 @@ public static class ServiceExtensions
         {
             options.GroupNameFormat = "'v'V";
             options.SubstituteApiVersionInUrl = true;
+        });
+    }
+
+    public static void ConfigureProblemDetails(this IServiceCollection services)
+    {
+        services.AddProblemDetails(config =>
+        {
+            config.CustomizeProblemDetails = context =>
+            {
+                context.ProblemDetails.Extensions.TryAdd("requestId", context.HttpContext.TraceIdentifier);
+            };
+        });
+    }
+
+    public static void ConfigureJsonSerializer(this IServiceCollection services)
+    {
+        services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
         });
     }
 }
