@@ -46,7 +46,7 @@ public static class EndpointsAuthentication
             Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
 
-        authenticateGroup.MapPost("/refresh-token", async (HttpContext http, JwtRefreshTokenRequest jwtRefreshTokenRequest, IAuthenticateService authenticateService, HttpContext context) =>
+        authenticateGroup.MapPost("/refresh-token", async (HttpContext http, JwtRefreshTokenRequest jwtRefreshTokenRequest, IRefreshTokenService refreshTokenService, HttpContext context) =>
         {
             http.Response.Headers.CacheControl = "no-store"; // Disable caching
             http.Response.Headers.Pragma = "no-cache";
@@ -58,7 +58,7 @@ public static class EndpointsAuthentication
                 {
                     return Results.BadRequest("Refresh token invalid.");
                 }
-                var tokens = await authenticateService.RefreshTokenAsync(refreshToken, JWTHelper.IpAddress(context));
+                var tokens = await refreshTokenService.RefreshTokenAsync(refreshToken, JWTHelper.IpAddress(context));
 
                 SetAccessTokenCookie(http, tokens.Token);
                 SetRefreshTokenCookie(http, tokens.RefreshToken);
