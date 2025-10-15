@@ -33,21 +33,6 @@ internal sealed class AuthenticateService(IValidator<LoginRequest> _validator,
         return (true, new LoginResponse(jwtToken, refreshToken.Token, new Profile(account.FirstName, account.Surname, account.Email)), []);
     }
 
-    public async Task<JwtRefreshToken> RefreshTokenAsync(string token, string ipAddress)
-    {
-        var refreshToken = await _refreshTokenService.GetRefreshTokenAsync(token);
-        var newRefreshToken = _refreshTokenService.GenerateRefreshToken(ipAddress, refreshToken.Account);
-
-        _refreshTokenService.RemoveExpiredRefreshTokens(refreshToken.Account.Id);
-        await _refreshTokenService.AddRefreshTokenAsync(newRefreshToken);
-
-        var jwtToken = _jWTHelper.GenerateJWTToken(refreshToken.Account);
-
-        return new JwtRefreshToken(refreshToken.Account.IsAuthenticated, jwtToken, newRefreshToken.Token,
-                                      new Profile(refreshToken.Account.FirstName, refreshToken.Account.Surname,
-                                         refreshToken.Account.Email));
-    }
-
     private Account GetAccount(string email)
     {
         return _accountUnitOfWork.Account.Get(email) ?? throw new AccountNotFoundException();

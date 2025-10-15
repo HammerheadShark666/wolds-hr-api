@@ -6,5 +6,4 @@ namespace wolds_hr_api.Service.Interfaces;
 internal interface IAuthenticateService
 {
     Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress);
-    Task<JwtRefreshToken> RefreshTokenAsync(string token, string ipAddress);
 }
