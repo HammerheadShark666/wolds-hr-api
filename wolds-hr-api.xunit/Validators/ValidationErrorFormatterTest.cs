@@ -1,5 +1,5 @@
 ﻿using FluentValidation.Results;
-using wolds_hr_api.Helper.Validation;
+using wolds_hr_api.Library.Validation;
 
 
 namespace wolds_hr_api.xunit.Validators;

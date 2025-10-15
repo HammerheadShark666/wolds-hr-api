@@ -1,11 +1,12 @@
 ﻿using Asp.Versioning.Builder;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using wolds_hr_api.Helper;
-using wolds_hr_api.Helper.Dto.Requests;
-using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helper.Exceptions;
-using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Library;
+using wolds_hr_api.Library.Dto.Requests;
+using wolds_hr_api.Library.Dto.Responses;
+using wolds_hr_api.Library.Exceptions;
+using wolds_hr_api.Library.Helpers;
+using wolds_hr_api.Library.Helpers.Interfaces;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;

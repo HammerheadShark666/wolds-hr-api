@@ -5,13 +5,11 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-internal sealed class ImportEmployeeSuccessHistoryRepository(WoldsHrDbContext context) : IImportEmployeeSuccessHistoryRepository
+internal sealed class ImportEmployeeSuccessHistoryRepository(WoldsHrDbContext woldsHrDbContext) : IImportEmployeeSuccessHistoryRepository
 {
-    private readonly WoldsHrDbContext _context = context;
-
     public async Task<(List<Employee>, int)> GetAsync(Guid id, int page, int pageSize)
     {
-        var baseQuery = _context.Employees
+        var baseQuery = woldsHrDbContext.Employees
                                 .Where(e => e.ImportEmployeeHistoryId == id)
                                 .AsNoTracking();
 
@@ -29,6 +27,6 @@ internal sealed class ImportEmployeeSuccessHistoryRepository(WoldsHrDbContext co
 
     public async Task<int> CountAsync(Guid id)
     {
-        return await _context.Employees.Where(e => e.ImportEmployeeHistoryId.Equals(id)).CountAsync();
+        return await woldsHrDbContext.Employees.Where(e => e.ImportEmployeeHistoryId.Equals(id)).CountAsync();
     }
 }

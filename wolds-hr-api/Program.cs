@@ -1,10 +1,8 @@
 using Asp.Versioning;
-using wolds_hr_api.Data.Context;
 using wolds_hr_api.Endpoint;
-using wolds_hr_api.Helper;
-using wolds_hr_api.Helper.ExceptionHandlers;
-using wolds_hr_api.Helper.Extensions;
-using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Library.ExceptionHandlers;
+using wolds_hr_api.Library.Extensions;
+using wolds_hr_api.Library.Helpers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -52,8 +50,8 @@ EndpointsImportEmployeeHistory.ConfigureRoutes(app, versionSet);
 
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<WoldsHrDbContext>();
-    await DataSeeder.SeedDatabaseAsync(context);
+    var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+    await seeder.SeedDatabaseAsync();
 }
 
 app.Run();

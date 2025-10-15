@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Helper.Dto.Requests;
+using wolds_hr_api.Library.Dto.Requests;
 using BC = BCrypt.Net.BCrypt;
 
 namespace wolds_hr_api.Validator;
@@ -30,7 +30,7 @@ public sealed class AuthenticateValidator : AbstractValidator<LoginRequest>
         });
     }
 
-    protected bool ValidLoginDetails(LoginRequest loginRequest)
+    private bool ValidLoginDetails(LoginRequest loginRequest)
     {
         var account = _accountRepository.Get(loginRequest.Username);
         if (account == null || !account.IsAuthenticated || !BC.Verify(loginRequest.Password, account.PasswordHash))

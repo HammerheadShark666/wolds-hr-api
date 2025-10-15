@@ -1,17 +1,25 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using wolds_hr_api.Helper;
+using wolds_hr_api.Library.Helpers;
+
 
 namespace wolds_hr_api.xunit.Helpers;
 public class FileHelperTest
 {
+    private readonly FileHelper _fileHelper;
+
+    public FileHelperTest()
+    {
+        _fileHelper = new FileHelper();
+    }
+
     [Fact]
     public void GetGuidFileName_ShouldReturnFilenameWithGuidAndExtension()
     {
         var extenstion = "jpg";
 
-        var filename = FileHelper.GetGuidFileName(extenstion);
+        var filename = _fileHelper.GetGuidFileName(extenstion);
 
         var parts = filename.Split('.');
         var namePart = parts.Length > 1 ? parts[0] : string.Empty;
@@ -29,7 +37,7 @@ public class FileHelperTest
     {
         IFormFile? file = null;
 
-        var result = FileHelper.FileHasContent(file);
+        var result = _fileHelper.FileHasContent(file);
 
         result.Should().BeFalse();
     }
@@ -40,7 +48,7 @@ public class FileHelperTest
         var fileMock = new Mock<IFormFile>();
         fileMock.Setup(f => f.Length).Returns(0);
 
-        var result = FileHelper.FileHasContent(fileMock.Object);
+        var result = _fileHelper.FileHasContent(fileMock.Object);
 
         result.Should().BeFalse();
     }
@@ -51,7 +59,7 @@ public class FileHelperTest
         var fileMock = new Mock<IFormFile>();
         fileMock.Setup(f => f.Length).Returns(123);
 
-        var result = FileHelper.FileHasContent(fileMock.Object);
+        var result = _fileHelper.FileHasContent(fileMock.Object);
 
         result.Should().BeTrue();
     }
@@ -63,7 +71,7 @@ public class FileHelperTest
         var formCollection = new FormCollection(new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>(), new FormFileCollection());
         context.Request.Form = formCollection;
 
-        var result = await FileHelper.GetFileAsync(context.Request);
+        var result = await _fileHelper.GetFileAsync(context.Request);
 
         result.Should().BeNull();
     }
@@ -81,7 +89,7 @@ public class FileHelperTest
         var context = new DefaultHttpContext();
         context.Request.Form = formCollection;
 
-        var result = await FileHelper.GetFileAsync(context.Request);
+        var result = await _fileHelper.GetFileAsync(context.Request);
 
         result.Should().NotBeNull();
         result!.FileName.Should().Be("test.txt");
@@ -94,7 +102,7 @@ public class FileHelperTest
         var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
         var file = new FormFile(stream, 0, stream.Length, "file", "test.txt");
 
-        var result = await FileHelper.ReadAllLinesAsync(file);
+        var result = await _fileHelper.ReadAllLinesAsync(file);
 
         result.Should().BeEquivalentTo(new List<string> { "Line1", "Line2", "Line3" });
     }
@@ -105,7 +113,7 @@ public class FileHelperTest
         var stream = new MemoryStream();
         var file = new FormFile(stream, 0, stream.Length, "file", "empty.txt");
 
-        var result = await FileHelper.ReadAllLinesAsync(file);
+        var result = await _fileHelper.ReadAllLinesAsync(file);
 
         result.Should().BeEmpty();
     }
