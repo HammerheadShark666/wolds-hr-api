@@ -8,14 +8,14 @@ using wolds_hr_api.Helper.Interfaces;
 
 namespace wolds_hr_api.Helper;
 
-internal sealed class JWTHelper() : IJWTHelper
+internal sealed class JWTHelper(IEnvironmentHelper environmentHelper) : IJWTHelper
 {
     public string GenerateJWTToken(Account account)
     {
         var nowUtc = DateTime.UtcNow;
         var expirationTimeUtc = GetExpirationTimeUtc(nowUtc);
 
-        var token = new JwtSecurityToken(issuer: EnvironmentVariablesHelper.JWTIssuer,
+        var token = new JwtSecurityToken(issuer: environmentHelper.JWTIssuer,
                                          claims: GetClaims(account, nowUtc, expirationTimeUtc),
                                          expires: expirationTimeUtc,
                                          signingCredentials: GetSigningCredentials());
@@ -23,32 +23,32 @@ internal sealed class JWTHelper() : IJWTHelper
         return GetTokenString(token);
     }
 
-    private static string GetTokenString(JwtSecurityToken token)
+    private string GetTokenString(JwtSecurityToken token)
     {
         return (new JwtSecurityTokenHandler()).WriteToken(token);
     }
 
-    private static DateTime GetExpirationTimeUtc(DateTime nowUtc)
+    private DateTime GetExpirationTimeUtc(DateTime nowUtc)
     {
-        var expirationDuration = TimeSpan.FromMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes);
+        var expirationDuration = TimeSpan.FromMinutes(environmentHelper.JWTSettingsTokenExpiryMinutes);
         return nowUtc.Add(expirationDuration);
     }
 
-    private static SigningCredentials GetSigningCredentials()
+    private SigningCredentials GetSigningCredentials()
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvironmentVariablesHelper.JWTSymmetricSecurityKey));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(environmentHelper.JWTSymmetricSecurityKey));
         return new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
     }
 
-    private static List<Claim> GetClaims(Account account, DateTime nowUtc, DateTime expirationUtc)
+    private List<Claim> GetClaims(Account account, DateTime nowUtc, DateTime expirationUtc)
     {
         return [
                     new(JwtRegisteredClaimNames.Sub, "Authentication"),
                     new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new(JwtRegisteredClaimNames.Iat, EpochTime.GetIntDate(nowUtc).ToString(), ClaimValueTypes.Integer64),
                     new(JwtRegisteredClaimNames.Exp, EpochTime.GetIntDate(expirationUtc).ToString(), ClaimValueTypes.Integer64),
-                    new(JwtRegisteredClaimNames.Iss, EnvironmentVariablesHelper.JWTIssuer),
-                    new(JwtRegisteredClaimNames.Aud, EnvironmentVariablesHelper.JWTAudience),
+                    new(JwtRegisteredClaimNames.Iss, environmentHelper.JWTIssuer),
+                    new(JwtRegisteredClaimNames.Aud, environmentHelper.JWTAudience),
                     new(ClaimTypes.NameIdentifier, account.Id.ToString()),
                     new("name", account.Email)
                ];

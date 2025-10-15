@@ -43,7 +43,7 @@ internal static class ServiceExtensions
         });
     }
 
-    public static void ConfigureJWT(this IServiceCollection services)
+    public static void ConfigureJWT(this IServiceCollection services, IEnvironmentHelper environmentHelper)
     {
         services.AddAuthentication("Bearer")
             .AddJwtBearer("Bearer", options =>
@@ -54,9 +54,9 @@ internal static class ServiceExtensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = EnvironmentVariablesHelper.JWTIssuer,
-                    ValidAudience = EnvironmentVariablesHelper.JWTAudience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(EnvironmentVariablesHelper.JWTSymmetricSecurityKey)),
+                    ValidIssuer = environmentHelper.JWTIssuer,
+                    ValidAudience = environmentHelper.JWTAudience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(environmentHelper.JWTSymmetricSecurityKey)),
                     NameClaimType = "name",
                     ClockSkew = TimeSpan.Zero
                 };
@@ -82,9 +82,9 @@ internal static class ServiceExtensions
             });
     }
 
-    public static void ConfigureDI(this IServiceCollection services)
+    public static void ConfigureDI(this IServiceCollection services, IEnvironmentHelper environmentHelper)
     {
-        services.AddSingleton(new BlobServiceClient(EnvironmentVariablesHelper.AzureStorageConnectionString));
+        services.AddSingleton(new BlobServiceClient(environmentHelper.AzureStorageConnectionString));
         services.AddScoped<IAuthenticateService, AuthenticateService>();
         services.AddScoped<IRefreshTokenService, RefreshTokenService>();
         services.AddScoped<IDepartmentService, DepartmentService>();
@@ -107,6 +107,8 @@ internal static class ServiceExtensions
         services.AddScoped<IAzureStorageBlobHelper, AzureStorageBlobHelper>();
         services.AddScoped<IPhotoHelper, PhotoHelper>();
         services.AddScoped<IJWTHelper, JWTHelper>();
+        services.AddScoped<IEnvironmentHelper, EnvironmentHelper>();
+        services.AddScoped<ICookieHelper, CookieHelper>();
         services.AddValidatorsFromAssemblyContaining<EmployeeValidator>();
     }
 
@@ -118,7 +120,7 @@ internal static class ServiceExtensions
             .MigrationsAssembly(typeof(WoldsHrDbContext).Assembly.FullName)));
     }
 
-    public static void BuildCorsPolicy(this IServiceCollection services)
+    public static void BuildCorsPolicy(this IServiceCollection services, IEnvironmentHelper environmentHelper)
     {
         services.AddCors(options =>
         {
@@ -127,9 +129,9 @@ internal static class ServiceExtensions
                 policy.WithOrigins(
                     "http://localhost:3000",
                     "http://localhost:3001",
-                    "https://mango-plant-076b11e1e.6.azurestaticapps.net",
-                    "https://wolds-hr.co.uk",
-                    "https://www.wolds-hr.co.uk"
+                    environmentHelper.Azure_Original_Url,
+                    environmentHelper.Azure_Custom_Domain,
+                    environmentHelper.Azure_Custom_Domain_WWW
                 )
                 .AllowAnyHeader()
                 .AllowAnyMethod()

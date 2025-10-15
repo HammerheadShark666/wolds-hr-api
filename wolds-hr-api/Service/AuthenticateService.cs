@@ -10,9 +10,9 @@ using wolds_hr_api.Service.Interfaces;
 namespace wolds_hr_api.Service;
 
 internal sealed class AuthenticateService(IValidator<LoginRequest> _validator,
-                                 IRefreshTokenService _refreshTokenService,
-                                 IAccountUnitOfWork _accountUnitOfWork,
-                                 IJWTHelper _jWTHelper) : IAuthenticateService
+                                          IRefreshTokenService _refreshTokenService,
+                                          IAccountUnitOfWork _accountUnitOfWork,
+                                          IJWTHelper _jWTHelper) : IAuthenticateService
 {
     public async Task<(bool isValid, LoginResponse? authenticated, List<string>? Errors)> AuthenticateAsync(LoginRequest loginRequest, string ipAddress)
     {
