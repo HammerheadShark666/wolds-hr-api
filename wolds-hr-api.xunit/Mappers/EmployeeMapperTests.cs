@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper.Dto.Requests.Employee;
-using wolds_hr_api.Helper.Mappers;
+using wolds_hr_api.Library.Dto.Requests.Employee;
+using wolds_hr_api.Library.Mappers;
 
 namespace wolds_hr_api.xunit.Mappers;
 

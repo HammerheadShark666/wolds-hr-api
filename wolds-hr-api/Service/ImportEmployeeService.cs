@@ -1,22 +1,24 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.UnitOfWork.Interfaces;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
-using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helper.Exceptions;
-using wolds_hr_api.Helper.Validation;
+using wolds_hr_api.Library;
+using wolds_hr_api.Library.Dto.Responses;
+using wolds_hr_api.Library.Exceptions;
+using wolds_hr_api.Library.Helpers.Interfaces;
+using wolds_hr_api.Library.Validation;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
-                                            IEmployeeUnitOfWork _employeeUnitOfWork,
-                                            IImportEmployeeHistoryUnitOfWork _importEmployeeHistoryUnitOfWork,
-                                            ILogger<ImportEmployeeService> _logger) : IImportEmployeeService
+internal sealed class ImportEmployeeService(IValidator<Employee> validator,
+                                            IEmployeeUnitOfWork employeeUnitOfWork,
+                                            IFileHelper fileHelper,
+                                            IImportEmployeeHistoryUnitOfWork importEmployeeHistoryUnitOfWork,
+                                            ILogger<ImportEmployeeService> logger) : IImportEmployeeService
 {
     public async Task<ImportEmployeeHistorySummaryResponse> ImportFromFileAsync(IFormFile file)
     {
-        var fileLines = await FileHelper.ReadAllLinesAsync(file);
+        var fileLines = await fileHelper.ReadAllLinesAsync(file);
 
         if (await MaximumNumberOfEmployeesReachedAsync(fileLines))
             throw new InvalidOperationException($"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}");
@@ -63,16 +65,16 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Import Employee: {line}, Error: {ex.Message}");
+                logger.LogError($"Import Employee: {line}, Error: {ex.Message}");
                 await AddImportEmployeeFailedAsync(line, importEmployeeHistory.Id, ex.Message);
                 importEmployeesErrors++;
                 continue;
             }
         }
 
-        _logger.LogInformation("Imported {importedEmployees} employees (Success)", importedEmployees);
-        _logger.LogInformation("Imported {importEmployeesExisting} employees (Existing)", importEmployeesExisting);
-        _logger.LogInformation("Imported {importEmployeesErrors} employees (Failed)", importEmployeesErrors);
+        logger.LogInformation("Imported {importedEmployees} employees (Success)", importedEmployees);
+        logger.LogInformation("Imported {importEmployeesExisting} employees (Existing)", importEmployeesExisting);
+        logger.LogInformation("Imported {importEmployeesErrors} employees (Failed)", importEmployeesErrors);
 
         return new ImportEmployeeHistorySummaryResponse()
         {
@@ -86,7 +88,7 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
 
     private async Task<bool> ValidateAndHandleAsync(Employee employee, string rawLine, Guid historyId)
     {
-        var result = await _validator.ValidateAsync(employee, opts => opts.IncludeRuleSets("AddUpdate"));
+        var result = await validator.ValidateAsync(employee, opts => opts.IncludeRuleSets("AddUpdate"));
         if (result.IsValid) return true;
 
         await AddImportEmployeeFailedAsync(rawLine, historyId, ValidationErrorFormatter.ExtractErrorMessages(result));
@@ -97,8 +99,8 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
     private async Task AddEmployeeAsync(Employee employee, Guid importEmployeeHistoryId)
     {
         employee.ImportEmployeeHistoryId = importEmployeeHistoryId;
-        _employeeUnitOfWork.Employee.Add(employee);
-        await _employeeUnitOfWork.SaveChangesAsync();
+        employeeUnitOfWork.Employee.Add(employee);
+        await employeeUnitOfWork.SaveChangesAsync();
 
         return;
     }
@@ -109,7 +111,7 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
             return false;
 
         var numberOfEmployeesToImport = fileLines.Count;
-        var numberOfEmployees = await _employeeUnitOfWork.Employee.CountAsync();
+        var numberOfEmployees = await employeeUnitOfWork.Employee.CountAsync();
 
         return EmployeeLimitHelper.WillExceedLimit(
             numberOfEmployees,
@@ -120,7 +122,7 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
 
     private async Task<bool> EmployeeExistsAsync(Employee employee, Guid importEmployeeHistoryId)
     {
-        var employeeExists = await _employeeUnitOfWork.Employee.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
+        var employeeExists = await employeeUnitOfWork.Employee.ExistsAsync(employee.Surname, employee.FirstName, employee.DateOfBirth);
         if (employeeExists)
         {
             var existingEmployee = new ImportEmployeeExistingHistory()
@@ -133,8 +135,8 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
                 ImportEmployeeHistoryId = importEmployeeHistoryId
             };
 
-            _importEmployeeHistoryUnitOfWork.ExistingHistory.Add(existingEmployee);
-            await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
+            importEmployeeHistoryUnitOfWork.ExistingHistory.Add(existingEmployee);
+            await importEmployeeHistoryUnitOfWork.SaveChangesAsync();
 
             return true;
         }
@@ -154,8 +156,8 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
             }).ToList()
         };
 
-        _importEmployeeHistoryUnitOfWork.FailedHistory.Add(importEmployeeFailedHistory);
-        await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
+        importEmployeeHistoryUnitOfWork.FailedHistory.Add(importEmployeeFailedHistory);
+        await importEmployeeHistoryUnitOfWork.SaveChangesAsync();
     }
 
     private async Task AddImportEmployeeFailedAsync(string employeeLine, Guid importEmployeeHistoryId, string error)
@@ -173,8 +175,8 @@ internal sealed class ImportEmployeeService(IValidator<Employee> _validator,
             FailedEmployees = []
         };
 
-        _importEmployeeHistoryUnitOfWork.History.Add(importEmployeeHistory);
-        await _importEmployeeHistoryUnitOfWork.SaveChangesAsync();
+        importEmployeeHistoryUnitOfWork.History.Add(importEmployeeHistory);
+        await importEmployeeHistoryUnitOfWork.SaveChangesAsync();
 
         if (importEmployeeHistory.Id == Guid.Empty)
             throw new ImportEmployeeHistoryNotCreated();

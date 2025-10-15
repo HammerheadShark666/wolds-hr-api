@@ -1,5 +1,5 @@
 ﻿using FluentAssertions;
-using wolds_hr_api.Helper;
+using wolds_hr_api.Library.Helpers;
 
 namespace wolds_hr_api.xunit.Helpers;
 

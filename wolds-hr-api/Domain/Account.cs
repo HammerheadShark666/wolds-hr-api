@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static wolds_hr_api.Helper.Enums;
+using static wolds_hr_api.Library.Enums;
 
 namespace wolds_hr_api.Domain;
 

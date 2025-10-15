@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using wolds_hr_api.Data.Interfaces;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper;
+using wolds_hr_api.Library;
 
 namespace wolds_hr_api.Validator;
 

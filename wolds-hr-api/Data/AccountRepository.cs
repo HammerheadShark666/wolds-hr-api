@@ -4,13 +4,11 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-internal sealed class AccountRepository(WoldsHrDbContext context) : IAccountRepository
+internal sealed class AccountRepository(WoldsHrDbContext woldsHrDbContext) : IAccountRepository
 {
-    private readonly WoldsHrDbContext _context = context;
-
     public Account? Get(string email)
     {
-        return _context.Accounts.Where(a => a.Email.Equals(email))
+        return woldsHrDbContext.Accounts.Where(a => a.Email.Equals(email))
                        .FirstOrDefault();
     }
 }

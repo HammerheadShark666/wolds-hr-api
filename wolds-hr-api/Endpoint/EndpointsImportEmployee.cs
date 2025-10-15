@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using wolds_hr_api.Helper;
-using wolds_hr_api.Helper.Dto.Responses;
+using wolds_hr_api.Library.Dto.Responses;
+using wolds_hr_api.Library.Helpers.Interfaces;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
@@ -17,13 +17,13 @@ public static class EndpointsImportEmployee
                                                   .WithApiVersionSet(versionSet)
                                                   .MapToApiVersion(1.0);
 
-        importEmployeeGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService) =>
+        importEmployeeGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService, IFileHelper fileHelper) =>
         {
             if (!request.HasFormContentType)
                 return Results.BadRequest(new { Message = "Invalid content type." });
 
-            var file = await FileHelper.GetFileAsync(request);
-            if (file == null || !FileHelper.FileHasContent(file))
+            var file = await fileHelper.GetFileAsync(request);
+            if (file == null || !fileHelper.FileHasContent(file))
                 return Results.BadRequest(new { Message = "No data in file." });
 
             var result = await importEmployeeService.ImportFromFileAsync(file);

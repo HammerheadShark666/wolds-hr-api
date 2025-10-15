@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using wolds_hr_api.Domain;
-using wolds_hr_api.Helper.Dto.Requests.Department;
-using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helper.Exceptions;
+using wolds_hr_api.Library.Dto.Requests.Department;
+using wolds_hr_api.Library.Dto.Responses;
+using wolds_hr_api.Library.Exceptions;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;

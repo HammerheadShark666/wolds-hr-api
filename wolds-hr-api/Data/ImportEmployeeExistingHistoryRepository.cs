@@ -5,20 +5,18 @@ using wolds_hr_api.Domain;
 
 namespace wolds_hr_api.Data;
 
-internal sealed class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext context) : IImportEmployeeExistingHistoryRepository
+internal sealed class ImportEmployeeExistingHistoryRepository(WoldsHrDbContext woldsHrDbContext) : IImportEmployeeExistingHistoryRepository
 {
-    private readonly WoldsHrDbContext _context = context;
-
     public void Add(ImportEmployeeExistingHistory employee)
     {
         employee.Created = DateOnly.FromDateTime(DateTime.Now);
 
-        _context.ImportEmployeesExistingHistory.Add(employee);
+        woldsHrDbContext.ImportEmployeesExistingHistory.Add(employee);
     }
 
     public async Task<(List<ImportEmployeeExistingHistory>, int)> GetAsync(Guid id, int page, int pageSize)
     {
-        var baseQuery = _context.ImportEmployeesExistingHistory
+        var baseQuery = woldsHrDbContext.ImportEmployeesExistingHistory
                                 .Where(e => e.ImportEmployeeHistoryId == id)
                                 .AsNoTracking();
 

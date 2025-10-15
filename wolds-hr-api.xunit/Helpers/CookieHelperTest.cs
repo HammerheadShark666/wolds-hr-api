@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Moq;
-using wolds_hr_api.Helper;
-using wolds_hr_api.Helper.Interfaces;
+using wolds_hr_api.Library.Helpers.Interfaces;
 
 namespace wolds_hr_api.xunit.Helpers;
 
@@ -10,7 +9,6 @@ public class CookieHelperTest
     [Fact]
     public void SetAccessTokenCookie_ShouldAddCookieWithCorrectOptions()
     {
-        // Arrange
         var envMock = new Mock<IEnvironmentHelper>();
         envMock.Setup(e => e.HostDomain).Returns("example.com");
 
@@ -19,10 +17,8 @@ public class CookieHelperTest
         var context = new DefaultHttpContext();
         var token = "test-access-token";
 
-        // Act
         service.SetAccessTokenCookie(context, token);
 
-        // Assert
         var cookies = context.Response.Headers["Set-Cookie"].ToString();
         Assert.Contains("access_token=test-access-token", cookies);
         Assert.Contains("httponly", cookies);
@@ -33,7 +29,6 @@ public class CookieHelperTest
     [Fact]
     public void SetRefreshTokenCookie_ShouldAddCookieWithCorrectOptions()
     {
-        // Arrange
         var envMock = new Mock<IEnvironmentHelper>();
         envMock.Setup(e => e.HostDomain).Returns("example.com");
 
@@ -42,10 +37,8 @@ public class CookieHelperTest
         var context = new DefaultHttpContext();
         var token = "test-refresh-token";
 
-        // Act
         service.SetRefreshTokenCookie(context, token);
 
-        // Assert
         var cookies = context.Response.Headers["Set-Cookie"].ToString();
         Assert.Contains("refresh_token=test-refresh-token", cookies);
         Assert.Contains("httponly", cookies);
