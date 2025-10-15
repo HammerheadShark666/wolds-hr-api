@@ -8,7 +8,7 @@ using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Service;
 
-internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork, IJWTHelper _jWTHelper) : IRefreshTokenService
+internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenUnitOfWork, IJWTHelper _jWTHelper, IEnvironmentHelper environmentHelper) : IRefreshTokenService
 {
     public async Task<JwtRefreshToken> RefreshTokenAsync(string token, string ipAddress)
     {
@@ -27,7 +27,7 @@ internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenU
 
     public void RemoveExpiredRefreshTokens(Guid accountId)
     {
-        _refreshTokenUnitOfWork.RefreshToken.RemoveExpired(EnvironmentVariablesHelper.JWTSettingsRefreshTokenTtl, accountId);
+        _refreshTokenUnitOfWork.RefreshToken.RemoveExpired(environmentHelper.JWTSettingsRefreshTokenTtl, accountId);
         _refreshTokenUnitOfWork.SaveChangesAsync();
     }
 
@@ -49,7 +49,7 @@ internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork _refreshTokenU
 
     public RefreshToken GenerateRefreshToken(string ipAddress, Account account)
     {
-        var refreshTokenExpires = DateTime.Now.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays);
+        var refreshTokenExpires = DateTime.Now.AddDays(environmentHelper.JWTSettingsRefreshTokenExpiryDays);
         var refreshToken = JWTHelper.GenerateRefreshToken(ipAddress, refreshTokenExpires);
         refreshToken.Account = account;
 

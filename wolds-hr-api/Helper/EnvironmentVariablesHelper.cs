@@ -2,7 +2,7 @@
 
 namespace wolds_hr_api.Helper;
 
-internal class EnvironmentVariablesHelper
+internal class EnvironmentVariablesHelperOLD
 {
     public static string AzureStorageConnectionString => GetEnvironmentVariableString(Constants.AzureStorageConnectionString);
     public static string JWTIssuer => GetEnvironmentVariableString(Constants.JWTIssuer);

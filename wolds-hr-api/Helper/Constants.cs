@@ -25,6 +25,9 @@ internal static class Constants
 
     public const string HostDomain = "HOST_DOMAIN";
     public const string LocalHost = "localhost";
+    public const string Azure_Original_Url = "AZURE_ORIGINAL_URL";
+    public const string Azure_Custom_Domain = "AZURE_CUSTOM_DOMAIN";
+    public const string Azure_Custom_Domain_WWW = "AZURE_CUSTOM_DOMAIN_WWW";
 
     public const int MaxNumberOfEmployees = 150;
 }

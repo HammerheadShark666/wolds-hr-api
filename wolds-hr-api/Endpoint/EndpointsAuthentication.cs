@@ -4,7 +4,7 @@ using System.Net;
 using wolds_hr_api.Helper;
 using wolds_hr_api.Helper.Dto.Requests;
 using wolds_hr_api.Helper.Dto.Responses;
-using wolds_hr_api.Helper.Exceptions;
+using wolds_hr_api.Helper.Interfaces;
 using wolds_hr_api.Service.Interfaces;
 
 namespace wolds_hr_api.Endpoint;
@@ -18,7 +18,7 @@ public static class EndpointsAuthentication
                                               .WithApiVersionSet(versionSet)
                                               .MapToApiVersion(1.0);
 
-        authenticateGroup.MapPost("/login", async (HttpContext http, LoginRequest loginRequest, IAuthenticateService authenticateService) =>
+        authenticateGroup.MapPost("/login", async (HttpContext http, LoginRequest loginRequest, IAuthenticateService authenticateService, ICookieHelper cookieHelper) =>
         {
             http.Response.Headers.CacheControl = "no-store"; // Disable caching
             http.Response.Headers.Pragma = "no-cache";
@@ -33,8 +33,8 @@ public static class EndpointsAuthentication
             var token = authenticated.Token;
             var refreshToken = authenticated.RefreshToken;
 
-            SetAccessTokenCookie(http, token);
-            SetRefreshTokenCookie(http, refreshToken);
+            cookieHelper.SetAccessTokenCookie(http, token);
+            cookieHelper.SetRefreshTokenCookie(http, refreshToken);
 
             return Results.Ok(new { message = "Logged in" });
         })
@@ -43,41 +43,6 @@ public static class EndpointsAuthentication
         {
             Summary = "Login and return a jwt token and refresh token",
             Description = "Login and return a jwt token and refresh token",
-            Tags = [new() { Name = "Wolds HR - Authenticate" }]
-        });
-
-        authenticateGroup.MapPost("/refresh-token", async (HttpContext http, JwtRefreshTokenRequest jwtRefreshTokenRequest, IRefreshTokenService refreshTokenService, HttpContext context) =>
-        {
-            http.Response.Headers.CacheControl = "no-store"; // Disable caching
-            http.Response.Headers.Pragma = "no-cache";
-
-            try
-            {
-                var refreshToken = http.Request.Cookies[Constants.RefreshToken];
-                if (string.IsNullOrEmpty(refreshToken))
-                {
-                    return Results.BadRequest("Refresh token invalid.");
-                }
-                var tokens = await refreshTokenService.RefreshTokenAsync(refreshToken, JWTHelper.IpAddress(context));
-
-                SetAccessTokenCookie(http, tokens.Token);
-                SetRefreshTokenCookie(http, tokens.RefreshToken);
-
-                return Results.Ok(new { message = "Refresh token created" });
-            }
-            catch (RefreshTokenNotFoundException)
-            {
-                return Results.BadRequest("Refresh token invalid.");
-            }
-        })
-        .Accepts<JwtRefreshTokenRequest>("application/json")
-        .Produces<JwtRefreshToken>((int)HttpStatusCode.OK)
-        .Produces<FailedValidationResponse>((int)HttpStatusCode.BadRequest)
-        .WithName("RefreshToken")
-        .WithOpenApi(x => new OpenApiOperation(x)
-        {
-            Summary = "Authenticate refresh token and return a new jwt token and refresh token",
-            Description = "Authenticate refresh token and return a new jwt token and refresh token",
             Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
 
@@ -118,57 +83,6 @@ public static class EndpointsAuthentication
             Description = "Authenticate token",
             Tags = [new() { Name = "Wolds HR - Authenticate" }]
         });
-    }
-
-    private static void SetAccessTokenCookie(HttpContext http, string token)
-    {
-        if (EnvironmentVariablesHelper.HostDomain == Constants.LocalHost)
-        {
-            http.Response.Cookies.Append(Constants.AccessToken, token, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes)
-            });
-        }
-        else
-        {
-            http.Response.Cookies.Append(Constants.AccessToken, token, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Domain = EnvironmentVariablesHelper.HostDomain,
-                Expires = DateTimeOffset.UtcNow.AddMinutes(EnvironmentVariablesHelper.JWTSettingsTokenExpiryMinutes)
-            });
-        }
-    }
-
-    private static void SetRefreshTokenCookie(HttpContext http, string refreshToken)
-    {
-        if (EnvironmentVariablesHelper.HostDomain == Constants.LocalHost)
-        {
-            http.Response.Cookies.Append(Constants.RefreshToken, refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
-            });
-        }
-        else
-        {
-            http.Response.Cookies.Append(Constants.RefreshToken, refreshToken, new CookieOptions
-            {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None,
-                Secure = true,
-                Domain = EnvironmentVariablesHelper.HostDomain,
-                Expires = DateTimeOffset.UtcNow.AddDays(EnvironmentVariablesHelper.JWTSettingsRefreshTokenExpiryDays)
-            });
-        }
-
     }
 
     private static void SetDeleteCookie(HttpContext http, string cookieName)
