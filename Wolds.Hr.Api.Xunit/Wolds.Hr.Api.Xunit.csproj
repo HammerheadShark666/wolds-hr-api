@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>wolds_hr_api.xunit</RootNamespace>
+    <RootNamespace>Wolds.Hr.Api.Xunit</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 
@@ -26,7 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\wolds-hr-api\wolds-hr-api.csproj" />
+    <ProjectReference Include="..\Wolds.Hr.Api\Wolds.Hr.Api.csproj" />
   </ItemGroup>
 
   <ItemGroup>
