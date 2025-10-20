@@ -24,16 +24,16 @@ jobs:
             dotnet-version: '8.0'
     
         - name: Restore NuGet packages
-          run: dotnet restore wolds-hr-api/wolds-hr-api.csproj
+          run: dotnet restore Wolds.Hr.Api/Wolds.Hr.Api.csproj
         
         - name: Build main project
-          run: dotnet build wolds-hr-api/wolds-hr-api.csproj -c Release
+          run: dotnet build Wolds.Hr.Api/Wolds.Hr.Api.csproj -c Release
         
         - name: Clean publish folder
           run: rm -rf ${{env.DOTNET_ROOT}}/myapp
         
         - name: Publish main project only
-          run: dotnet publish wolds-hr-api/wolds-hr-api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-dependencies
+          run: dotnet publish Wolds.Hr.Api/Wolds.Hr.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp --no-dependencies
  
         - name: Upload artifact for deployment job
           uses: actions/upload-artifact@v4
@@ -53,13 +53,13 @@ jobs:
             dotnet-version: '8.x'
     
         - name: Restore NuGet packages
-          run: dotnet restore wolds-hr-api.xunit/wolds-hr-api.xunit.csproj
+          run: dotnet restore Wolds.Hr.Api.Xunit/Wolds.Hr.Api.Xunit.csproj
     
         - name: Build test project
-          run: dotnet build wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --configuration Release
+          run: dotnet build Wolds.Hr.Api.Xunit/Wolds.Hr.Api.Xunit.csproj --configuration Release
     
         - name: Run unit tests
-          run: dotnet test wolds-hr-api.xunit/wolds-hr-api.xunit.csproj --logger "console;verbosity=detailed"
+          run: dotnet test Wolds.Hr.Api.Xunit/Wolds.Hr.Api.Xunit.csproj --logger "console;verbosity=detailed"
  
     deploy:
       runs-on: ubuntu-latest
@@ -98,6 +98,7 @@ jobs:
         - name: Run API tests
           run: |
             postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e ${{ secrets.POSTMAN_ENVIRONMENT_ID }} --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+
 
 
 
