@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace wolds_hr_api.Library.Converters;
+namespace Wolds.Hr.Api.Library.Converters;
 
 internal sealed class DateOnlyComparer : ValueComparer<DateOnly>
 {

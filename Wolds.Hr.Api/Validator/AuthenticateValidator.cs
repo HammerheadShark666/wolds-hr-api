@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Library.Dto.Requests;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Library.Dto.Requests;
 using BC = BCrypt.Net.BCrypt;
 
-namespace wolds_hr_api.Validator;
+namespace Wolds.Hr.Api.Validator;
 
 public sealed class AuthenticateValidator : AbstractValidator<LoginRequest>
 {

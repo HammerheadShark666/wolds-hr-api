@@ -1,7 +1,7 @@
-﻿using wolds_hr_api.Library;
-using wolds_hr_api.Library.Exceptions;
+﻿using Wolds.Hr.Api.Library;
+using Wolds.Hr.Api.Library.Exceptions;
 
-namespace wolds_hr_api.Library.Helpers.Interfaces;
+namespace Wolds.Hr.Api.Library.Helpers.Interfaces;
 
 internal class EnvironmentHelper : IEnvironmentHelper
 {

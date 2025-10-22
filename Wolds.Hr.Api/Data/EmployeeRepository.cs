@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Exceptions;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Exceptions;
 
-namespace wolds_hr_api.Data;
+namespace Wolds.Hr.Api.Data;
 
 internal sealed class EmployeeRepository(WoldsHrDbContext woldsHrDbContext) : IEmployeeRepository
 {

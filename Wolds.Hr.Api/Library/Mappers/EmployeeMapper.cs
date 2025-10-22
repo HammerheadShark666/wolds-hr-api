@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Dto.Requests.Employee;
-using wolds_hr_api.Library.Dto.Responses;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Requests.Employee;
+using Wolds.Hr.Api.Library.Dto.Responses;
 
-namespace wolds_hr_api.Library.Mappers;
+namespace Wolds.Hr.Api.Library.Mappers;
 
 internal static class EmployeeMapper
 {

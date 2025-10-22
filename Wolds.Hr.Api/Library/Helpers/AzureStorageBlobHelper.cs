@@ -1,8 +1,8 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using wolds_hr_api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
 
-namespace wolds_hr_api.Library.Helpers;
+namespace Wolds.Hr.Api.Library.Helpers;
 
 internal sealed class AzureStorageBlobHelper(BlobServiceClient blobServiceClient, ILogger<AzureStorageBlobHelper> logger) : IAzureStorageBlobHelper
 {

@@ -2,22 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using wolds_hr_api.Library.Dto.Responses;
-using wolds_hr_api.Library.Exceptions;
-using wolds_hr_api.Service.Interfaces;
+using Wolds.Hr.Api.Library;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Library.Exceptions;
+using Wolds.Hr.Api.Service.Interfaces;
 
-namespace wolds_hr_api.Endpoint;
+namespace Wolds.Hr.Api.Endpoint;
 
 public static class EndpointsImportEmployeeHistory
 {
     public static void ConfigureRoutes(this WebApplication webApplication, ApiVersionSet versionSet)
     {
-        var importEmployeeHistoryGroup = webApplication.MapGroup("v{version:apiVersion}/import-employee-history")
+        var importEmployeeHistoryGroup = webApplication.MapGroup("v{version:apiVersion}/import/employees/history")
                                                        .WithTags("import-employee-history")
                                                        .WithApiVersionSet(versionSet)
                                                        .MapToApiVersion(1.0);
 
-        importEmployeeHistoryGroup.MapGet("/employees", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
+        importEmployeeHistoryGroup.MapGet("/imported", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
         {
             var employees = await importEmployeeHistoryService.GetImportedEmployeesHistoryAsync(id, page, pageSize);
             return Results.Ok(employees);
@@ -32,7 +33,7 @@ public static class EndpointsImportEmployeeHistory
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        importEmployeeHistoryGroup.MapGet("/existing-employees", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
+        importEmployeeHistoryGroup.MapGet("/existing", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
         {
             var existingEmployees = await importEmployeeHistoryService.GetImportedEmployeeExistingHistoryAsync(id, page, pageSize);
             return Results.Ok(existingEmployees);
@@ -47,7 +48,7 @@ public static class EndpointsImportEmployeeHistory
             Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
 
-        importEmployeeHistoryGroup.MapGet("/failed", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
+        importEmployeeHistoryGroup.MapGet("/error", async (Guid id, int page, int pageSize, [FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
         {
             var failedEmployeeImports = await importEmployeeHistoryService.GetImportedEmployeeFailedHistoryAsync(id, page, pageSize);
             return Results.Ok(failedEmployeeImports);
@@ -98,6 +99,21 @@ public static class EndpointsImportEmployeeHistory
             Summary = "Delete import employee",
             Description = "Delete import employee ",
             Tags = [new() { Name = "Wolds HR - Import Employee" }]
+        });
+
+        importEmployeeHistoryGroup.MapGet("/latest", async ([FromServices] IImportEmployeeHistoryService importEmployeeHistoryService) =>
+        {
+            var latestEmployeeImports = await importEmployeeHistoryService.GetLatestAsync(Constants.NumberOfLatestImportsToGet);
+            return Results.Ok(latestEmployeeImports);
+        })
+        .Produces<List<ImportEmployeeHistorySummaryResponse>>((int)HttpStatusCode.OK)
+        .WithName("GetLatestEmployeeImports")
+        .RequireAuthorization()
+        .WithOpenApi(x => new OpenApiOperation(x)
+        {
+            Summary = "Get latest employee import records",
+            Description = "Gets latest employee import records",
+            Tags = [new() { Name = "Wolds HR - Employee Import" }]
         });
     }
 }

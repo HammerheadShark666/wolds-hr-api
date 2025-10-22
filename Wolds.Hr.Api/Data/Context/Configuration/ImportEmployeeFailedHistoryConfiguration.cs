@@ -1,6 +1,6 @@
-﻿namespace wolds_hr_api.Data.Context.Configuration;
+﻿namespace Wolds.Hr.Api.Data.Context.Configuration;
 
-using global::wolds_hr_api.Domain;
+using global::Wolds.Hr.Api.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Data.Context;
+﻿using Wolds.Hr.Api.Data.Context;
 
-namespace wolds_hr_api.Library.Extensions;
+namespace Wolds.Hr.Api.Library.Extensions;
 
 internal static class AppExtensions
 {

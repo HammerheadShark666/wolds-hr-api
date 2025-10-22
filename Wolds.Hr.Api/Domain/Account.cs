@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using static wolds_hr_api.Library.Enums;
+using static Wolds.Hr.Api.Library.Enums;
 
-namespace wolds_hr_api.Domain;
+namespace Wolds.Hr.Api.Domain;
 
 public class Account
 {

@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Dto.Requests.Department;
-using wolds_hr_api.Library.Dto.Responses;
-using wolds_hr_api.Library.Exceptions;
-using wolds_hr_api.Service.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Requests.Department;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Library.Exceptions;
+using Wolds.Hr.Api.Service.Interfaces;
 
-namespace wolds_hr_api.Endpoint;
+namespace Wolds.Hr.Api.Endpoint;
 
 public static class EndpointsDepartment
 {

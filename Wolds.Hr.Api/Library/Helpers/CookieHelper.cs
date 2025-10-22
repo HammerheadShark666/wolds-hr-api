@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Library;
+﻿using Wolds.Hr.Api.Library;
 
-namespace wolds_hr_api.Library.Helpers.Interfaces;
+namespace Wolds.Hr.Api.Library.Helpers.Interfaces;
 
 internal class CookieHelper(IEnvironmentHelper environmentHelper) : ICookieHelper
 {

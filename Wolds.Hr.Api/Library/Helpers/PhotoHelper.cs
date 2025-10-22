@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Library.Helpers.Interfaces;
+﻿using Wolds.Hr.Api.Library.Helpers.Interfaces;
 
-namespace wolds_hr_api.Library.Helpers;
+namespace Wolds.Hr.Api.Library.Helpers;
 
 internal sealed class PhotoHelper : IPhotoHelper
 {

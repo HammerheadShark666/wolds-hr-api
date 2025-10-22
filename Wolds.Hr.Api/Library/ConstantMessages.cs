@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library;
+﻿namespace Wolds.Hr.Api.Library;
 
 internal class ConstantMessages
 {
@@ -15,6 +15,7 @@ internal class ConstantMessages
     public static string EmployeeNotFound = "Employee not found";
     public static string ImportEmployeeNotFound = "Import employee not found";
     public static string ImportEmployeeNotCreated = "Import employee  record was not created.";
+    public static string MaxNumberOfEmployeesReached = $"Maximum number of employees reached: {Constants.MaxNumberOfEmployees}";
 
     public static string EnvironmentVariableNotFound = "Environment Variable Not Found: {0}.";
 

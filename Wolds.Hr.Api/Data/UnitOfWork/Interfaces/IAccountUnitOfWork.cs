@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Data.Interfaces;
+﻿using Wolds.Hr.Api.Data.Interfaces;
 
-namespace wolds_hr_api.Data.UnitOfWork.Interfaces;
+namespace Wolds.Hr.Api.Data.UnitOfWork.Interfaces;
 
 internal interface IAccountUnitOfWork
 {

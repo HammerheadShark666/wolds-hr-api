@@ -1,12 +1,12 @@
-﻿using wolds_hr_api.Data.UnitOfWork.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Dto.Responses;
-using wolds_hr_api.Library.Exceptions;
-using wolds_hr_api.Library.Helpers;
-using wolds_hr_api.Library.Helpers.Interfaces;
-using wolds_hr_api.Service.Interfaces;
+﻿using Wolds.Hr.Api.Data.UnitOfWork.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Library.Exceptions;
+using Wolds.Hr.Api.Library.Helpers;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Service.Interfaces;
 
-namespace wolds_hr_api.Service;
+namespace Wolds.Hr.Api.Service;
 
 internal sealed class RefreshTokenService(IRefreshTokenUnitOfWork refreshTokenUnitOfWork, IJWTHelper jwtHelper, IEnvironmentHelper environmentHelper) : IRefreshTokenService
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using wolds_hr_api.Domain;
+using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Data.Context.Configuration;
+namespace Wolds.Hr.Api.Data.Context.Configuration;
 
 internal sealed class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {

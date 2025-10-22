@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Data;
+namespace Wolds.Hr.Api.Data;
 
 internal sealed class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext woldsHrDbContext) : IImportEmployeeFailedHistoryRepository
 {
@@ -16,6 +16,7 @@ internal sealed class ImportEmployeeFailedHistoryRepository(WoldsHrDbContext wol
     {
         var baseQuery = woldsHrDbContext.ImportEmployeesFailedHistory
                                 .Where(e => e.ImportEmployeeHistoryId == id)
+                                .Include(e => e.Errors)
                                 .AsNoTracking();
 
         var totalEmployees = await baseQuery.CountAsync();

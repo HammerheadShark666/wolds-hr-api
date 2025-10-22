@@ -1,8 +1,8 @@
-﻿using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Data.UnitOfWork.Interfaces;
+﻿using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Data.UnitOfWork.Interfaces;
 
-namespace wolds_hr_api.Data.UnitOfWork;
+namespace Wolds.Hr.Api.Data.UnitOfWork;
 
 internal sealed class ImportEmployeeHistoryUnitOfWork(IImportEmployeeHistoryRepository history,
                                              IImportEmployeeSuccessHistoryRepository successHistory,

@@ -1,9 +1,9 @@
 ﻿using FluentAssertions;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Dto.Requests.Employee;
-using wolds_hr_api.Library.Mappers;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Requests.Employee;
+using Wolds.Hr.Api.Library.Mappers;
 
-namespace wolds_hr_api.xunit.Mappers;
+namespace Wolds.Hr.Api.Xunit.Mappers;
 
 public class EmployeeMapperTests
 {

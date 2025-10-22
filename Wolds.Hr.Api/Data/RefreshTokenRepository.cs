@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Data;
+namespace Wolds.Hr.Api.Data;
 
 internal sealed class RefreshTokenRepository(WoldsHrDbContext woldsHrDbContext) : IRefreshTokenRepository
 {

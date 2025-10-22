@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 
-namespace wolds_hr_api.Library.ExceptionHandlers;
+namespace Wolds.Hr.Api.Library.ExceptionHandlers;
 
 internal sealed class ValidationExceptionHandler(IProblemDetailsService problemDetailsService) : IExceptionHandler
 {

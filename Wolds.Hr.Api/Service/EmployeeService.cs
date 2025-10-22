@@ -1,16 +1,16 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.UnitOfWork.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library;
-using wolds_hr_api.Library.Dto.Requests.Employee;
-using wolds_hr_api.Library.Dto.Responses;
-using wolds_hr_api.Library.Exceptions;
-using wolds_hr_api.Library.Helpers.Interfaces;
-using wolds_hr_api.Library.Mappers;
-using wolds_hr_api.Service.Interfaces;
-using static wolds_hr_api.Library.Helpers.PhotoHelper;
+using Wolds.Hr.Api.Data.UnitOfWork.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library;
+using Wolds.Hr.Api.Library.Dto.Requests.Employee;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Library.Exceptions;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Library.Mappers;
+using Wolds.Hr.Api.Service.Interfaces;
+using static Wolds.Hr.Api.Library.Helpers.PhotoHelper;
 
-namespace wolds_hr_api.Service;
+namespace Wolds.Hr.Api.Service;
 
 internal sealed class EmployeeService(IValidator<Employee> validator,
                                       IEmployeeUnitOfWork employeeUnitOfWork,

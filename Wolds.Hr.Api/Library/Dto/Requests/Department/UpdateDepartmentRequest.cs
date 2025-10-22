@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library.Dto.Requests.Department;
+﻿namespace Wolds.Hr.Api.Library.Dto.Requests.Department;
 
 public class UpdateDepartmentRequest
 {

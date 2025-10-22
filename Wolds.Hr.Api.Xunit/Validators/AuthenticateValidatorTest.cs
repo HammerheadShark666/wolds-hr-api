@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using Moq;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Dto.Requests;
-using wolds_hr_api.Validator;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Requests;
+using Wolds.Hr.Api.Validator;
 
-namespace wolds_hr_api.xunit.Validators;
+namespace Wolds.Hr.Api.Xunit.Validators;
 
 public class AuthenticateValidatorTests
 {

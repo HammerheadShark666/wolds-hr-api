@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context.Configuration;
-using wolds_hr_api.Domain;
+using Wolds.Hr.Api.Data.Context.Configuration;
+using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Data.Context;
+namespace Wolds.Hr.Api.Data.Context;
 
 internal sealed class WoldsHrDbContext(DbContextOptions<WoldsHrDbContext> options) : DbContext(options)
 {
