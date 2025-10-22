@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library.Exceptions;
+﻿namespace Wolds.Hr.Api.Library.Exceptions;
 
 internal sealed class ImportEmployeeHistoryNotFoundException : Exception
 {

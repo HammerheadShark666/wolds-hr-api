@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 
-namespace wolds_hr_api.Library.Validation;
+namespace Wolds.Hr.Api.Library.Validation;
 
 internal static class ValidationErrorFormatter
 {

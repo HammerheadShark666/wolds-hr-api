@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Librarys.Converters;
+﻿namespace Wolds.Hr.Api.Librarys.Converters;
 
 using System.Text.Json;
 using System.Text.Json.Serialization;

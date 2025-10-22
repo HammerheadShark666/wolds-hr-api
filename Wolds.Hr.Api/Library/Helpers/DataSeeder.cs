@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
 
-namespace wolds_hr_api.Library.Helpers;
+namespace Wolds.Hr.Api.Library.Helpers;
 
 internal class DataSeeder(WoldsHrDbContext woldsHrDbContext) : IDataSeeder
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace wolds_hr_api.Migrations
+namespace Wolds.Hr.Api.Migrations
 {
     /// <inheritdoc />
     public partial class initialcreate : Migration

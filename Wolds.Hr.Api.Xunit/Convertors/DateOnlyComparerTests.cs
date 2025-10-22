@@ -1,7 +1,7 @@
 using FluentAssertions;
-using wolds_hr_api.Library.Converters;
+using Wolds.Hr.Api.Library.Converters;
 
-namespace wolds_hr_api.xunit.Convertors;
+namespace Wolds.Hr.Api.Xunit.Convertors;
 
 public class DateOnlyComparerTests
 {

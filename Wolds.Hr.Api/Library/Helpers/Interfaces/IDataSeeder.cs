@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library.Helpers.Interfaces;
+﻿namespace Wolds.Hr.Api.Library.Helpers.Interfaces;
 
 internal interface IDataSeeder
 {

@@ -1,41 +1,34 @@
 ﻿using Asp.Versioning.Builder;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.OpenApi.Models;
 using System.Net;
-using wolds_hr_api.Library.Dto.Responses;
-using wolds_hr_api.Library.Helpers.Interfaces;
-using wolds_hr_api.Service.Interfaces;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Service.Interfaces;
 
-namespace wolds_hr_api.Endpoint;
+namespace Wolds.Hr.Api.Endpoint;
 
 public static class EndpointsImportEmployee
 {
     public static void ConfigureRoutes(this WebApplication webApplication, ApiVersionSet versionSet)
     {
-        var importEmployeeGroup = webApplication.MapGroup("v{version:apiVersion}/import-employees")
+        var importEmployeeGroup = webApplication.MapGroup("v{version:apiVersion}/import/employees")
                                                   .WithTags("import-employees")
                                                   .WithApiVersionSet(versionSet)
                                                   .MapToApiVersion(1.0);
 
-        importEmployeeGroup.MapPost("", async (HttpRequest request, [FromServices] IImportEmployeeService importEmployeeService, IFileHelper fileHelper) =>
+        importEmployeeGroup.MapPost("", async (IFormFile importFile, IImportEmployeeService importEmployeeService) =>
         {
-            if (!request.HasFormContentType)
-                return Results.BadRequest(new { Message = "Invalid content type." });
+            if (importFile == null || importFile.Length == 0)
+                return Results.BadRequest(new { Message = "No data in import file." });
 
-            var file = await fileHelper.GetFileAsync(request);
-            if (file == null || !fileHelper.FileHasContent(file))
-                return Results.BadRequest(new { Message = "No data in file." });
-
-            var result = await importEmployeeService.ImportFromFileAsync(file);
+            var result = await importEmployeeService.ImportFromFileAsync(importFile);
 
             return Results.Ok(result);
-
-
         })
         .Accepts<IFormFile>("multipart/form-data")
         .Produces<ImportEmployeeHistorySummaryResponse>((int)HttpStatusCode.OK)
         .WithName("ImportEmployees")
         .RequireAuthorization()
+        .DisableAntiforgery()
         .WithOpenApi(x => new OpenApiOperation(x)
         {
             Summary = "Import employees",

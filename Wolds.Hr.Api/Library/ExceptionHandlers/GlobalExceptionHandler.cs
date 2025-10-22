@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library.ExceptionHandlers;
+﻿namespace Wolds.Hr.Api.Library.ExceptionHandlers;
 
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Net;
 using System.Threading;
-using wolds_hr_api.Library.Exceptions;
+using Wolds.Hr.Api.Library.Exceptions;
 
 internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetailsService, ILogger<GlobalExceptionHandler> _logger) : IExceptionHandler
 {
@@ -18,6 +18,7 @@ internal sealed class GlobalExceptionHandler(IProblemDetailsService problemDetai
         var (statusCode, message) = exception switch
         {
             DepartmentNotFoundException or EmployeeNotFoundException => ((int)HttpStatusCode.NotFound, exception.Message),
+            MaxNumberOfEmployeesReachedException => ((int)HttpStatusCode.BadRequest, exception.Message),
             UnauthorizedAccessException => ((int)HttpStatusCode.Unauthorized, "Unauthorized"),
             _ => ((int)HttpStatusCode.InternalServerError, "An unexpected error occurred.")
         };

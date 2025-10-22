@@ -1,8 +1,8 @@
 using Asp.Versioning;
-using wolds_hr_api.Endpoint;
-using wolds_hr_api.Library.ExceptionHandlers;
-using wolds_hr_api.Library.Extensions;
-using wolds_hr_api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Endpoint;
+using Wolds.Hr.Api.Library.ExceptionHandlers;
+using Wolds.Hr.Api.Library.Extensions;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 

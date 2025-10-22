@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library;
 
-namespace wolds_hr_api.Validator;
+namespace Wolds.Hr.Api.Validator;
 
 public class EmployeeValidator : AbstractValidator<Employee>
 {

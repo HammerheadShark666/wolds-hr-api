@@ -1,6 +1,6 @@
-﻿using static wolds_hr_api.Library.Helpers.PhotoHelper;
+﻿using static Wolds.Hr.Api.Library.Helpers.PhotoHelper;
 
-namespace wolds_hr_api.Library.Helpers.Interfaces;
+namespace Wolds.Hr.Api.Library.Helpers.Interfaces;
 
 internal interface IPhotoHelper
 {

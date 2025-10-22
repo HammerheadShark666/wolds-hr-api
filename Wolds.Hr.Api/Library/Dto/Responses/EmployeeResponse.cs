@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Domain;
+﻿using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Library.Dto.Responses;
+namespace Wolds.Hr.Api.Library.Dto.Responses;
 
 internal class EmployeeResponse
 {

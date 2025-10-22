@@ -1,8 +1,8 @@
 ﻿using FluentValidation.Results;
-using wolds_hr_api.Library.Validation;
+using Wolds.Hr.Api.Library.Validation;
 
 
-namespace wolds_hr_api.xunit.Validators;
+namespace Wolds.Hr.Api.Xunit.Validators;
 
 public class ValidationErrorFormatterTest
 {

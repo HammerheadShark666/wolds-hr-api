@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library;
+﻿namespace Wolds.Hr.Api.Library;
 
 internal static class EmployeeLimitHelper
 {

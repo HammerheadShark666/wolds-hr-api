@@ -1,10 +1,10 @@
 ﻿namespace Wolds.Hr.Api.Library.Dto.Responses;
 
-public class ImportEmployeeHistorySummaryResponse
+public class ImportEmployeeHistoryLatestResponse
 {
     public Guid Id { get; set; }
     public DateTime Date { get; set; }
     public int ImportedEmployeesCount { get; set; }
-    public int ImportEmployeesExistingCount { get; set; }
-    public int ImportEmployeesErrorsCount { get; set; }
+    public int ImportedEmployeesErrorsCount { get; set; }
+    public int ImportedEmployeesExistingCount { get; set; }
 }

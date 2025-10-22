@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Converters;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Converters;
 
-namespace wolds_hr_api.Data.Context.Configuration;
+namespace Wolds.Hr.Api.Data.Context.Configuration;
 
 internal sealed class ImportEmployeeExistingHistoryConfiguration : IEntityTypeConfiguration<ImportEmployeeExistingHistory>
 {

@@ -1,10 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using wolds_hr_api.Library.Helpers;
+using Wolds.Hr.Api.Library.Helpers;
 
 
-namespace wolds_hr_api.xunit.Helpers;
+namespace Wolds.Hr.Api.Xunit.Helpers;
 public class FileHelperTest
 {
     private readonly FileHelper _fileHelper;

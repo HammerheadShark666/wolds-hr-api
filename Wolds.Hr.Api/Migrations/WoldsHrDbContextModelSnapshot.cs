@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using wolds_hr_api.Data.Context;
+using Wolds.Hr.Api.Data.Context;
 
 #nullable disable
 
-namespace wolds_hr_api.Migrations
+namespace Wolds.Hr.Api.Migrations
 {
     [DbContext(typeof(WoldsHrDbContext))]
     partial class WoldsHrDbContextModelSnapshot : ModelSnapshot
@@ -22,7 +22,7 @@ namespace wolds_hr_api.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("wolds_hr_api.Domain.Account", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.Account", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -88,7 +88,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_Account", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.Department", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.Department", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -105,7 +105,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_Department", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.Employee", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.Employee", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,7 +157,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_Employee", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeExistingHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeExistingHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -203,7 +203,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_ImportEmployeeExistingHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedErrorHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeFailedErrorHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -224,7 +224,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_ImportEmployeeFailedErrorHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeFailedHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -246,7 +246,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_ImportEmployeeFailedHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeHistory", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -261,7 +261,7 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_ImportEmployeeHistory", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.RefreshToken", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.RefreshToken", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -304,14 +304,14 @@ namespace wolds_hr_api.Migrations
                     b.ToTable("WOLDS_HR_RefreshToken", (string)null);
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.Employee", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.Employee", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.Department", "Department")
+                    b.HasOne("Wolds.Hr.Api.Domain.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", "ImportEmployeeHistory")
+                    b.HasOne("Wolds.Hr.Api.Domain.ImportEmployeeHistory", "ImportEmployeeHistory")
                         .WithMany("ImportedEmployees")
                         .HasForeignKey("ImportEmployeeHistoryId");
 
@@ -320,13 +320,13 @@ namespace wolds_hr_api.Migrations
                     b.Navigation("ImportEmployeeHistory");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeExistingHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeExistingHistory", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", "EmployeeImportHistory")
+                    b.HasOne("Wolds.Hr.Api.Domain.ImportEmployeeHistory", "EmployeeImportHistory")
                         .WithMany()
                         .HasForeignKey("EmployeeImportHistoryId");
 
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", null)
+                    b.HasOne("Wolds.Hr.Api.Domain.ImportEmployeeHistory", null)
                         .WithMany("ExistingEmployees")
                         .HasForeignKey("ImportEmployeeHistoryId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -334,27 +334,27 @@ namespace wolds_hr_api.Migrations
                     b.Navigation("EmployeeImportHistory");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedErrorHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeFailedErrorHistory", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeFailedHistory", null)
+                    b.HasOne("Wolds.Hr.Api.Domain.ImportEmployeeFailedHistory", null)
                         .WithMany("Errors")
                         .HasForeignKey("ImportEmployeeFailedHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeFailedHistory", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.ImportEmployeeHistory", null)
+                    b.HasOne("Wolds.Hr.Api.Domain.ImportEmployeeHistory", null)
                         .WithMany("FailedEmployees")
                         .HasForeignKey("ImportEmployeeHistoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.RefreshToken", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.RefreshToken", b =>
                 {
-                    b.HasOne("wolds_hr_api.Domain.Account", "Account")
+                    b.HasOne("Wolds.Hr.Api.Domain.Account", "Account")
                         .WithMany("RefreshTokens")
                         .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -363,17 +363,17 @@ namespace wolds_hr_api.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.Account", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.Account", b =>
                 {
                     b.Navigation("RefreshTokens");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeFailedHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeFailedHistory", b =>
                 {
                     b.Navigation("Errors");
                 });
 
-            modelBuilder.Entity("wolds_hr_api.Domain.ImportEmployeeHistory", b =>
+            modelBuilder.Entity("Wolds.Hr.Api.Domain.ImportEmployeeHistory", b =>
                 {
                     b.Navigation("ExistingEmployees");
 

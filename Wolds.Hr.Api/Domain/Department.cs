@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Domain;
+﻿namespace Wolds.Hr.Api.Domain;
 
 public class Department
 {

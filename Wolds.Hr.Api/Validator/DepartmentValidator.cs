@@ -1,8 +1,8 @@
 ﻿using FluentValidation;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Validator;
+namespace Wolds.Hr.Api.Validator;
 
 public sealed class DepartmentValidator : AbstractValidator<Department>
 {

@@ -1,8 +1,8 @@
 ﻿using FluentAssertions;
 using System.Text.Json;
-using wolds_hr_api.Librarys.Converters;
+using Wolds.Hr.Api.Librarys.Converters;
 
-namespace wolds_hr_api.xunit.Convertors;
+namespace Wolds.Hr.Api.Xunit.Convertors;
 
 public class DateOnlyJsonConverterTests
 {

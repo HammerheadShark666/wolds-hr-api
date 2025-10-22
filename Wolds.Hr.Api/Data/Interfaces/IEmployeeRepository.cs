@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Domain;
+﻿using Wolds.Hr.Api.Domain;
 
-namespace wolds_hr_api.Data.Interfaces;
+namespace Wolds.Hr.Api.Data.Interfaces;
 
 public interface IEmployeeRepository
 {

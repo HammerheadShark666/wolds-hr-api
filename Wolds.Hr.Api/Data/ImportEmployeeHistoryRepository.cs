@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Exceptions;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Dto.Responses;
+using Wolds.Hr.Api.Library.Exceptions;
 
-namespace wolds_hr_api.Data;
+namespace Wolds.Hr.Api.Data;
 
 internal sealed class ImportEmployeeHistoryRepository(WoldsHrDbContext woldsHrDbContext) : IImportEmployeeHistoryRepository
 {
@@ -15,6 +16,7 @@ internal sealed class ImportEmployeeHistoryRepository(WoldsHrDbContext woldsHrDb
                              .AsNoTracking()
                              .ToListAsync();
     }
+
     public void Add(ImportEmployeeHistory importEmployeeHistory)
     {
         woldsHrDbContext.ImportEmployeesHistory.Add(importEmployeeHistory);
@@ -39,5 +41,21 @@ internal sealed class ImportEmployeeHistoryRepository(WoldsHrDbContext woldsHrDb
         }
         else
             throw new ImportEmployeeHistoryNotFoundException();
+    }
+
+
+
+    public async Task<List<ImportEmployeeHistoryLatestResponse>> GetLatestAsync(int numberToGet)
+    {
+        return await (from importEmployeesHistory in woldsHrDbContext.ImportEmployeesHistory
+                      orderby importEmployeesHistory.Date descending
+                      select new ImportEmployeeHistoryLatestResponse
+                      {
+                          Id = importEmployeesHistory.Id,
+                          Date = importEmployeesHistory.Date,
+                          ImportedEmployeesCount = importEmployeesHistory.ImportedEmployees.Count(),
+                          ImportedEmployeesErrorsCount = importEmployeesHistory.FailedEmployees.Count(),
+                          ImportedEmployeesExistingCount = importEmployeesHistory.ExistingEmployees.Count()
+                      }).Take(5).ToListAsync();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace wolds_hr_api.Data.Context;
+namespace Wolds.Hr.Api.Data.Context;
 
 internal sealed class WoldsHrDbContextFactory : IDesignTimeDbContextFactory<WoldsHrDbContext>
 {

@@ -5,6 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <RootNamespace>Wolds.Hr.Api</RootNamespace>
+	<UserSecretsId>dummy-user-secrets-id</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup> 

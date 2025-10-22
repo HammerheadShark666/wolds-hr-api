@@ -6,19 +6,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using wolds_hr_api.Data;
-using wolds_hr_api.Data.Context;
-using wolds_hr_api.Data.Interfaces;
-using wolds_hr_api.Data.UnitOfWork;
-using wolds_hr_api.Data.UnitOfWork.Interfaces;
-using wolds_hr_api.Library.Helpers;
-using wolds_hr_api.Library.Helpers.Interfaces;
-using wolds_hr_api.Librarys.Converters;
-using wolds_hr_api.Service;
-using wolds_hr_api.Service.Interfaces;
-using wolds_hr_api.Validator;
+using Wolds.Hr.Api.Data;
+using Wolds.Hr.Api.Data.Context;
+using Wolds.Hr.Api.Data.Interfaces;
+using Wolds.Hr.Api.Data.UnitOfWork;
+using Wolds.Hr.Api.Data.UnitOfWork.Interfaces;
+using Wolds.Hr.Api.Library.Helpers;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Librarys.Converters;
+using Wolds.Hr.Api.Service;
+using Wolds.Hr.Api.Service.Interfaces;
+using Wolds.Hr.Api.Validator;
 
-namespace wolds_hr_api.Library.Extensions;
+namespace Wolds.Hr.Api.Library.Extensions;
 
 internal static class ServiceExtensions
 {

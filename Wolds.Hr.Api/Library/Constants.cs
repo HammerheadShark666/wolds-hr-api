@@ -1,4 +1,4 @@
-﻿namespace wolds_hr_api.Library;
+﻿namespace Wolds.Hr.Api.Library;
 
 internal static class Constants
 {
@@ -30,4 +30,5 @@ internal static class Constants
     public const string Azure_Custom_Domain_WWW = "AZURE_CUSTOM_DOMAIN_WWW";
 
     public const int MaxNumberOfEmployees = 150;
+    public const int NumberOfLatestImportsToGet = 5;
 }

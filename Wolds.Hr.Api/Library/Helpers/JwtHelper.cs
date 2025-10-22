@@ -3,10 +3,10 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using wolds_hr_api.Domain;
-using wolds_hr_api.Library.Helpers.Interfaces;
+using Wolds.Hr.Api.Domain;
+using Wolds.Hr.Api.Library.Helpers.Interfaces;
 
-namespace wolds_hr_api.Library.Helpers;
+namespace Wolds.Hr.Api.Library.Helpers;
 
 internal sealed class JWTHelper(IEnvironmentHelper environmentHelper) : IJWTHelper
 {

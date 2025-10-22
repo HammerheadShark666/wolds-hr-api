@@ -1,6 +1,6 @@
-﻿using wolds_hr_api.Library.Dto.Responses;
+﻿using Wolds.Hr.Api.Library.Dto.Responses;
 
-namespace wolds_hr_api.Service.Interfaces;
+namespace Wolds.Hr.Api.Service.Interfaces;
 
 internal interface IImportEmployeeHistoryService
 {
@@ -9,4 +9,5 @@ internal interface IImportEmployeeHistoryService
     Task<ImportEmployeeFailedHistoryPagedResponse> GetImportedEmployeeFailedHistoryAsync(Guid id, int page, int pageSize);
     Task DeleteAsync(Guid id);
     Task<List<ImportEmployeeHistoryResponse>> GetAsync();
+    Task<List<ImportEmployeeHistoryLatestResponse>> GetLatestAsync(int numberOfLatestImportsToGet);
 }
