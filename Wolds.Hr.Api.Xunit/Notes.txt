@@ -8,4 +8,4 @@ dotnet tool install --global dotnet-reportgenerator-globaltool
 
 reportgenerator -reports:TestResults/**/coverage.cobertura.xml -targetdir:coveragereport
 
-file:///D:/Wolds-Hr-Project/Wolds.Hr.Api.Cr/Wolds.Hr.Api.Xunit/coveragereport/index.html
+file:///D:/Wolds-Hr-Project/Wolds.Hr.Api/Wolds.Hr.Api.Xunit/coveragereport/index.html
