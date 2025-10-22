@@ -52,6 +52,62 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/login Fail",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test('Schema validation', () => { \r",
+									"    pm.response.to.have.jsonSchema (JSON.parse(pm.globals.get('authenticate_fail_schema')));\r",
+									"}); \r",
+									"\r",
+									"pm.test('Validate error messages', () => { \r",
+									"\r",
+									"    const jsonData = pm.response.json();\r",
+									"    let errors = jsonData.errors;  \r",
+									"\r",
+									"    pm.expect(errors[0]).to.eql(\"Invalid login\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"Failed@hotmail.com\",\r\n    \"password\": \"FailedPassword#1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1021,7 +1077,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees (Add) Success",
+					"name": "{{baseUrl}}/employees/employee (Add) Success",
 					"event": [
 						{
 							"listen": "test",
@@ -1061,7 +1117,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						},
 						{
@@ -1074,7 +1131,8 @@
 									""
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1094,19 +1152,20 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/employees",
+							"raw": "{{baseUrl}}/employees/employee",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"employees"
+								"employees",
+								"employee"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees (Add) Fail",
+					"name": "{{baseUrl}}/employees/employee (Add) Fail",
 					"event": [
 						{
 							"listen": "test",
@@ -1134,7 +1193,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						},
 						{
@@ -1147,7 +1207,8 @@
 									""
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1167,12 +1228,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/employees",
+							"raw": "{{baseUrl}}/employees/employee",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"employees"
+								"employees",
+								"employee"
 							]
 						}
 					},
@@ -1245,7 +1307,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees (Update)",
+					"name": "{{baseUrl}}/employees/employee (Update)",
 					"event": [
 						{
 							"listen": "test",
@@ -1279,7 +1341,8 @@
 									"}); "
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						},
 						{
@@ -1291,7 +1354,8 @@
 									"pm.environment.set(\"selectedDepartmentId\", selected.id);"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1311,19 +1375,20 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/employees",
+							"raw": "{{baseUrl}}/employees/employee",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"employees"
+								"employees",
+								"employee"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees (Update) Fail",
+					"name": "{{baseUrl}}/employees/employee (Update) Fail",
 					"event": [
 						{
 							"listen": "test",
@@ -1351,7 +1416,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						},
 						{
@@ -1363,7 +1429,8 @@
 									"pm.environment.set(\"selectedDepartmentId\", selected.id);"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1383,12 +1450,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/employees",
+							"raw": "{{baseUrl}}/employees/employee",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"employees"
+								"employees",
+								"employee"
 							]
 						}
 					},
@@ -1459,7 +1527,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/employees/{{employeeId}}",
+					"name": "{{baseUrl}}/employees/employee/{{employeeId}}",
 					"event": [
 						{
 							"listen": "test",
@@ -1470,7 +1538,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1481,12 +1550,13 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/employees/{{employeeId}}",
+							"raw": "{{baseUrl}}/employees/employee/{{employeeId}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"employees",
+								"employee",
 								"{{employeeId}}"
 							]
 						}
@@ -1535,7 +1605,7 @@
 			"name": "Import Employee",
 			"item": [
 				{
-					"name": "{{baseUrl}}/import-employees (Bad Data File)",
+					"name": "{{baseUrl}}/import/employees (Bad Data File)",
 					"event": [
 						{
 							"listen": "test",
@@ -1560,7 +1630,8 @@
 									" });"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1571,26 +1642,27 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "file",
+									"key": "importFile",
 									"type": "file",
 									"src": "postman-cloud:///1f0957c2-6aef-4950-94ef-b6aaed893f60"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/import-employees",
+							"raw": "{{baseUrl}}/import/employees",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employees"
+								"import",
+								"employees"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employee-history (Delete Bad Date Import)",
+					"name": "{{baseUrl}}/import/employees/history (Delete Bad Date Import)",
 					"event": [
 						{
 							"listen": "test",
@@ -1601,7 +1673,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1612,12 +1685,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history/{{employee_import_id}}",
+							"raw": "{{baseUrl}}/import/employees/history/{{employee_import_id}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history",
+								"import",
+								"employees",
+								"history",
 								"{{employee_import_id}}"
 							]
 						}
@@ -1625,7 +1700,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employees",
+					"name": "{{baseUrl}}/import/employees",
 					"event": [
 						{
 							"listen": "test",
@@ -1650,7 +1725,8 @@
 									" });"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1667,7 +1743,7 @@
 							"mode": "formdata",
 							"formdata": [
 								{
-									"key": "file",
+									"key": "importFile",
 									"type": "file",
 									"src": "postman-cloud:///1f092582-df65-40e0-b45d-13c57eca2673"
 								},
@@ -1680,12 +1756,13 @@
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/import-employees",
+							"raw": "{{baseUrl}}/import/employees",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employees"
+								"import",
+								"employees"
 							]
 						}
 					},
@@ -1697,7 +1774,7 @@
 			"name": "Import Employee History",
 			"item": [
 				{
-					"name": "{{baseUrl}}/import-employee-history",
+					"name": "{{baseUrl}}/import/employees/history",
 					"event": [
 						{
 							"listen": "test",
@@ -1712,7 +1789,8 @@
 									"}); "
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1720,19 +1798,21 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history",
+							"raw": "{{baseUrl}}/import/employees/history",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history"
+								"import",
+								"employees",
+								"history"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employee-history/employees",
+					"name": "{{baseUrl}}/import/employees/history/employees/imported",
 					"event": [
 						{
 							"listen": "test",
@@ -1747,7 +1827,8 @@
 									"}); "
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1758,13 +1839,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history/employees?id={{employee_import_id}}&page=1&pageSize=5",
+							"raw": "{{baseUrl}}/import/employees/history/imported?id={{employee_import_id}}&page=1&pageSize=5",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history",
-								"employees"
+								"import",
+								"employees",
+								"history",
+								"imported"
 							],
 							"query": [
 								{
@@ -1785,7 +1868,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employee-history/existing-employees?id=1&page=1&pageSize=5",
+					"name": "{{baseUrl}}/import/employees/history/existing?id=1&page=1&pageSize=5",
 					"event": [
 						{
 							"listen": "test",
@@ -1800,7 +1883,8 @@
 									"}); "
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1811,13 +1895,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history/existing-employees?id={{employee_import_id}}&page=1&pageSize=5",
+							"raw": "{{baseUrl}}/import/employees/history/existing?id={{employee_import_id}}&page=1&pageSize=5",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history",
-								"existing-employees"
+								"import",
+								"employees",
+								"history",
+								"existing"
 							],
 							"query": [
 								{
@@ -1838,7 +1924,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employee-history/fail?id={{employee_import_id}}&page=1&pageSize=5",
+					"name": "{{baseUrl}}/import/employees/history/error?id={{employee_import_id}}&page=1&pageSize=5",
 					"event": [
 						{
 							"listen": "test",
@@ -1853,7 +1939,8 @@
 									"}); "
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1861,13 +1948,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history/failed?id={{employee_import_id}}&page=1&pageSize=5",
+							"raw": "{{baseUrl}}/import/employees/history/error?id={{employee_import_id}}&page=1&pageSize=5",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history",
-								"failed"
+								"import",
+								"employees",
+								"history",
+								"error"
 							],
 							"query": [
 								{
@@ -1888,7 +1977,7 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/import-employee-history",
+					"name": "{{baseUrl}}/import/employees/history",
 					"event": [
 						{
 							"listen": "test",
@@ -1899,7 +1988,8 @@
 									"});"
 								],
 								"type": "text/javascript",
-								"packages": {}
+								"packages": {},
+								"requests": {}
 							}
 						}
 					],
@@ -1910,12 +2000,14 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/import-employee-history/{{employee_import_id}}",
+							"raw": "{{baseUrl}}/import/employees/history/{{employee_import_id}}",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"import-employee-history",
+								"import",
+								"employees",
+								"history",
 								"{{employee_import_id}}"
 							]
 						}
