@@ -29,6 +29,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseRouting();
 app.AddCors();
 app.UseHttpsRedirection();
 app.UseAuthentication();
