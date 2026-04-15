@@ -31,18 +31,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseRouting();
 app.AddCors();
-
-app.Use(async (context, next) =>
-{
-    if (context.Request.Method == "OPTIONS")
-    {
-        context.Response.StatusCode = 204;
-        return;
-    }
-
-    await next();
-});
-
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
