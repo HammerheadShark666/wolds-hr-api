@@ -38,6 +38,7 @@ public static class EndpointsAuthentication
 
             return Results.Ok(new { message = "Logged in" });
         })
+        .Accepts<LoginRequest>("application/json")
         .WithName("Login")
         .WithOpenApi(x => new OpenApiOperation(x)
         {
