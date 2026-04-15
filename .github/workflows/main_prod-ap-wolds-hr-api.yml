@@ -97,7 +97,7 @@ jobs:
           run: echo '${{ secrets.POSTMAN_GLOBALS_JSON }}' > globals.json
         - name: Run API tests
           run: |
-            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e ${{ secrets.POSTMAN_ENVIRONMENT_ID }} --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e PostmanCollections/WoldsHr Domain.postman_environment.json --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
 
 
 
