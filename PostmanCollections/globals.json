@@ -1,0 +1,105 @@
+{
+	"id": "d23eea48-b698-459f-8a3d-36835af0c6c5",
+	"values": [
+		{
+			"key": "employee_add_response_schema",
+			"value": "{  \n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"surname\": {\n      \"type\": \"string\"\n    },\n    \"firstName\": {\n      \"type\": \"string\"\n    },\n    \"dateOfBirth\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"hireDate\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"email\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"phoneNumber\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"photo\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"created\": {\n      \"type\": \"string\"\n    },\n    \"employeeImportId\": {\n      \"type\": [\"number\", \"null\"]\n    },\n    \"departmentId\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"department\": {}\n  },\n  \"required\": [\n    \"id\",\n    \"surname\",\n    \"firstName\",\n    \"created\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employee_get_response_schema",
+			"value": "{ \n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"surname\": {\n      \"type\": \"string\"\n    },\n    \"firstName\": {\n      \"type\": \"string\"\n    },\n    \"dateOfBirth\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"hireDate\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"email\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"phoneNumber\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"photo\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"created\": {\n      \"type\": \"string\"\n    },\n    \"employeeImportId\": {\n      \"type\": [\"number\", \"null\"]\n    },\n    \"departmentId\": {\n      \"type\": [\"string\", \"null\"]\n    },\n    \"department\": {\n      \"type\": [\"object\", \"null\"],\n      \"properties\": {\n        \"id\": {\n          \"type\": \"string\"\n        },\n        \"name\": {\n          \"type\": \"string\"\n        }\n      },\n      \"required\": [\n        \"id\",\n        \"name\"\n      ]\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"surname\",\n    \"firstName\",\n    \"created\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employees_imported_schema",
+			"value": "{ \n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"date\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"date\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employees_imported_history_schema",
+			"value": "{\n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"id\": {\n        \"type\": \"string\"\n      },\n      \"date\": {\n        \"type\": \"string\"\n      } \n    },\n    \"required\": [\n      \"id\",\n      \"date\"\n    ]\n  }\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employees_search_response_schema",
+			"value": "{ \n  \"type\": \"object\",\n  \"properties\": {\n    \"employees\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"surname\": {\n            \"type\": \"string\"\n          },\n          \"firstName\": {\n            \"type\": \"string\"\n          },\n          \"dateOfBirth\": {\n            \"type\": \"string\"\n          },\n          \"hireDate\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"email\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"phoneNumber\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"photo\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"created\": {\n            \"type\": \"string\"\n          },\n         \"employeeImportId\": {\n\t\t\t  \"type\": [\"number\", \"null\"]\n\t\t\t},\n          \"departmentId\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"department\": {\n            \"type\": [\"object\", \"null\"],\n            \"properties\": {\n              \"id\": {\n                \"type\": \"string\"\n              },\n              \"name\": {\n                \"type\": \"string\"\n              }\n            },\n            \"required\": [\n              \"id\",\n              \"name\"\n            ]\n          }\n        },\n        \"required\": [\n          \"id\",\n          \"surname\",\n          \"firstName\", \n          \"created\"\n        ]\n      }\n    },\n    \"page\": {\n      \"type\": \"number\"\n    },\n    \"pageSize\": {\n      \"type\": \"number\"\n    },\n    \"totalEmployees\": {\n      \"type\": \"number\"\n    },\n    \"totalPages\": {\n      \"type\": \"number\"\n    }\n  },\n  \"required\": [\n    \"employees\",\n    \"page\",\n    \"pageSize\",\n    \"totalEmployees\",\n    \"totalPages\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "departments_get_response_schema",
+			"value": "{   \n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"id\": {\n        \"type\": \"string\"\n      },\n      \"name\": {\n        \"type\": \"string\"\n      }\n    },\n    \"required\": [\n      \"id\",\n      \"name\"\n    ]\n  }\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "department_schema",
+			"value": "{   \n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"name\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "departments_schema",
+			"value": "{ \n  \"type\": \"array\",\n  \"items\": {\n    \"type\": \"object\",\n    \"properties\": {\n      \"id\": {\n        \"type\": \"string\"\n      },\n      \"name\": {\n        \"type\": \"string\"\n      }\n    },\n    \"required\": [\n      \"id\",\n      \"name\"\n    ]\n  }\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "errors_schema",
+			"value": "{  \n  \"type\": \"object\",\n  \"properties\": {\n    \"error\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    }\n  },\n  \"required\": [\n    \"error\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "department_updated_schema",
+			"value": "{ \n  \"type\": \"object\",\n  \"properties\": {\n    \"message\": {\n      \"type\": \"string\"\n    },\n    \"departmentId\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"message\",\n    \"departmentId\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employees_imported_failed_response_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"employees\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"employee\": {\n            \"type\": \"string\"\n          },\n          \"errors\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"id\",\n          \"employee\",\n          \"errors\"\n        ]\n      }\n    },\n    \"page\": {\n      \"type\": \"number\"\n    },\n    \"pageSize\": {\n      \"type\": \"number\"\n    },\n    \"totalEmployees\": {\n      \"type\": \"number\"\n    },\n    \"totalPages\": {\n      \"type\": \"number\"\n    }\n  },\n  \"required\": [\n    \"employees\",\n    \"page\",\n    \"pageSize\",\n    \"totalEmployees\",\n    \"totalPages\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employees_imported_response_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"employees\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"id\": {\n            \"type\": \"string\"\n          },\n          \"surname\": {\n            \"type\": \"string\"\n          },\n          \"firstName\": {\n            \"type\": \"string\"\n          },\n          \"dateOfBirth\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"hireDate\": {},\n          \"email\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"phoneNumber\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"photo\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"created\": {\n            \"type\": [\"string\", \"null\"]\n          },\n          \"departmentId\": {},\n          \"department\": {}\n        },\n        \"required\": [\n          \"id\",\n          \"surname\",\n          \"firstName\"           \n        ]\n      }\n    },\n    \"page\": {\n      \"type\": \"number\"\n    },\n    \"pageSize\": {\n      \"type\": \"number\"\n    },\n    \"totalEmployees\": {\n      \"type\": \"number\"\n    },\n    \"totalPages\": {\n      \"type\": \"number\"\n    }\n  },\n  \"required\": [\n    \"employees\",\n    \"page\",\n    \"pageSize\",\n    \"totalEmployees\",\n    \"totalPages\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "employee_fail_schema",
+			"value": "{  \n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"number\"\n    },\n    \"detail\": {\n      \"type\": \"string\"\n    },\n    \"errors\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"requestId\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"type\",\n    \"title\",\n    \"status\",\n    \"detail\",\n    \"errors\",\n    \"requestId\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "department_add_response_schema",
+			"value": "{  \n  \"type\": \"object\",\n  \"properties\": {\n    \"id\": {\n      \"type\": \"string\"\n    },\n    \"name\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"id\",\n    \"name\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "department_fail_schema",
+			"value": "{ \n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"number\"\n    },\n    \"detail\": {\n      \"type\": \"string\"\n    },\n    \"errors\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"requestId\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"type\",\n    \"title\",\n    \"status\",\n    \"detail\",\n    \"errors\",\n    \"requestId\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "authenticate_fail_schema",
+			"value": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"type\": {\n      \"type\": \"string\"\n    },\n    \"title\": {\n      \"type\": \"string\"\n    },\n    \"status\": {\n      \"type\": \"number\"\n    },\n    \"detail\": {\n      \"type\": \"string\"\n    },\n    \"errors\": {\n      \"type\": \"array\",\n      \"items\": {\n        \"type\": \"string\"\n      }\n    },\n    \"requestId\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"type\",\n    \"title\",\n    \"status\",\n    \"detail\",\n    \"errors\",\n    \"requestId\"\n  ]\n}",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"name": "Wolds HR Globals",
+	"_postman_variable_scope": "globals",
+	"_postman_exported_at": "2026-04-17T14:34:08.255Z",
+	"_postman_exported_using": "Postman/12.6.8"
+}
