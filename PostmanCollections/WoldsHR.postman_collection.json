@@ -1644,7 +1644,7 @@
 								{
 									"key": "importFile",
 									"type": "file",
-									"src": "postman-cloud:///1f0957c2-6aef-4950-94ef-b6aaed893f60"
+									"src": "PostmanCollections/employee-imports-invalid.csv"
 								}
 							]
 						},
@@ -1745,7 +1745,7 @@
 								{
 									"key": "importFile",
 									"type": "file",
-									"src": "postman-cloud:///1f092582-df65-40e0-b45d-13c57eca2673"
+									"src": "PostmanCollections/employee-imports-for-tests.csv"
 								},
 								{
 									"key": "",
