@@ -93,5 +93,4 @@ jobs:
         - name: Run Postman tests with Newman
           run: |
             newman run PostmanCollections/WoldsHR.postman_collection.json \
-            --environment PostmanCollections/env.json \
-            --cookie-jar /tmp/cookies.json
+            --environment PostmanCollections/env.json
