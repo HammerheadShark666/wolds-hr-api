@@ -93,4 +93,5 @@ jobs:
         - name: Run Postman tests with Newman
           run: |
             newman run PostmanCollections/WoldsHR.postman_collection.json \
-            --environment PostmanCollections/env.json
+            --environment PostmanCollections/env.json \
+            --globals PostmanCollections/globals.json
