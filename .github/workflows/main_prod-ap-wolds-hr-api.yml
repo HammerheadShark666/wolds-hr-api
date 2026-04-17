@@ -94,4 +94,4 @@ jobs:
           run: |
             newman run PostmanCollections/WoldsHR.postman_collection.json \
             --environment PostmanCollections/env.json \
-            --cookie-jar cookies.json
+            --cookie-jar /tmp/cookies.json
