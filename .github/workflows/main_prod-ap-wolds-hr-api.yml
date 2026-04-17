@@ -92,6 +92,6 @@ jobs:
           run: npm install -g newman
         - name: Run Postman tests with Newman
           run: |
-            newman run /PostmanCollections/WoldsHR.postman_collection.json \
-            --environment /PostmanCollections/env.json \
+            newman run PostmanCollections/WoldsHR.postman_collection.json \
+            --environment PostmanCollections/env.json \
             --cookie-jar cookies.json
