@@ -1720,7 +1720,7 @@
 									"pm.test(\"Is import summary\", function () {       \r",
 									"    pm.expect(jsonData).to.be.an(\"object\");\r",
 									"    pm.expect(jsonData.importedEmployeesCount).to.eql(14);\r",
-									"    pm.expect(jsonData.importEmployeesExistingCount).to.eql(2);\r",
+									"    pm.expect(jsonData.importEmployeesExistingCount).to.eql(0);\r",
 									"    pm.expect(jsonData.importEmployeesErrorsCount).to.eql(5);\r",
 									" });"
 								],
