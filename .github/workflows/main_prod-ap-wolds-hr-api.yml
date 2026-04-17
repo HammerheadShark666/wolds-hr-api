@@ -94,12 +94,10 @@ jobs:
         - name: Login to Postman CLI
           run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
         - name: Create globals file from GitHub secret
-          run: echo '${{ secrets.POSTMAN_GLOBALS_JSON }}' > globals.json
-        - name: Create cookie jar
-          run: echo "{}" > /tmp/cookies.json
+          run: echo '${{ secrets.POSTMAN_GLOBALS_JSON }}' > globals.json 
         - name: Run API tests
           run: |
-            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e ${{ secrets.POSTMAN_ENVIRONMENT_ID }} --cookie-jar /tmp/cookies.json --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
+            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e ${{ secrets.POSTMAN_ENVIRONMENT_ID }} --cookie-jar /tmp/cookies.txt --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
 
 
 
