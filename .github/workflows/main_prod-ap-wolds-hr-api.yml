@@ -82,23 +82,16 @@ jobs:
             slot-name: 'Production'
             package: .
             publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D553457A9BF141058A55A3748812E1FC }}
-            
+              
     automated-api-tests:
       runs-on: ubuntu-latest
       needs: deploy
       steps:
         - uses: actions/checkout@v4
-        - name: Install Postman CLI
+        - name: Install Newman
+          run: npm install -g newman
+        - name: Run Postman tests with Newman
           run: |
-            curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-        - name: Login to Postman CLI
-          run: postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
-        - name: Create globals file from GitHub secret
-          run: echo '${{ secrets.POSTMAN_GLOBALS_JSON }}' > globals.json 
-        - name: Run API tests
-          run: |
-            postman collection run "${{ github.workspace }}/PostmanCollections/WoldsHR.postman_collection.json" --globals globals.json -e ${{ secrets.POSTMAN_ENVIRONMENT_ID }} --cookie-jar /tmp/cookies.txt --integration-id "165236-${{ github.run_id }}" --env-var "upload_file=PostmanCollections/import-employees.csv"
-
-
-
-
+            newman run /PostmanCollections/WoldsHR.postman_collection.json \
+            --environment /PostmanCollections/env.json \
+            --cookie-jar cookies.json
