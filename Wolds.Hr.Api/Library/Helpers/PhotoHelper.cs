@@ -16,7 +16,7 @@ internal sealed class PhotoHelper : IPhotoHelper
             return false;
     }
 
-    public EditPhoto WasPhotoEdited(string originalPhotoFileName, string newPhotoFileName, string defaultPhotoFilename)
+    public EditPhoto WasPhotoEdited(string? originalPhotoFileName, string? newPhotoFileName, string defaultPhotoFilename)
     {
         return new EditPhoto(originalPhotoFileName != null && newPhotoFileName != null && NotDefaultImage(originalPhotoFileName, defaultPhotoFilename)
                                     && originalPhotoFileName != newPhotoFileName, originalPhotoFileName);
